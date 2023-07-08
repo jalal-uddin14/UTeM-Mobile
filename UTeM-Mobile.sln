@@ -5,6 +5,10 @@ VisualStudioVersion = 17.0.31611.283
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UTeM-Mobile", "UTeM-Mobile\UTeM-Mobile.csproj", "{AD8A7397-E462-4E55-BD40-2FA2B78584CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTeM-Mobile.Data", "UTeM-Mobile.Data\UTeM-Mobile.Data.csproj", "{2F2A01AD-281D-4CE2-A219-DBD2098BDBF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTeM-Mobile.Core", "UTeM-Mobile.Core\UTeM-Mobile.Core.csproj", "{56C0263D-86FB-4FD7-B5F4-1EA9CCB27327}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +21,14 @@ Global
 		{AD8A7397-E462-4E55-BD40-2FA2B78584CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD8A7397-E462-4E55-BD40-2FA2B78584CD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AD8A7397-E462-4E55-BD40-2FA2B78584CD}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{2F2A01AD-281D-4CE2-A219-DBD2098BDBF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F2A01AD-281D-4CE2-A219-DBD2098BDBF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F2A01AD-281D-4CE2-A219-DBD2098BDBF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F2A01AD-281D-4CE2-A219-DBD2098BDBF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56C0263D-86FB-4FD7-B5F4-1EA9CCB27327}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56C0263D-86FB-4FD7-B5F4-1EA9CCB27327}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56C0263D-86FB-4FD7-B5F4-1EA9CCB27327}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56C0263D-86FB-4FD7-B5F4-1EA9CCB27327}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
