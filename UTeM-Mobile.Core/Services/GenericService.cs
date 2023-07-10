@@ -19,7 +19,7 @@ namespace UTeM_Mobile.Core.Services
             {
                 insecureHandler = GetInsecureHandler();
                 _client = new HttpClient(insecureHandler);
-                //GetHttpClient(token);
+                GetHttpClient(token);
                 HttpResponseMessage response = await _client.GetAsync(ServerCredential.BaseUrl + url).ConfigureAwait(false);
                 string result = await response.Content.ReadAsStringAsync();
                 ListResponse<T> listResponse = JsonConvert.DeserializeObject<ListResponse<T>>(result);
@@ -40,7 +40,8 @@ namespace UTeM_Mobile.Core.Services
         {
             try
             {
-                _client = new HttpClient();
+                insecureHandler = GetInsecureHandler();
+                _client = new HttpClient(insecureHandler);
                 GetHttpClient(token);
                 HttpResponseMessage response = await _client.GetAsync(_baseURL + url).ConfigureAwait(false);
                 string result = await response.Content.ReadAsStringAsync();
@@ -58,8 +59,8 @@ namespace UTeM_Mobile.Core.Services
         {
             try
             {
-                //insecureHandler = GetInsecureHandler();
-                _client = new HttpClient();
+                insecureHandler = GetInsecureHandler();
+                _client = new HttpClient(insecureHandler);
                 GetHttpClient(token);
                 HttpResponseMessage HttpResponse = await _client.GetAsync(_baseURL + url).ConfigureAwait(false);
                 string result = await HttpResponse.Content.ReadAsStringAsync();
@@ -80,7 +81,8 @@ namespace UTeM_Mobile.Core.Services
         {
             try
             {
-                _client = new HttpClient();
+                insecureHandler = GetInsecureHandler();
+                _client = new HttpClient(insecureHandler);
                 GetHttpClient(token);
                 var body = new StringContent(
                     JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
@@ -104,7 +106,8 @@ namespace UTeM_Mobile.Core.Services
         {
             try
             {
-                _client = new HttpClient();
+                insecureHandler = GetInsecureHandler();
+                _client = new HttpClient(insecureHandler);
                 GetHttpClient(token);
                 var body = new StringContent(
                     JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
@@ -127,7 +130,8 @@ namespace UTeM_Mobile.Core.Services
         {
             try
             {
-                _client = new HttpClient();
+                insecureHandler = GetInsecureHandler();
+                _client = new HttpClient(insecureHandler);
                 GetHttpClient(token);
                 HttpResponseMessage HttpResponse = await _client.DeleteAsync(_baseURL + url).ConfigureAwait(false);
                 string result = await HttpResponse.Content.ReadAsStringAsync();

@@ -3,24 +3,24 @@ using UTeM_Mobile.ViewModels.Supervisor;
 
 namespace UTeM_Mobile.Views.Supervisor;
 
-public partial class GuardListPage : ContentPage
+public partial class PatrolListPage : ContentPage
 {
-	private GuardListViewModel viewModel;
-	public GuardListPage()
+	private PatrolListViewModel viewModel;
+	public PatrolListPage()
 	{
 		InitializeComponent();
+		viewModel = BindingContext as PatrolListViewModel;
 	}
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        viewModel = BindingContext as GuardListViewModel;
         viewModel.OnAppearing();
     }
 
     private async void ListView_ItemTapped(object sender, ItemTappedEventArgs e)
     {
-        var Item = e.Item as ApplicationUser;
-        await Shell.Current.GoToAsync($"{nameof(GuardDetailPage)}?Id={Item.Id}");
+        var Item = e.Item as Patrol;
+        await Shell.Current.GoToAsync($"{nameof(PatrolDetailPage)}?Id={Item.Id}");
     }
 }

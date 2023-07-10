@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UTeM_Mobile.Views.Supervisor.PatrolAddPage"
+             xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
+             xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
+             Title="Add Patrol">
+
+    <ContentPage.BindingContext>
+        <viewModel:PatrolAddViewModel />
+    </ContentPage.BindingContext>
+    <VerticalStackLayout>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.2*" />
+                <ColumnDefinition Width="0.8*" />
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Row="0" Grid.Column="0">
+                <Label Text="Guard" />
+            </Grid>
+            <Grid Grid.Row="0" Grid.Column="1">
+                <Frame Padding="5, -7" Margin="0, 7">
+                    <Picker x:Name="guardPicker"
+                            TextColor="{StaticResource Primary}"
+                            Title="Select Leave Status"
+                            ItemsSource="{Binding GuardList}"
+                            ItemDisplayBinding="{Binding Name}"
+                            SelectedItem="{Binding SelectedGuard}"/>
+                </Frame>
+            </Grid>
+            <Grid Grid.Row="1" Grid.Column="0">
+                <Label Text="Route" />
+            </Grid>
+            <Grid Grid.Row="1" Grid.Column="1">
+                <Frame Padding="5, -7" Margin="0, 7">
+                    <Picker x:Name="routePicker"
+                            TextColor="{StaticResource Primary}"
+                            Title="Select Leave Status"
+                            ItemsSource="{Binding RouteList}"
+                            ItemDisplayBinding="{Binding Name}"
+                            SelectedItem="{Binding SelectedRoute}"/>
+                </Frame>
+            </Grid>
+            <Grid Grid.Row="2" Grid.Column="0">
+                <Label Text="Date" />
+            </Grid>
+            <Grid Grid.Row="2" Grid.Column="1">
+                <Frame Padding="5, -7" Margin="0, 7">
+                    <DatePicker Date="{Binding Patrol.Date}" />
+                </Frame>
+            </Grid>
+            <Grid Grid.Row="3" Grid.Column="0">
+                <Label Text="Start" />
+            </Grid>
+            <Grid Grid.Row="3" Grid.Column="1">
+                <Frame Padding="5, -7" Margin="0, 7">
+                    <TimePicker Time="{Binding Patrol.Start}" />
+                </Frame>
+            </Grid>
+            <Grid Grid.Row="4" Grid.Column="0">
+                <Label Text="Start" />
+            </Grid>
+            <Grid Grid.Row="4" Grid.Column="1">
+                <Frame Padding="5, -7" Margin="0, 7">
+                    <TimePicker Time="{Binding Patrol.End}" />
+                </Frame>
+            </Grid>
+            <Grid Grid.Row="5" Grid.ColumnSpan="2" Margin="10">
+                <Button Text="Assign" Command="{Binding CreatePatrolCommand}" />
+            </Grid>
+        </Grid>
+    </VerticalStackLayout>
+</ContentPage>

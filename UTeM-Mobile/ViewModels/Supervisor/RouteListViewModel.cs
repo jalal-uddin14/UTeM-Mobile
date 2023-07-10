@@ -30,9 +30,12 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             try
             {
                 string url = "routes";
-                var routlist = await _routeService.GetAllAsync(url);
-                RouteList.Clear();
-                RouteList.AddRange(routlist.Data);
+                var routlist = await _routeService.GetPagedListAsync(url);
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    RouteList.Clear();
+                    RouteList.AddRange(routlist.Data.Data);
+                });
             }
             catch (Exception ex)
             {

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UTeM_Mobile.Views.Supervisor.PatrolListPage"
+             xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
+             xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
+             Title="Patrol List">
+    <ContentPage.BindingContext>
+        <viewModel:PatrolListViewModel />
+    </ContentPage.BindingContext>
+    <VerticalStackLayout>
+        <StackLayout Margin="10">
+            <Button Text="Add" Command="{Binding NavigateToPatrolAddCommand}" />
+        </StackLayout>
+        <ListView ItemsSource="{Binding PatrolList}" ItemTapped="ListView_ItemTapped">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="model:Patrol">
+                    <ViewCell>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <Label Text="{Binding Guard.Name, StringFormat='Guard: {0}'}" />
+                            </Grid>
+                            <Grid Grid.Row="1">
+                                <Label Text="{Binding Route.Name, StringFormat='Route: {0}'}" />
+                            </Grid>
+                            <Grid Grid.Row="2">
+                                <Label Text="{Binding Start, StringFormat='Start: {0}'}" />
+                            </Grid>
+                            <Grid Grid.Row="3">
+                                <Label Text="{Binding End, StringFormat='End: {0}'}" />
+                            </Grid>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </VerticalStackLayout>
+</ContentPage>

@@ -3,13 +3,13 @@
     x:Class="UTeM_Mobile.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:UTeM_Mobile"
+    xmlns:local="clr-namespace:UTeM_Mobile.Views"
     xmlns:supervisor="clr-namespace:UTeM_Mobile.Views.Supervisor"
     Shell.FlyoutBehavior="Disabled">
 
     <ShellContent
         Title="Home"
-        ContentTemplate="{DataTemplate supervisor:RouteListPage}"
+        ContentTemplate="{DataTemplate local:LoginPage}"
         Route="MainPage" />
 
 </Shell>

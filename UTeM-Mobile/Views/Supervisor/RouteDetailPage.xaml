@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UTeM_Mobile.Views.Supervisor.RouteDetailPage"
+             xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
+             xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
+             Title="Route Detail">
+    <ContentPage.BindingContext>
+        <viewModel:RouteDetailViewModel />
+    </ContentPage.BindingContext>
+    
+    <VerticalStackLayout>
+        <StackLayout>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Row="0" Grid.Column="0">
+                    <Label Text="Name: " />
+                </Grid>
+                <Grid Grid.Row="0" Grid.Column="1">
+                    <Label Text="{Binding Route.Name}" TextColor="Black"/>
+                </Grid>
+            </Grid>
+        </StackLayout>
+        <Label Text="Checkpoints" />
+        <ListView ItemsSource="{Binding RouteCheckpointList}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="model:RouteCheckpoint">
+                    <ViewCell>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Row="0" Grid.Column="0">
+                                <Label Text="Name" />
+                            </Grid>
+                            <Grid Grid.Row="0" Grid.Column="1">
+                                <Label Text="{Binding Checkpoint.Name}" TextColor="Black" />
+                            </Grid>
+                            <Grid Grid.Row="1" Grid.Column="0">
+                                <Label Text="Latitude" />
+                            </Grid>
+                            <Grid Grid.Row="1" Grid.Column="1">
+                                <Label Text="{Binding Checkpoint.Latitude}" TextColor="Black" />
+                            </Grid>
+                            <Grid Grid.Row="2" Grid.Column="0">
+                                <Label Text="Longitude" />
+                            </Grid>
+                            <Grid Grid.Row="2" Grid.Column="1">
+                                <Label Text="{Binding Checkpoint.Latitude}" TextColor="Black" />
+                            </Grid>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </VerticalStackLayout>
+</ContentPage>

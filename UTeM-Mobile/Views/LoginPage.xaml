@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UTeM_Mobile.Views.LoginPage"
+             xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels"
+             Title="Login">
+
+    <ContentPage.BindingContext>
+        <viewModel:LoginViewModel />
+    </ContentPage.BindingContext>
+    <VerticalStackLayout>
+        <Frame Margin="5" Padding="5">
+            <Entry Placeholder="Email" Text="{Binding User.Email}"/>
+        </Frame>
+        <Frame Margin="5" Padding="5">
+            <Entry Placeholder="Password" Text="{Binding User.Password}"/>
+        </Frame>
+        <Button Text="Login" Command="{Binding LoginCommand}"/>
+    </VerticalStackLayout>
+</ContentPage>
