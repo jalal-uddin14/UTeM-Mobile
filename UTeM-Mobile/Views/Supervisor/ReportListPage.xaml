@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UTeM_Mobile.Views.Supervisor.ReportListPage"
+             xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
+             xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
+             Title="Report List">
+
+    <ContentPage.BindingContext>
+        <viewModel:ReportListViewModel />
+    </ContentPage.BindingContext>
+    
+    <VerticalStackLayout>
+        <ListView ItemsSource="{Binding ReportList}" ItemTapped="ListView_ItemTapped">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <Label Text="{Binding Guard.Name, StringFormat='Guard: {0}'}" />
+                            </Grid>
+                            <Grid Grid.Row="1">
+                                <Label Text="{Binding Description, StringFormat='Description: {0}'}" />
+                            </Grid>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </VerticalStackLayout>
+</ContentPage>

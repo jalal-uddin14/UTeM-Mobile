@@ -20,6 +20,7 @@ public static class MauiProgram
         builder.Services.AddTransient<IGenericService<ApplicationUser>, GenericService<ApplicationUser>>();
         builder.Services.AddTransient<IGenericService<Route>, GenericService<Route>>();
         builder.Services.AddTransient<IGenericService<Patrol>, GenericService<Patrol>>();
+        builder.Services.AddTransient<IGenericService<Report>, GenericService<Report>>();
         builder.Services.AddTransient<IGenericService<AuthToken>, GenericService<AuthToken>>();
         return builder.Build();
 	}

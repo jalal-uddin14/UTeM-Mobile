@@ -18,5 +18,8 @@
         <Tab Title="Patrol" Icon="chart_line_solid">
             <ShellContent ContentTemplate="{DataTemplate views:PatrolListPage}" Route="PatrolListPage" />
         </Tab>
+        <Tab Title="Report" Icon="chart_line_solid">
+            <ShellContent ContentTemplate="{DataTemplate views:ReportListPage}" Route="ReportListPage" />
+        </Tab>
     </TabBar>
 </Shell>

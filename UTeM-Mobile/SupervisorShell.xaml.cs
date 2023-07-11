@@ -11,5 +11,6 @@ public partial class SupervisorShell : Shell
         Routing.RegisterRoute(nameof(RouteDetailPage), typeof(RouteDetailPage));
         Routing.RegisterRoute(nameof(PatrolAddPage), typeof(PatrolAddPage));
         Routing.RegisterRoute(nameof(PatrolDetailPage), typeof(PatrolDetailPage));
+        Routing.RegisterRoute(nameof(ReportDetailPage), typeof(ReportDetailPage));
     }
 }

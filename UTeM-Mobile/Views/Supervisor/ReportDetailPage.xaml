@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UTeM_Mobile.Views.Supervisor.ReportDetailPage"
+             xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
+             xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
+             Title="Report Detail">
+    <ContentPage.BindingContext>
+        <viewModel:ReportDetailViewModel />
+    </ContentPage.BindingContext>
+    <VerticalStackLayout>
+        <Label Text="{Binding Report.Guard.Name, StringFormat='Guard: {0}'}" />
+        <Label Text="{Binding Report.Date, StringFormat='Date: {0}'}" />
+        <Label Text="{Binding Report.Description, StringFormat='Description: {0}'}" />
+        <Image Source="{Binding Report.FilePath}" />
+    </VerticalStackLayout>
+</ContentPage>
