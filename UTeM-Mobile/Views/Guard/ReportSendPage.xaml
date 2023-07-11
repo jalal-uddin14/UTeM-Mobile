@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UTeM_Mobile.Views.Guard.ReportSendPage"
+             xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Guard"
+             xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
+             Title="ReportSendPage">
+
+    <ContentPage.BindingContext>
+        <viewModel:ReportSendViewModel />
+    </ContentPage.BindingContext>
+    <VerticalStackLayout>
+        <Frame Margin="10">
+            <Entry Text="{Binding Report.Description}" />
+        </Frame>
+        <StackLayout Margin="10">
+            <Button Text="Take photo" Command="{Binding TakePhotoCommand}" />
+        </StackLayout>
+        <StackLayout Margin="10">
+            <Image Source="{Binding PhotoResult.FullPath}" HeightRequest="100"/>
+        </StackLayout>
+        <StackLayout Margin="10">
+            <Button Text="Send" Command="{Binding SendReportCommand}"/>
+        </StackLayout>
+    </VerticalStackLayout>
+</ContentPage>

@@ -52,12 +52,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="ViewModels\Guard\" />
-	  <Folder Include="Views\Guard\" />
+	  <None Remove="Platforms\Android\Resources\xml\file_paths.xml" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
+	  <PackageReference Include="Xam.Plugin.Media" Version="6.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -66,7 +66,22 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="GuardShell.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="SupervisorShell.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Guard\DashboardPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Guard\PatrolDetailPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Guard\PatrolListPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Guard\ReportSendPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\LoginPage.xaml">

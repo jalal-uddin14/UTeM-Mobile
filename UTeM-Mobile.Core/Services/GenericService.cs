@@ -1,4 +1,7 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using RestSharp;
+using System.Net;
 using System.Text;
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Data.StaticCredentials;
@@ -174,6 +177,42 @@ namespace UTeM_Mobile.Core.Services
                 return errors == System.Net.Security.SslPolicyErrors.None;
             };
             return handler;
+        }
+
+        //public ObjectResponse<T> PostFile(string url, RestRequest restRequest)
+        //{
+        //    try
+        //    {
+        //        RestClient client = new RestClient(ServerCredential.BaseUrl + url);
+        //        ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+        //        RestResponse response = client.Execute(restRequest);
+        //        ObjectResponse<T> objectResponse = JsonConvert.DeserializeObject<ObjectResponse<T>>(response.Content);
+        //        objectResponse.IsSuccess = response.IsSuccessful;
+        //        return objectResponse;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return null;
+        //    }
+        //}
+
+        public async Task<ObjectResponse<T>> PostFile(string url, MultipartFormDataContent content)
+        {
+            try
+            {
+                insecureHandler = GetInsecureHandler();
+                _client = new HttpClient(insecureHandler);
+                HttpResponseMessage HttpResponse = await _client.PostAsync(_baseURL + url, content).ConfigureAwait(false);
+                string result = await HttpResponse.Content.ReadAsStringAsync();
+                ObjectResponse<T> objectResponse = JsonConvert.DeserializeObject<ObjectResponse<T>>(result);
+                objectResponse.IsSuccess = HttpResponse.IsSuccessStatusCode;
+                objectResponse.StatusCode = HttpResponse.StatusCode;
+                return objectResponse;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
     }
 }

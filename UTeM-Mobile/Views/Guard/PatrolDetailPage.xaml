@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="UTeM_Mobile.Views.Supervisor.PatrolDetailPage"
-             xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
+             x:Class="UTeM_Mobile.Views.Guard.PatrolDetailPage"
+             xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Guard"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
-             Title="PatrolDetailPage">
+             Title="Patrol Detail">
+
     <ContentPage.BindingContext>
         <viewModel:PatrolDetailViewModel />
     </ContentPage.BindingContext>
+
     <VerticalStackLayout>
-        <Label Text="{Binding Patrol.Guard.Name, StringFormat='Guard name: {0}'}" />
         <Label Text="{Binding Patrol.Route.Name, StringFormat='Route name: {0}'}" />
         <Label Text="{Binding Patrol.Date, StringFormat='Date: {0}'}" />
         <Label Text="{Binding Patrol.Start, StringFormat='Start: {0}'}" />

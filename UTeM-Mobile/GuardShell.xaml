@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UTeM_Mobile.GuardShell"
+            xmlns:android="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;assembly=Microsoft.Maui.Controls"
+            android:TabbedPage.ToolbarPlacement="Bottom"
+            xmlns:views="clr-namespace:UTeM_Mobile.Views.Guard">
+    <TabBar>
+        <Tab Title="Dashboard" Icon="house_solid">
+            <ShellContent ContentTemplate="{DataTemplate views:DashboardPage}" Route="DashboardPage" />
+        </Tab>
+        <Tab Title="Patrol" Icon="chart_line_solid">
+            <ShellContent ContentTemplate="{DataTemplate views:PatrolListPage}" Route="PatrolListPage" />
+        </Tab>
+        <Tab Title="Report" Icon="chart_line_solid">
+            <ShellContent ContentTemplate="{DataTemplate views:ReportSendPage}" Route="ReportSendPage" />
+        </Tab>
+    </TabBar>
+</Shell>

@@ -4,7 +4,7 @@ using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Models;
 
-namespace UTeM_Mobile.ViewModels.Supervisor
+namespace UTeM_Mobile.ViewModels.Guard
 {
     [QueryProperty(nameof(Id), "Id")]
     public class PatrolDetailViewModel : BaseViewModel
@@ -18,8 +18,8 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         public PatrolDetailViewModel()
         {
-            Patrol = new Patrol { Guard = new ApplicationUser(), Route = new Route() };
             _genericService = new GenericService<Patrol>();
+            Patrol = new Patrol();
         }
 
         public void OnAppearing()
@@ -29,16 +29,9 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         private async Task GetPatrolDetailAsync()
         {
-            if (Id != null)
-            {
-                string url = "patrols/" + Id;
-                ObjectResponse<Patrol> response = await _genericService.GetDetailsAsync(url);
-                Patrol = response.Data;
-            }
-            else
-            {
-                Console.WriteLine("Exception");
-            }
+            string url = "patrols/" + Id;
+            ObjectResponse<Patrol> response = await _genericService.GetDetailsAsync(url);
+            Patrol = response.Data;
         }
     }
 }

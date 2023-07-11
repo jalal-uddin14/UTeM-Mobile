@@ -1,4 +1,5 @@
-﻿using UTeM_Mobile.Core.Models;
+﻿using RestSharp;
+using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Models;
 using X.PagedList;
 
@@ -12,5 +13,6 @@ namespace UTeM_Mobile.Core.IServices
         Task<ObjectResponse<T>> InsertAsync(string url, object content, AuthToken? token = null);
         Task<ObjectResponse<T>> UpdateAsync(string url, object content, AuthToken? token = null);
         Task<ObjectResponse<T>> DeleteAsync(string url, AuthToken? token = null);
+        Task<ObjectResponse<T>> PostFile(string url, MultipartFormDataContent content);
     }
 }
