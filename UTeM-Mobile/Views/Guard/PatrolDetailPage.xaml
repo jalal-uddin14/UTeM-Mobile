@@ -11,11 +11,11 @@
     </ContentPage.BindingContext>
 
     <VerticalStackLayout>
-        <Label Text="{Binding Patrol.Route.Name, StringFormat='Route name: {0}'}" />
-        <Label Text="{Binding Patrol.Date, StringFormat='Date: {0}'}" />
-        <Label Text="{Binding Patrol.Start, StringFormat='Start: {0}'}" />
-        <Label Text="{Binding Patrol.End, StringFormat='End: {0}'}" />
-        <ListView ItemsSource="{Binding Patrol.Route.RouteCheckpoints}">
+        <Label Text="{Binding Patrol.Route.Name, StringFormat='Route name: {0}'}" Margin="5"/>
+        <Label Text="{Binding Patrol.Date, StringFormat='Date: {0}'}" Margin="5"/>
+        <Label Text="{Binding Patrol.Start, StringFormat='Start: {0}'}" Margin="5"/>
+        <Label Text="{Binding Patrol.End, StringFormat='End: {0}'}" Margin="5"/>
+        <ListView ItemsSource="{Binding Patrol.Route.RouteCheckpoints}" Margin="5">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="model:RouteCheckpoint">
                     <ViewCell>

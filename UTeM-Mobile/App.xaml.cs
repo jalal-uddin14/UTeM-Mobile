@@ -6,6 +6,6 @@ public partial class App : Application
 	{
 		InitializeComponent();
 
-		MainPage = new GuardShell();
+		MainPage = new AppShell();
 	}
 }

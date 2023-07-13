@@ -16,6 +16,10 @@ public static class MauiProgram
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+				fonts.AddFont("fa-brands-400.ttf", "FAbrands");
+				fonts.AddFont("fa-regular-400.ttf", "FAregular");
+				fonts.AddFont("fa-solid-900.ttf", "FAsolid");
+				fonts.AddFont("fa-v4compatibility.ttf", "FAv4");
 			});
         builder.Services.AddTransient<IGenericService<ApplicationUser>, GenericService<ApplicationUser>>();
         builder.Services.AddTransient<IGenericService<Route>, GenericService<Route>>();

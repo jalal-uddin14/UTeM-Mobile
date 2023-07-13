@@ -9,12 +9,13 @@
         <viewModel:PatrolListViewModel />
     </ContentPage.BindingContext>
     <VerticalStackLayout>
-        <ListView ItemsSource="{Binding PatrolList}" ItemTapped="ListView_ItemTapped">
+        <ListView ItemsSource="{Binding PatrolList}" ItemTapped="ListView_ItemTapped" Margin="10" RowHeight="120">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="model:Patrol">
                     <ViewCell>
                         <Grid>
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -31,6 +32,9 @@
                             </Grid>
                             <Grid Grid.Row="3">
                                 <Label Text="{Binding End, StringFormat='End: {0}'}" />
+                            </Grid>
+                            <Grid Grid.Row="4">
+                                <Label Text="{Binding Status, StringFormat='Status: {0}'}" />
                             </Grid>
                         </Grid>
                     </ViewCell>

@@ -7,5 +7,6 @@
         public DateTime ValidTo { get; set; }
         public string Token { get; set; }
         public string UserRole { get; set; }
+        public bool IsRemember { get; set; }
     }
 }

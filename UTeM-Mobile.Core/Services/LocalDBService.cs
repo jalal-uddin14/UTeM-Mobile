@@ -1,13 +1,14 @@
 ﻿using SQLite;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Data.StaticCredentials;
+using UTeM_Mobile.Models;
 using Xamarin.Essentials;
 
 namespace UTeM_Mobile.Core.Services
 {
     public class LocalDBService
     {
-        static ApplicationUser user;
+        static AuthToken token;
         static SQLiteAsyncConnection db;
         public async static Task InitDB()
         {
@@ -20,7 +21,7 @@ namespace UTeM_Mobile.Core.Services
             try
             {
                 await CheckPermission();
-                await db.CreateTableAsync<ApplicationUser>();
+                await db.CreateTableAsync<AuthToken>();
             }
             catch (Exception ex)
             {
@@ -29,16 +30,16 @@ namespace UTeM_Mobile.Core.Services
         }
 
 
-        public async static Task InsertToken(ApplicationUser t)
+        public async static Task InsertToken(AuthToken t)
         {
             try
             {
-                user = t;
+                token = t;
                 await InitDB();
-                var table = await db.GetTableInfoAsync("User");
+                var table = await db.GetTableInfoAsync("AuthToken");
                 if (table.Count <= 0)
                 {
-                    await db.CreateTableAsync<ApplicationUser>();
+                    await db.CreateTableAsync<AuthToken>();
                 }
                 await db.InsertOrReplaceAsync(t);
             }
@@ -48,18 +49,18 @@ namespace UTeM_Mobile.Core.Services
             }
         }
 
-        public async static Task<ApplicationUser> GetToken()
+        public async static Task<AuthToken> GetToken()
         {
             await InitDB();
             try
             {
-                var query = db.Table<ApplicationUser>();
+                var query = db.Table<AuthToken>();
 
                 var result = await query.ToListAsync();
 
                 foreach (var s in result)
                 {
-                    user = s;
+                    token = s;
                 }
             }
             catch (Exception e)
@@ -67,7 +68,7 @@ namespace UTeM_Mobile.Core.Services
 
             }
 
-            return user;
+            return token;
         }
 
         public async static Task RemoveToken()
@@ -75,8 +76,8 @@ namespace UTeM_Mobile.Core.Services
             try
             {
                 await InitDB();
-                await db.DeleteAllAsync<ApplicationUser>();
-                user = null;
+                await db.DeleteAllAsync<AuthToken>();
+                token = null;
             }
             catch (Exception e)
             {

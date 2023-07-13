@@ -9,7 +9,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
     public class RouteListViewModel : BaseViewModel
     {
         private string _baseUrl;
-        private IRouteService _routeService;
+        private IGenericService<Route> _genericService;
         private ApplicationUser LoggedinUser;
         public ObservableRangeCollection<Route> RouteList { get; }
 
@@ -21,7 +21,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         public void OnAppearing()
         {
-            _routeService = new RouteService();
+            _genericService = new GenericService<Route>();
             Task.Run(async () => await GetRouteListAsync());
         }
 
@@ -30,7 +30,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             try
             {
                 string url = "routes";
-                var routlist = await _routeService.GetPagedListAsync(url);
+                var routlist = await _genericService.GetPagedListAsync(url);
                 await MainThread.InvokeOnMainThreadAsync(() =>
                 {
                     RouteList.Clear();

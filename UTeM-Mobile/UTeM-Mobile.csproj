@@ -53,10 +53,18 @@
 
 	<ItemGroup>
 	  <None Remove="Platforms\Android\Resources\xml\file_paths.xml" />
+	  <None Remove="Resources\Fonts\fa-brands-400.ttf" />
+	  <None Remove="Resources\Fonts\fa-regular-400.ttf" />
+	  <None Remove="Resources\Fonts\fa-solid-900.ttf" />
+	  <None Remove="Resources\Fonts\fa-v4compatibility.ttf" />
+	  <None Remove="Resources\Images\logo.jpg" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
+	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.5" />
+	  <PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.5" />
 	  <PackageReference Include="Xam.Plugin.Media" Version="6.0.2" />
 	</ItemGroup>
 
@@ -67,6 +75,9 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="GuardShell.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Styles\Icons.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="SupervisorShell.xaml">
@@ -85,6 +96,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\LoginPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\StartPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Supervisor\DashboardPage.xaml">

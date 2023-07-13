@@ -3,18 +3,59 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="UTeM_Mobile.Views.LoginPage"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels"
+             Shell.NavBarIsVisible="False"
              Title="Login">
 
     <ContentPage.BindingContext>
         <viewModel:LoginViewModel />
     </ContentPage.BindingContext>
     <VerticalStackLayout>
-        <Frame Margin="5" Padding="5">
-            <Entry Placeholder="Email" Text="{Binding User.Email}"/>
-        </Frame>
-        <Frame Margin="5" Padding="5">
-            <Entry Placeholder="Password" Text="{Binding User.Password}"/>
-        </Frame>
-        <Button Text="Login" Command="{Binding LoginCommand}"/>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Image Source="logo.jpg" />
+            </Grid>
+            <Frame Grid.Row="1" HorizontalOptions="FillAndExpand" Margin="20, 10" Padding="5" BorderColor="Grey">
+                <HorizontalStackLayout>
+                    <Image HeightRequest="20" Margin="10, 0" HorizontalOptions="StartAndExpand">
+                        <Image.Source>
+                            <FontImageSource FontFamily="FAsolid" Glyph="{StaticResource IconUser}" Color="Grey"></FontImageSource>
+                        </Image.Source>
+                    </Image>
+                    <Entry Placeholder="Email" MinimumWidthRequest="200" Text="{Binding User.Email}" Keyboard="Email"/>
+                </HorizontalStackLayout>
+            </Frame>
+            <Frame Grid.Row="2" HorizontalOptions="FillAndExpand" Margin="20, 10" Padding="5" BorderColor="Grey">
+                <HorizontalStackLayout>
+                    <Image HeightRequest="20" Margin="10, 0">
+                        <Image.Source>
+                            <FontImageSource FontFamily="FAsolid" Glyph="{StaticResource IconLock}" Color="Grey"></FontImageSource>
+                        </Image.Source>
+                    </Image>
+                    <Entry Placeholder="Password" MinimumWidthRequest="200" Text="{Binding User.Password}" IsPassword="True" HorizontalOptions="Fill"/>
+                </HorizontalStackLayout>
+            </Frame>
+            <Frame Grid.Row="3" HorizontalOptions="FillAndExpand" VerticalOptions="Center" Margin="20, 0" Padding="5" BorderColor="Transparent">
+                <HorizontalStackLayout VerticalOptions="CenterAndExpand">
+                    <CheckBox IsChecked="{Binding IsRemember}" Color="Blue"/>
+                    <StackLayout>
+                        <StackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
+                        </StackLayout.GestureRecognizers>
+                        <Label Text="Remember me" VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                    
+                </HorizontalStackLayout>
+            </Frame>
+            <Frame Grid.Row="4" HorizontalOptions="FillAndExpand" VerticalOptions="Center" Margin="20, 0" Padding="5" BorderColor="Transparent">
+                <Button Text="Log In" HorizontalOptions="FillAndExpand" Command="{Binding LoginCommand}"/>
+            </Frame>
+        </Grid>
     </VerticalStackLayout>
 </ContentPage>
