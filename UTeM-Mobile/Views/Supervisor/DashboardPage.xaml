@@ -2,11 +2,54 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="UTeM_Mobile.Views.Supervisor.DashboardPage"
-             Title="DashboardPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             BackgroundColor="White"
+             Shell.BackgroundColor="{StaticResource NavbarColor}">
+    <Shell.TitleView>
+        <Image Source="e_smartguardheader.png"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               HeightRequest="30"/>
+    </Shell.TitleView>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.8*" />
+            <RowDefinition Height="0.2*" />
+        </Grid.RowDefinitions>
+        <Frame Grid.Row="0" VerticalOptions="CenterAndExpand" BorderColor="Transparent">
+            <Image Source="logo.jpg" />
+        </Frame>
+        <Grid Grid.Row="1" IsVisible="False">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.25*" />
+                <RowDefinition Height="0.25*" />
+                <RowDefinition Height="0.25*" />
+                <RowDefinition Height="0.25*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.4*" />
+                <ColumnDefinition Width="0.1*" />
+                <ColumnDefinition Width="0.1*" />
+                <ColumnDefinition Width="0.4*" />
+            </Grid.ColumnDefinitions>
+            <StackLayout Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="10, 0">
+                <Button Text="Scan" Style="{StaticResource DashboardButton}" BackgroundColor="{StaticResource BlueButtonColor}"/>
+            </StackLayout>
+            <StackLayout Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Margin="10, 0">
+                <Button Text="Send SoS" Style="{StaticResource DashboardButton}" BackgroundColor="{StaticResource RedButtonColor}"/>
+            </StackLayout>
+            <StackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="10, 0">
+                <Button Text="Torch" Style="{StaticResource DashboardButton}" BackgroundColor="{StaticResource MatGreenButtonColor}"/>
+            </StackLayout>
+            <StackLayout Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Margin="10, 0">
+                <Button Text="Patrols" Style="{StaticResource DashboardButton}" BackgroundColor="{StaticResource GreenButtonColor}"/>
+            </StackLayout>
+            <Frame Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2" Padding="0" CornerRadius="40" HeightRequest="80" WidthRequest="80" BackgroundColor="White" BorderColor="Transparent">
+                <Button Text="End" Style="{StaticResource DashboarCenterdButton}" BackgroundColor="{StaticResource RedButtonColor}"/>
+            </Frame>
+        </Grid>
+        <Grid Grid.Row="1" IsVisible="True" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+            <Button Text="Start" Style="{StaticResource DashboarCenterdButton}" BackgroundColor="{StaticResource GreenButtonColor}"/>
+        </Grid>
+    </Grid>
 </ContentPage>

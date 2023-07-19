@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace UTeM_Mobile.Data.Models
+﻿namespace UTeM_Mobile.Data.Models
 {
     public class RouteCheckpoint
     {
@@ -10,5 +7,10 @@ namespace UTeM_Mobile.Data.Models
         public virtual Route Route { get; set; }
         public int CheckpointId { get; set; }
         public virtual Checkpoint Checkpoint { get; set; }
+
+        public virtual bool IsNotLast { get; set; }
+        public virtual bool IsChecked { get; set; }
+        public virtual bool IsScheduled { get; set; }
+        public virtual bool NotFound { get; set; } = true;
     }
 }

@@ -40,5 +40,24 @@
     <Color x:Key="Blue100Accent">#3E8EED</Color>
     <Color x:Key="Blue200Accent">#72ACF1</Color>
     <Color x:Key="Blue300Accent">#A7CBF6</Color>
+    
+    <!-- Custom colors -->
+    <Color x:Key="NavbarColor">#00ACA0</Color>
+    <Color x:Key="HeadingColor">#002531</Color>
+    <Color x:Key="DashboardHeadColor">#022F3E</Color>
 
+    <Color x:Key="LoginButtonColor">#0291DA</Color>
+    <Color x:Key="BlueButtonColor">#0098D3</Color>
+    <Color x:Key="RedButtonColor">#E5264D</Color>
+    <Color x:Key="MatGreenButtonColor">#00ACA0</Color>
+    <Color x:Key="GreenButtonColor">#29A71A</Color>
+
+    <Color x:Key="StartedStatusLabelColor">#007BFF</Color>
+    <Color x:Key="CompletedStatusLabelColor">#29A71A</Color>
+    <Color x:Key="MissedStatusLabelColor">#E5264D</Color>
+
+    <Color x:Key="ScheduledCheckpointColor">#E5E5E5</Color>
+    <Color x:Key="CompletedCheckpointColor">#A4CE4E</Color>
+    <Color x:Key="CheckpointBorderColor">#FE9700</Color>
+    <Color x:Key="CheckpointRouteColor">#607D8B</Color>
 </ResourceDictionary>

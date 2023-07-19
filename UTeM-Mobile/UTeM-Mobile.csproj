@@ -57,6 +57,8 @@
 	  <None Remove="Resources\Fonts\fa-regular-400.ttf" />
 	  <None Remove="Resources\Fonts\fa-solid-900.ttf" />
 	  <None Remove="Resources\Fonts\fa-v4compatibility.ttf" />
+	  <None Remove="Resources\Images\e_smartguardheader.png" />
+	  <None Remove="Resources\Images\guard.png" />
 	  <None Remove="Resources\Images\logo.jpg" />
 	</ItemGroup>
 
@@ -119,6 +121,9 @@
 	  <MauiXaml Update="Views\Supervisor\PatrolListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\Supervisor\ProfilePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Supervisor\ReportDetailPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -129,6 +134,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Supervisor\RouteListPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Supervisor\WhatsAppPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

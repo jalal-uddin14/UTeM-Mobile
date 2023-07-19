@@ -1,7 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using RestSharp;
-using System.Net;
 using System.Text;
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Data.StaticCredentials;

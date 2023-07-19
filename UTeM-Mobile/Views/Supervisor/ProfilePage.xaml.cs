@@ -2,18 +2,18 @@ using UTeM_Mobile.ViewModels.Supervisor;
 
 namespace UTeM_Mobile.Views.Supervisor;
 
-public partial class ReportDetailPage : ContentPage
+public partial class ProfilePage : ContentPage
 {
-	private ReportDetailViewModel viewModel;
-	public ReportDetailPage()
+	private ProfileViewModel viewModel;
+	public ProfilePage()
 	{
 		InitializeComponent();
 	}
 
     protected override void OnAppearing()
     {
-        viewModel = BindingContext as ReportDetailViewModel;
         base.OnAppearing();
+		viewModel = BindingContext as ProfileViewModel;
 		viewModel.OnAppearing();
     }
 }

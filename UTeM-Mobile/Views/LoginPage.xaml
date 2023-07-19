@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="UTeM_Mobile.Views.LoginPage"
+             BackgroundColor="White"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels"
              Shell.NavBarIsVisible="False"
              Title="Login">
@@ -17,11 +18,12 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Image Source="logo.jpg" />
             </Grid>
-            <Frame Grid.Row="1" HorizontalOptions="FillAndExpand" Margin="20, 10" Padding="5" BorderColor="Grey">
+            <Frame Grid.Row="1" Style="{StaticResource LoginPageFrame}" BorderColor="Grey">
                 <HorizontalStackLayout>
                     <Image HeightRequest="20" Margin="10, 0" HorizontalOptions="StartAndExpand">
                         <Image.Source>
@@ -31,7 +33,7 @@
                     <Entry Placeholder="Email" MinimumWidthRequest="200" Text="{Binding User.Email}" Keyboard="Email"/>
                 </HorizontalStackLayout>
             </Frame>
-            <Frame Grid.Row="2" HorizontalOptions="FillAndExpand" Margin="20, 10" Padding="5" BorderColor="Grey">
+            <Frame Grid.Row="2" Style="{StaticResource LoginPageFrame}" Margin="20, 10" BorderColor="Grey">
                 <HorizontalStackLayout>
                     <Image HeightRequest="20" Margin="10, 0">
                         <Image.Source>
@@ -41,7 +43,7 @@
                     <Entry Placeholder="Password" MinimumWidthRequest="200" Text="{Binding User.Password}" IsPassword="True" HorizontalOptions="Fill"/>
                 </HorizontalStackLayout>
             </Frame>
-            <Frame Grid.Row="3" HorizontalOptions="FillAndExpand" VerticalOptions="Center" Margin="20, 0" Padding="5" BorderColor="Transparent">
+            <Frame Grid.Row="3" Style="{StaticResource LoginPageFrame}" Padding="0" BorderColor="Transparent">
                 <HorizontalStackLayout VerticalOptions="CenterAndExpand">
                     <CheckBox IsChecked="{Binding IsRemember}" Color="Blue"/>
                     <StackLayout>
@@ -53,8 +55,11 @@
                     
                 </HorizontalStackLayout>
             </Frame>
-            <Frame Grid.Row="4" HorizontalOptions="FillAndExpand" VerticalOptions="Center" Margin="20, 0" Padding="5" BorderColor="Transparent">
-                <Button Text="Log In" HorizontalOptions="FillAndExpand" Command="{Binding LoginCommand}"/>
+            <Frame Grid.Row="4" Style="{StaticResource LoginPageFrame}" Padding="0"  BorderColor="Transparent">
+                <Button Text="Log In" Style="{StaticResource LogindButton}" Command="{Binding LoginCommand}"/>
+            </Frame>
+            <Frame Grid.Row="5" IsVisible="{Binding IsError}" Style="{StaticResource LoginPageFrame}" BorderColor="Transparent">
+                <Label Text="{Binding ErrorMessage}" TextColor="Red" />
             </Frame>
         </Grid>
     </VerticalStackLayout>

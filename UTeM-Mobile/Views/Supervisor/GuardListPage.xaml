@@ -2,28 +2,39 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="UTeM_Mobile.Views.Supervisor.GuardListPage"
+             BackgroundColor="White"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
-             Title="GuardListPage">
+             Shell.NavBarIsVisible="False">
     <ContentPage.BindingContext>
         <viewModel:GuardListViewModel />
     </ContentPage.BindingContext>
-    <VerticalStackLayout>
-        <ListView ItemsSource="{Binding GuardList}" ItemTapped="ListView_ItemTapped">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="model:ApplicationUser">
-                    <ViewCell>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Grid Grid.Column="0">
-                                <Label Text="{Binding Name}" />
+    <Grid RowDefinitions="50, *">
+        <StackLayout Grid.Row="0" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
+            <Label Text="Guard List" Style="{StaticResource HeaderLabel}"/>
+        </StackLayout>
+        <StackLayout Grid.Row="1" Margin="10">
+            <ListView ItemsSource="{Binding GuardList}" ItemTapped="ListView_ItemTapped" RowHeight="55">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="model:ApplicationUser">
+                        <ViewCell>
+                            <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto" ColumnSpacing="10">
+                                <Grid Grid.Column="0" Grid.RowSpan="2" VerticalOptions="CenterAndExpand">
+                                    <Frame Padding="0" Margin="0" BorderColor="Transparent" CornerRadius="25">
+                                        <Image Source="guard.jpg" HeightRequest="50" VerticalOptions="CenterAndExpand"/>
+                                    </Frame>
+                                </Grid>
+                                <Grid Grid.Column="1" Grid.Row="0">
+                                    <Label Text="{Binding Name}" VerticalTextAlignment="End"/>
+                                </Grid>
+                                <Grid Grid.Column="1" Grid.Row="1">
+                                    <Label Text="{Binding PhoneNumber}" VerticalTextAlignment="Start"/>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </VerticalStackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </Grid>
 </ContentPage>

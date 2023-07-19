@@ -12,9 +12,12 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         private IGenericService<ApplicationUser> _genericService;
         private string id;
         private ApplicationUser guard;
+        private AuthToken token;
 
         public string Id { get => id; set => id = value; }
         public ApplicationUser Guard { get => guard; set => SetProperty(ref guard, value); }
+        public AuthToken Token { get => token; set => SetProperty(ref token, value); }
+
         public GuardDetailViewModel()
         {
             _genericService = new GenericService<ApplicationUser>();
@@ -23,13 +26,22 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         public void OnAppearing()
         {
-            Task.Run(async () => { await GetGuardDetail(); });
+            Task.Run(async () => { await GetTokenAsync(); });
+        }
+
+        private async Task GetTokenAsync()
+        {
+            Token = await LocalDBService.GetToken();
+            if (Token != null)
+            {
+                await GetGuardDetail();
+            }
         }
 
         private async Task GetGuardDetail()
         {
             string url = "guards/" + Id;
-            ObjectResponse<ApplicationUser> response = await _genericService.GetDetailsAsync(url);
+            ObjectResponse<ApplicationUser> response = await _genericService.GetDetailsAsync(url, Token);
             Guard = response.Data;
         }
     }

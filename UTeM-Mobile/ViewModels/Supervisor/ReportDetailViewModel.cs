@@ -18,25 +18,42 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         private IGenericService<Report> _genericService;
         private int id;
         private Report report;
+        private AuthToken token;
 
         public int Id { get => id; set => id = value; }
         public Report Report { get => report; set => SetProperty(ref report, value); }
+        public AuthToken Token { get => token; set => SetProperty(ref token, value); }
 
         public ReportDetailViewModel()
         {
             _genericService = new GenericService<Report>();
-            Report = new Report();
+            Report = new Report
+            {
+                Patrol = new Patrol
+                {
+                    Route = new Route()
+                }
+            };
         }
 
         public void OnAppearing()
         {
-            Task.Run(async () => { await GetReportDetail(); });
+            Task.Run(async () => { await GetTokenAsync(); });
+        }
+
+        private async Task GetTokenAsync()
+        {
+            Token = await LocalDBService.GetToken();
+            if (Token != null)
+            {
+                await GetReportDetail();
+            }
         }
 
         private async Task GetReportDetail()
         {
             string url = "reports/" + Id;
-            ObjectResponse<Report> response = await _genericService.GetDetailsAsync(url);
+            ObjectResponse<Report> response = await _genericService.GetDetailsAsync(url,Token);
             Report = response.Data;
             //Report.FilePath = ServerCredential.BaseUrl + "reports/files/" + Report.File;
             Report.FilePath = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7FB0RcV2PQHhD0kuwIWEAXkrAVGT74EoieA&usqp=CAU";

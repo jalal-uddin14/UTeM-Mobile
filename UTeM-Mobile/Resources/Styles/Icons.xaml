@@ -7,5 +7,9 @@
     <x:String x:Key="IconTrash">&#xf2ed;</x:String>
     <x:String x:Key="IconUser">&#xf007;</x:String>
     <x:String x:Key="IconLock">&#xf13e;</x:String>
+    <x:String x:Key="IconWhatsapp">&#xf232;</x:String>
+    <x:String x:Key="IconHome">&#xf015;</x:String>
+    <x:String x:Key="IconEnvelope">&#xf0e0;</x:String>
+    <x:String x:Key="IconLocation">&#xf3c5;</x:String>
     
 </ResourceDictionary>

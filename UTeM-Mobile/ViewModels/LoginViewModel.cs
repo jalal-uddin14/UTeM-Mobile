@@ -11,19 +11,22 @@ namespace UTeM_Mobile.ViewModels
     public class LoginViewModel : BaseViewModel
     {
         private bool isRemember;
+        private bool isError;
+        private string errorMessage;
         private AuthToken authToken;
         private ApplicationUser user;
-        private bool isErrorMessage;
         private IGenericService<AuthToken> _authService;
 
         public ICommand LoginCommand { get; }
         public bool IsRemember { get => isRemember; set => SetProperty(ref isRemember, value); }
+        public bool IsError { get => isError; set => SetProperty(ref isError, value); }
+        public string ErrorMessage { get => errorMessage; set => SetProperty(ref errorMessage, value); }
         public AuthToken AuthToken { get => authToken; set => SetProperty(ref authToken, value); }
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
-        public bool IsErrorMessage { get => isErrorMessage; set => SetProperty(ref isErrorMessage, value); }
 
         public LoginViewModel()
         {
+            IsError = false;
             AuthToken = new AuthToken();
             User = new ApplicationUser();
             _authService = new GenericService<AuthToken>();
@@ -32,6 +35,7 @@ namespace UTeM_Mobile.ViewModels
 
         private async Task ExecuteLogin()
         {
+            IsError = false;
             string url = "accounts/login";
             ObjectResponse<AuthToken> response = await _authService.InsertAsync(url, User);
             if (response.IsSuccess && response.Data != null)
@@ -53,6 +57,11 @@ namespace UTeM_Mobile.ViewModels
                         Application.Current.MainPage = new GuardShell();
                     });
                 }
+            }
+            else
+            {
+                IsError = true;
+                ErrorMessage = "Wrong email or password.";
             }
         }
 

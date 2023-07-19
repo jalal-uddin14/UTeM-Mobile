@@ -1,4 +1,6 @@
-﻿namespace UTeM_Mobile.Data.Models
+﻿using System;
+
+namespace UTeM_Mobile.Data.Models
 {
     public class Report
     {
@@ -7,7 +9,30 @@
         public string Description { get; set; }
         public string File { get; set; }
         public string FilePath { get; set; }
-        public string GuardId { get; set; }
-        public virtual ApplicationUser Guard { get; set; }
+        public int PatrolId { get; set; }
+        public virtual Patrol Patrol { get; set; }
+        public string GuardName
+        {
+            get
+            {
+                return Patrol != null && Patrol.Guard != null ? Patrol.Guard.Name : "";
+            }
+        }
+        public string RouteName
+        {
+            get
+            {
+                return Patrol != null && Patrol.Route != null ? Patrol.Route.Name : "";
+            }
+        }
+        public virtual string Difference
+        {
+            get
+            {
+                DateTime now = DateTime.Now;
+                var diff = now.Subtract(Date);
+                return string.Format("{0}:{1}", diff.Hours, diff.Minutes);
+            }
+        }
     }
 }

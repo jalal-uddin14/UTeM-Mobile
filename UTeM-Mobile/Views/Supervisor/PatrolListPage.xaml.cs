@@ -1,5 +1,6 @@
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.ViewModels.Supervisor;
+using DeviceDisplay = Microsoft.Maui.Devices.DeviceDisplay;
 
 namespace UTeM_Mobile.Views.Supervisor;
 
@@ -9,12 +10,12 @@ public partial class PatrolListPage : ContentPage
 	public PatrolListPage()
 	{
 		InitializeComponent();
-		viewModel = BindingContext as PatrolListViewModel;
 	}
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
+        viewModel = BindingContext as PatrolListViewModel;
         viewModel.OnAppearing();
     }
 

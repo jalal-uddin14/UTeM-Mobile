@@ -3,12 +3,45 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="UTeM_Mobile.Views.Supervisor.GuardDetailPage"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
-             Title="Guard Detail">
+             BackgroundColor="White"
+             Shell.NavBarIsVisible="False">
     <ContentPage.BindingContext>
         <viewModel:GuardDetailViewModel />
     </ContentPage.BindingContext>
-    <VerticalStackLayout>
-        <Label Text="{Binding Guard.Name, StringFormat='Name: {0}'}" />
-        <Label Text="{Binding Guard.Email, StringFormat='Email: {0}'}" />
-    </VerticalStackLayout>
+    <Grid RowDefinitions="50, 80, *">
+        <StackLayout Grid.Row="0" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
+            <Label Text="Guard List" Style="{StaticResource HeaderLabel}"/>
+        </StackLayout>
+        <Grid Grid.Row="1" ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto" ColumnSpacing="10" BackgroundColor="{StaticResource DashboardHeadColor}">
+            <Grid Grid.Column="0" Grid.RowSpan="2" VerticalOptions="CenterAndExpand">
+                <Frame Padding="0" Margin="0" BorderColor="Transparent" CornerRadius="25">
+                    <Image Source="guard.jpg" HeightRequest="50" VerticalOptions="CenterAndExpand"/>
+                </Frame>
+            </Grid>
+            <Grid Grid.Column="1" Grid.Row="0">
+                <Label Text="{Binding Guard.Name}" TextColor="White" VerticalTextAlignment="End"/>
+            </Grid>
+            <Grid Grid.Column="1" Grid.Row="1">
+                <Label Text="Guard" TextColor="White" VerticalTextAlignment="Start"/>
+            </Grid>
+        </Grid>
+        <StackLayout Grid.Row="2" Margin="50, 10">
+            <!--<Label Text="{Binding Guard.Id, StringFormat='ID: {0}'}" HorizontalTextAlignment="Center" Margin="5"/>-->
+            <BoxView Color="Grey" HeightRequest="1"/>
+            <Grid RowDefinitions="*, *" ColumnDefinitions="0.5*, 0.5*">
+                <Grid Grid.Row="0" Grid.Column="0">
+                    <Label Text="Email:" />
+                </Grid>
+                <Grid Grid.Row="0" Grid.Column="1">
+                    <Label Text="{Binding Guard.Email}" />
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="0">
+                    <Label Text="Phone number:" />
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="1">
+                    <Label Text="{Binding Guard.PhoneNumber}" />
+                </Grid>
+            </Grid>
+        </StackLayout>
+    </Grid>
 </ContentPage>
