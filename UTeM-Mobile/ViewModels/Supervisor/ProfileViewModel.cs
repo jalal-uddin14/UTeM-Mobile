@@ -15,6 +15,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         private AuthToken token;
 
         public ICommand UpdateProfileCommand { get; }
+        public ICommand LogoutCommand { get; }
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
         public AuthToken Token { get => token; set => SetProperty(ref token, value); }
 
@@ -23,8 +24,23 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             User = new ApplicationUser();
             _genericService = new GenericService<ApplicationUser>();
             UpdateProfileCommand = new AsyncCommand(ExecuteUpdateProfile);
+            LogoutCommand = new AsyncCommand(ExecuteLogout);
         }
+        private async Task ExecuteLogout()
+        {
+            try
+            {
+                await LocalDBService.RemoveToken();
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    Application.Current.MainPage = new AppShell();
+                });
+            }
+            catch (Exception ex)
+            {
 
+            }
+        }
         private async Task ExecuteUpdateProfile()
         {
             try

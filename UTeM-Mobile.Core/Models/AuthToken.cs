@@ -5,6 +5,7 @@
         public string UserId { get; set; }
         public string TokenType { get; set; }
         public DateTime ValidTo { get; set; }
+        public int LifetimeMinutes { get; set; }
         public string Token { get; set; }
         public string UserRole { get; set; }
         public bool IsRemember { get; set; }

@@ -11,15 +11,27 @@
         <viewModel:ProfileViewModel />
     </ContentPage.BindingContext>
     <Grid RowDefinitions="100, 50, *, 80">
-        <StackLayout Grid.Row="0" Orientation="Horizontal" BackgroundColor="{StaticResource DashboardHeadColor}" Padding="20">
-            <Frame BackgroundColor="Transparent" Margin="10, 0" Padding="0" CornerRadius="25" HeightRequest="55">
-                <Image Source="logo" HeightRequest="50"/>
-            </Frame>
-            <StackLayout VerticalOptions="CenterAndExpand">
-                <Label Text="{Binding User.Name}" TextColor="White" FontAttributes="Bold"/>
-                <Label Text="Supervisor" TextColor="White" FontAttributes="Bold"/>
+        <Grid Grid.Row="0" ColumnDefinitions="0.8*, 0.2*">
+            <StackLayout Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" BackgroundColor="{StaticResource DashboardHeadColor}" Padding="20">
+                <Frame BackgroundColor="Transparent" Margin="10, 0" Padding="0" CornerRadius="25" HeightRequest="55">
+                    <Image Source="logo" HeightRequest="50"/>
+                </Frame>
+                <StackLayout VerticalOptions="CenterAndExpand">
+                    <Label Text="{Binding User.Name}" TextColor="White" FontAttributes="Bold"/>
+                    <Label Text="Supervisor" TextColor="White" FontAttributes="Bold"/>
+                </StackLayout>
             </StackLayout>
-        </StackLayout>
+            <StackLayout Grid.Column="1" VerticalOptions="CenterAndExpand">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding LogoutCommand}"/>
+                </StackLayout.GestureRecognizers>
+                <Image HeightRequest="20" Margin="20, 0" HorizontalOptions="EndAndExpand">
+                    <Image.Source>
+                        <FontImageSource FontFamily="FAsolid" Glyph="{StaticResource IconLogout}" Color="White"></FontImageSource>
+                    </Image.Source>
+                </Image>
+            </StackLayout>
+        </Grid>
         <StackLayout Grid.Row="1" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
             <Label Text="Basic Information" Style="{StaticResource HeaderLabel}"/>
         </StackLayout>

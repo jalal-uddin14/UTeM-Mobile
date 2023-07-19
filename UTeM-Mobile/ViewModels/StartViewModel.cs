@@ -29,7 +29,7 @@ namespace UTeM_Mobile.ViewModels
             //await LocalDBService.RemoveToken();
             await LocalDBService.InitDB();
             AuthToken token = await LocalDBService.GetToken();
-            if (token != null && token.IsRemember)
+            if (token != null && token.IsRemember && token.ValidTo > DateTime.Now)
             {
                 if (token.UserRole == "Supervisor")
                 {
