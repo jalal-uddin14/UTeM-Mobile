@@ -31,7 +31,10 @@ namespace UTeM_Mobile.Data.Models
             {
                 DateTime now = DateTime.Now;
                 var diff = now.Subtract(Date);
-                return string.Format("{0}:{1}", diff.Hours, diff.Minutes);
+                var days = diff.Days;
+                var hours = diff.Hours;
+                var minutes = diff.Minutes;
+                return string.Format("{0}d {1}h {2}m", days, diff.Hours, diff.Minutes);
             }
         }
     }

@@ -6,7 +6,7 @@ namespace UTeM_Mobile;
 #if DEBUG                                   // connect to local service on the
 [Application(UsesCleartextTraffic = true)]  // emulator's host for debugging,
 #else                                       // access via http://10.0.2.2
-[Application]                               
+[Application(UsesCleartextTraffic = true)]
 #endif
 public class MainApplication : MauiApplication
 {

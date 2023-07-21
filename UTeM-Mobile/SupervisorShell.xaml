@@ -12,15 +12,6 @@
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate views:PatrolListPage}" Route="PatrolListPage" />
         </Tab>
-        <!--<Tab Title="Route" Icon="chart_line_solid">
-            <ShellContent ContentTemplate="{DataTemplate views:RouteListPage}" Route="RouteListPage" />
-        </Tab>
-        <Tab Title="Guard" Icon="chart_line_solid">
-            <ShellContent ContentTemplate="{DataTemplate views:GuardListPage}" Route="GuardListPage" />
-        </Tab>
-        <Tab Title="Patrol" Icon="chart_line_solid">
-            <ShellContent ContentTemplate="{DataTemplate views:PatrolListPage}" Route="PatrolListPage" />
-        </Tab>-->
         <Tab Title="WhatsApp">
             <Tab.Icon>
                 <FontImageSource FontFamily="FAbrands" Glyph="{StaticResource IconWhatsapp}" Color="Grey" />

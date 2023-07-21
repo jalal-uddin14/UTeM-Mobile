@@ -57,6 +57,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         private async Task GetTokenAsync()
         {
+            IsBusy = true;
             Token = await LocalDBService.GetToken();
             if (Token != null)
             {
@@ -74,10 +75,21 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         private async Task GetPatrolList()
         {
-            string url = "patrols?date=" + DateTime.Now.Date;
-            PaginatedResponse<Patrol> response = await _genericService.GetPagedListAsync(url, token);
-            PatrolList.Clear();
-            PatrolList.AddRange(response.Data.Data); 
+            try
+            {
+                string url = "patrols?date=" + DateTime.Now.Date;
+                PaginatedResponse<Patrol> response = await _genericService.GetPagedListAsync(url, token);
+                PatrolList.Clear();
+                PatrolList.AddRange(response.Data.Data);
+            }
+            catch(Exception ex)
+            {
+
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
     }
 }

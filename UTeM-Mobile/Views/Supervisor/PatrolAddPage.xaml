@@ -11,7 +11,7 @@
     <ContentPage.BindingContext>
         <viewModel:PatrolAddViewModel />
     </ContentPage.BindingContext>
-    <Grid RowDefinitions="50, *, 80">
+    <Grid RowDefinitions="50, *, *">
         <StackLayout Grid.Row="0" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
             <Label Text="Assign Route" Style="{StaticResource HeaderLabel}"/>
         </StackLayout>
@@ -40,25 +40,32 @@
             </StackLayout>
             <StackLayout Grid.Row="2">
                 <Label Text="Date" />
-                <Frame Padding="5, -7" Margin="0, 7">
-                    <DatePicker Date="{Binding Patrol.Date}" />
-                </Frame>
             </StackLayout>
             <StackLayout Grid.Row="3">
                 <Label Text="Start" />
-                <Frame Padding="5, -7" Margin="0, 7">
-                    <TimePicker Time="{Binding Start}" />
-                </Frame>
+                <HorizontalStackLayout>
+                    <Frame Padding="5, -7" Margin="0, 7">
+                        <DatePicker Date="{Binding StartDate}" />
+                    </Frame>
+                    <Frame Padding="5, -7" Margin="0, 7">
+                        <TimePicker Time="{Binding StartTime}" />
+                    </Frame>
+                </HorizontalStackLayout>
             </StackLayout>
             <StackLayout Grid.Row="4">
                 <Label Text="End" />
-                <Frame Padding="5, -7" Margin="0, 7">
-                    <TimePicker Time="{Binding End}" />
-                </Frame>
+                <HorizontalStackLayout>
+                    <Frame Padding="5, -7" Margin="0, 7">
+                        <DatePicker Date="{Binding EndDate}" />
+                    </Frame>
+                    <Frame Padding="5, -7" Margin="0, 7">
+                        <TimePicker Time="{Binding EndTime}" />
+                    </Frame>
+                </HorizontalStackLayout>
             </StackLayout>
         </Grid>
-        <Grid Grid.Row="2" Margin="10">
-            <Button Text="Assign" Command="{Binding CreatePatrolCommand}" />
+        <Grid Grid.Row="2" Margin="10" >
+            <Button Text="Assign" Style="{StaticResource SubmitButton}" Command="{Binding CreatePatrolCommand}"/>
         </Grid>
     </Grid>
     

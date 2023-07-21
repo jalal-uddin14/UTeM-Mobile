@@ -3,9 +3,10 @@
     public class Patrol
     {
         public int Id { get; set; }
-        public DateTime Date { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
+        public DateTime? StartedAt { get; set; }
+        public DateTime? CompletedAt { get; set; }
         public string Status { get; set; }
         public int RouteId { get; set; }
         public virtual Route Route { get; set; }

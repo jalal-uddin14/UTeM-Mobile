@@ -97,6 +97,7 @@ namespace UTeM_Mobile.Core.Services
             {
                 return new ObjectResponse<T>
                 {
+                    Message = ex.Message,
                     IsSuccess = false
                 };
             }

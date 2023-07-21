@@ -62,7 +62,7 @@ namespace UTeM_Mobile.ViewModels
             else
             {
                 IsError = true;
-                ErrorMessage = "Wrong email or password.";
+                ErrorMessage = response.Message;
             }
         }
 

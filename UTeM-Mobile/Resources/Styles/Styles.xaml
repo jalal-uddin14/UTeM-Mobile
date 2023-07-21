@@ -398,9 +398,10 @@
     <Style TargetType="Button" x:Key="DashboarCenterdButton">
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="FontAttributes" Value="Bold"/>
-        <Setter Property="HeightRequest" Value="60" />
-        <Setter Property="WidthRequest" Value="60" />
-        <Setter Property="CornerRadius" Value="30" />
+        <Setter Property="HeightRequest" Value="65" />
+        <Setter Property="WidthRequest" Value="65" />
+        <Setter Property="CornerRadius" Value="35" />
+        <Setter Property="Padding" Value="0" />
     </Style>
     <Style TargetType="Button" x:Key="SupervisorDashboardButton">
         <Setter Property="FontSize" Value="18"/>
@@ -415,10 +416,32 @@
         <Setter Property="BackgroundColor" Value="{StaticResource LoginButtonColor}" />
         <Setter Property="TextColor" Value="White" />
     </Style>
+
+    <Style TargetType="Button" x:Key="SubmitButton">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+        <Setter Property="HorizontalOptions" Value="FillAndExpand" />
+        <Setter Property="BackgroundColor" Value="{StaticResource RedButtonColor}" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Margin" Value="10, 5" />
+        <Setter Property="VerticalOptions" Value="StartAndExpand" />
+    </Style>
+    
     <Style TargetType="Frame" x:Key="LoginPageFrame">
         <Setter Property="HorizontalOptions" Value="FillAndExpand" />
         <Setter Property="VerticalOptions" Value="Center" />
         <Setter Property="Margin" Value="20, 0" />
         <Setter Property="Padding" Value="5" />
+    </Style>
+    <Style TargetType="Frame" x:Key="DashboardButtonFrame">
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="CornerRadius" Value="40" />
+        <Setter Property="HeightRequest" Value="80" />
+        <Setter Property="WidthRequest" Value="80" />
+        <Setter Property="BackgroundColor" Value="White" />
+        <Setter Property="BorderColor" Value="Transparent" />
+        <Setter Property="HorizontalOptions" Value="CenterAndExpand" />
+        <Setter Property="VerticalOptions" Value="CenterAndExpand" />
     </Style>
 </ResourceDictionary>

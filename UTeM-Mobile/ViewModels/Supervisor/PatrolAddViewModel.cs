@@ -8,7 +8,7 @@ using UTeM_Mobile.Models;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
-    public class PatrolAddViewModel : BaseViewModel
+    public class PatrolAddViewModel : BaseViewModel, IOnAppearing
     {
         private IGenericService<ApplicationUser> _userService;
         private IGenericService<Route> _routeService;
@@ -17,8 +17,10 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         private Patrol patrol;
         private ApplicationUser selectedGuard;
         private Route selectedRoute;
-        private TimeSpan start;
-        private TimeSpan end;
+        private DateTime startDate;
+        private TimeSpan startTime;
+        private DateTime endDate;
+        private TimeSpan endTime;
 
         public ICommand CreatePatrolCommand { get; }
         public ObservableRangeCollection<ApplicationUser> GuardList { get; }
@@ -27,19 +29,18 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         public Patrol Patrol { get => patrol; set => SetProperty(ref patrol, value); }
         public ApplicationUser SelectedGuard { get => selectedGuard; set => SetProperty(ref selectedGuard, value); }
         public Route SelectedRoute { get => selectedRoute; set => SetProperty(ref selectedRoute, value); }
-        public TimeSpan Start { get => start; set => SetProperty(ref start, value); }
-        public TimeSpan End { get => end; set => SetProperty(ref end, value); }
+        public DateTime StartDate { get => startDate; set => SetProperty(ref startDate, value); }
+        public TimeSpan StartTime { get => startTime; set => SetProperty(ref startTime, value); }
+        public DateTime EndDate { get => endDate; set => SetProperty(ref endDate, value); }
+        public TimeSpan EndTime { get => endTime; set => SetProperty(ref endTime, value); }
 
         public PatrolAddViewModel()
         {
-            Patrol = new Patrol
-            {
-                Date = DateTime.Today,
-                Start = new DateTime(),
-                End = new DateTime()
-            };
-            Start = new TimeSpan();
-            End = new TimeSpan();
+            Patrol = new Patrol();
+            StartDate = DateTime.Now;
+            EndDate = DateTime.Now;
+            StartTime = new TimeSpan();
+            EndTime = new TimeSpan();
             SelectedGuard = new ApplicationUser();
             SelectedRoute = new Route();
             RouteList = new ObservableRangeCollection<Route>();
@@ -53,15 +54,20 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         private async Task ExecuteCreatePatrol()
         {
             string createPatrollUrl = "patrols";
+            string start = StartDate.ToString("yyyy-MM-dd ") + new DateTime(StartTime.Ticks).ToString("HH:mm:ss");
+            string end = EndDate.ToString("yyyy-MM-dd ") + new DateTime(EndTime.Ticks).ToString("HH:mm:ss");
             var content = new
             {
                 GuardId = SelectedGuard.Id,
                 RouteId = SelectedRoute.Id,
-                Date = Patrol.Date.ToString("yyyy-MM-dd"),
-                Start = (Patrol.Date + Start).ToString("HH:mm:ss"),
-                End = (Patrol.Date + End).ToString("HH:mm:ss"),
+                Start = start,
+                End = end,
             };
             ObjectResponse<Patrol> response = await _patrolService.InsertAsync(createPatrollUrl, content, Token);
+            if (response.IsSuccess)
+            {
+                await Shell.Current.GoToAsync("//PatrolListPage");
+            }
         }
 
         public void OnAppearing()
@@ -69,7 +75,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             Task.Run(async () => { await GetTokenAsync(); });
         }
 
-        private async Task GetTokenAsync()
+        public async Task GetTokenAsync()
         {
             Token = await LocalDBService.GetToken();
             if (Token != null)

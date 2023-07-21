@@ -33,7 +33,10 @@
         <StackLayout Grid.Row="1" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
             <Label Text="Patrol Schedule List" Style="{StaticResource HeaderLabel}"/>
         </StackLayout>
-        <StackLayout Grid.Row="2">
+        <StackLayout Grid.Row="2" IsVisible="{Binding IsBusy}" Margin="0, 20">
+            <ActivityIndicator IsRunning="{Binding IsBusy}" />
+        </StackLayout>
+        <StackLayout Grid.Row="2" IsVisible="{Binding IsNotBusy}">
             <ListView ItemsSource="{Binding PatrolList}" ItemTapped="ListView_ItemTapped" RowHeight="105" Margin="10" SeparatorVisibility="Default" SeparatorColor="Grey">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="model:Patrol">
@@ -55,18 +58,16 @@
                                         <Label Text="{Binding Guard.Name}" TextColor="Black" FontSize="14" FontAttributes="Bold" />
                                     </HorizontalStackLayout>
                                 </Grid>
-                                <Grid Grid.Row="2">
-                                    <Label Text="{Binding Date, StringFormat='Date: {0:d}'}" />
-                                </Grid>
+                                
                                 <Grid Grid.Row="3">
                                     <HorizontalStackLayout>
                                         <Label Text="Schedule: " TextColor="Grey" FontSize="14" />
                                         <Label>
                                             <Label.FormattedText>
                                                 <FormattedString>
-                                                    <Span Text="{Binding Start, StringFormat='{}{0:t}'}" />
+                                                    <Span Text="{Binding Start, StringFormat='{}{0}'}" />
                                                     <Span Text=" - " />
-                                                    <Span Text="{Binding End, StringFormat='{} {0:t}'}" />
+                                                    <Span Text="{Binding End, StringFormat='{} {0}'}" />
                                                 </FormattedString>
                                             </Label.FormattedText>
                                         </Label>

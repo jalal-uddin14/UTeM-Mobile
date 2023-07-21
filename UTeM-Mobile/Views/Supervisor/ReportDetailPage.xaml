@@ -27,7 +27,7 @@
             <BoxView HeightRequest="1" Color="Grey" Margin="0, 10"/>
         </StackLayout>
         <StackLayout Grid.Row="2" BackgroundColor="Transparent" Margin="20, 0">
-            <Label Text="{Binding Report.Difference, StringFormat='{0}h ago'}" TextColor="Gray" FontSize="12"/>
+            <Label Text="{Binding Report.Difference, StringFormat='{0} ago'}" TextColor="Gray" FontSize="12"/>
             <Frame Margin="0, 10" Padding="5, 10" HorizontalOptions="StartAndExpand" BorderColor="Gray">
                 <StackLayout HorizontalOptions="CenterAndExpand">
                     <Label Text="Route Name:" FontSize="12" HorizontalOptions="CenterAndExpand"/>
@@ -43,9 +43,5 @@
         <StackLayout Grid.Row="4" BackgroundColor="Transparent" Margin="20, 0">
             <Image Source="{Binding Report.FilePath}" />
         </StackLayout>
-        <!--<Label Text="{Binding Report.Guard.Name, StringFormat='Guard: {0}'}" />
-        <Label Text="{Binding Report.Date, StringFormat='Date: {0}'}" />
-        <Label Text="{Binding Report.Description, StringFormat='Description: {0}'}" />
-        <Image Source="{Binding Report.FilePath}" />-->
     </Grid>
 </ContentPage>

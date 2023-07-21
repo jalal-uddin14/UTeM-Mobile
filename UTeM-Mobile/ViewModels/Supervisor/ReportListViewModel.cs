@@ -22,6 +22,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         public void OnAppearing()
         {
+            IsBusy = true;
             Task.Run(async () => { await GetTokenAsync(); });
         }
 
@@ -36,10 +37,21 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         private async Task GetReportList()
         {
-            string url = "reports";
-            PaginatedResponse<Report> response = await _genericService.GetPagedListAsync(url, Token);
-            ReportList.Clear();
-            ReportList.AddRange(response.Data.Data);
+            try
+            {
+                string url = "reports";
+                PaginatedResponse<Report> response = await _genericService.GetPagedListAsync(url, Token);
+                ReportList.Clear();
+                ReportList.AddRange(response.Data.Data);
+            }
+            catch(Exception ex)
+            {
+
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
     }
 }
