@@ -20,6 +20,8 @@ public partial class GuardListPage : ContentPage
 
     private async void ListView_ItemTapped(object sender, ItemTappedEventArgs e)
     {
+        ((ListView)sender).SelectedItem = null;
+        ((ListView)sender).BackgroundColor = Colors.Transparent;
         var Item = e.Item as ApplicationUser;
         await Shell.Current.GoToAsync($"{nameof(GuardDetailPage)}?Id={Item.Id}");
     }

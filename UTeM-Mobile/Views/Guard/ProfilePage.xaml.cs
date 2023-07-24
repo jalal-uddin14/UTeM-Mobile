@@ -2,10 +2,10 @@ using UTeM_Mobile.ViewModels.Guard;
 
 namespace UTeM_Mobile.Views.Guard;
 
-public partial class ReportSendPage : ContentPage
+public partial class ProfilePage : ContentPage
 {
-	private ReportSendViewModel viewModel;
-	public ReportSendPage()
+	private ProfileViewModel viewModel;
+	public ProfilePage()
 	{
 		InitializeComponent();
 	}
@@ -13,7 +13,7 @@ public partial class ReportSendPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-		viewModel = BindingContext as ReportSendViewModel;
+		viewModel = BindingContext as ProfileViewModel;
 		viewModel.OnAppearing();
     }
 }

@@ -4,23 +4,51 @@
              x:Class="UTeM_Mobile.Views.Guard.ReportSendPage"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Guard"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
-             Title="ReportSendPage">
+             BackgroundColor="White"
+             Shell.NavBarIsVisible="False">
 
     <ContentPage.BindingContext>
         <viewModel:ReportSendViewModel />
     </ContentPage.BindingContext>
-    <VerticalStackLayout>
-        <Frame Margin="10">
-            <Entry Text="{Binding Report.Description}" />
-        </Frame>
-        <StackLayout Margin="10">
-            <Button Text="Take photo" Command="{Binding TakePhotoCommand}" />
+    <Grid RowDefinitions="50, 50, *, *, 80">
+        <StackLayout Grid.Row="0" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
+            <Label Text="SoS" Style="{StaticResource HeaderLabel}"/>
         </StackLayout>
-        <StackLayout Margin="10">
-            <Image Source="{Binding PhotoResult.FullPath}" HeightRequest="100"/>
-        </StackLayout>
-        <StackLayout Margin="10">
-            <Button Text="Send" Command="{Binding SendReportCommand}"/>
-        </StackLayout>
-    </VerticalStackLayout>
+        <Grid Grid.Row="1" BackgroundColor="{StaticResource DashboardHeadColor}">
+            <Label Text="{Binding User.Name}" TextColor="White" VerticalTextAlignment="Center" HorizontalOptions="CenterAndExpand"/>
+        </Grid>
+        <Grid Grid.Row="2" ColumnDefinitions="0.3*, 0.7*" RowDefinitions="Auto, Auto, *" Margin="10">
+            <Frame Grid.Row="0" Grid.Column="0" Margin="5, 10" Padding="5, 10" HorizontalOptions="FillAndExpand" BorderColor="Gray">
+                <StackLayout HorizontalOptions="CenterAndExpand">
+                    <Label Text="Route Name:" FontSize="12" HorizontalOptions="CenterAndExpand"/>
+                    <Label Text="{Binding Patrol.Route.Name}"  HorizontalOptions="CenterAndExpand" FontSize="16" FontAttributes="Bold"/>
+                </StackLayout>
+            </Frame>
+            <Frame Grid.Row="1" Grid.Column="0" Margin="5, 0" Padding="5" HorizontalOptions="FillAndExpand" BorderColor="Gray">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding TakePhotoCommand}" />
+                </Frame.GestureRecognizers>
+                <HorizontalStackLayout HorizontalOptions="CenterAndExpand">
+                    <Image Margin="5">
+                        <Image.Source>
+                            <FontImageSource FontFamily="FAsolid" Size="30" Glyph="{StaticResource IconCamera}" Color="Black"></FontImageSource>
+                        </Image.Source>
+                    </Image>
+                </HorizontalStackLayout>
+            </Frame>
+            <Frame Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" Margin="10" Padding="5">
+                <Image Source="{Binding PhotoResult.FullPath}" />
+            </Frame>
+        </Grid>
+        <Grid Grid.Row="3" Margin="5">
+            <Frame Padding="5">
+                <Editor Text="{Binding Report.Description}" MinimumWidthRequest="350" WidthRequest="350" HorizontalOptions="StartAndExpand" HorizontalTextAlignment="Start"/>
+            </Frame>
+        </Grid>
+        <Grid Grid.Row="4">
+            <StackLayout Margin="10">
+                <Button Text="Send SoS" Style="{StaticResource SubmitButton}" Command="{Binding SendReportCommand}"/>
+            </StackLayout>
+        </Grid>
+    </Grid>
 </ContentPage>

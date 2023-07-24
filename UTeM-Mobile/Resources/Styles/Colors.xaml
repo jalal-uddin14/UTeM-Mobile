@@ -60,4 +60,6 @@
     <Color x:Key="CompletedCheckpointColor">#A4CE4E</Color>
     <Color x:Key="CheckpointBorderColor">#FE9700</Color>
     <Color x:Key="CheckpointRouteColor">#607D8B</Color>
+
+    <Color x:Key="FormBackgroundColor">#F8F8F8</Color>
 </ResourceDictionary>

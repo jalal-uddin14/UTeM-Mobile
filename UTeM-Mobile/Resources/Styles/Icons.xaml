@@ -12,5 +12,6 @@
     <x:String x:Key="IconEnvelope">&#xf0e0;</x:String>
     <x:String x:Key="IconLocation">&#xf3c5;</x:String>
     <x:String x:Key="IconLogout">&#xf2f5;</x:String>
+    <x:String x:Key="IconCamera">&#xf030;</x:String>
     
 </ResourceDictionary>

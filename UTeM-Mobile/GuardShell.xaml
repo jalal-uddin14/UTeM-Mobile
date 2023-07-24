@@ -14,13 +14,16 @@
         </Tab>
         <Tab Title="WhatsApp">
             <Tab.Icon>
-                <FontImageSource FontFamily="FAbrands" Glyph="{StaticResource IconWhatsapp}" Color="Grey" />
+                <FontImageSource FontFamily="FAbrands" Glyph="{StaticResource IconWhatsapp}" Color="Green" />
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate views:WhatsAppPage}" Route="WhatsAppPage">
                 <Button Clicked="Button_Clicked" />
             </ShellContent>
         </Tab>
-        <Tab Title="Report" Icon="chart_line_solid">
+        <Tab Title="Report">
+            <Tab.Icon>
+                <FontImageSource FontFamily="FAsolid" Glyph="{StaticResource IconEnvelope}" Color="Grey" />
+            </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate views:ReportSendPage}" Route="ReportSendPage" />
         </Tab>
     </TabBar>

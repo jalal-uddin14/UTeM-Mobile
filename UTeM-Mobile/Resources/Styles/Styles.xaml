@@ -394,6 +394,7 @@
         <Setter Property="FontAttributes" Value="Bold"/>
         <Setter Property="HeightRequest" Value="55" />
         <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="TextColor" Value="White" />
     </Style>
     <Style TargetType="Button" x:Key="DashboarCenterdButton">
         <Setter Property="FontSize" Value="18"/>
@@ -402,6 +403,7 @@
         <Setter Property="WidthRequest" Value="65" />
         <Setter Property="CornerRadius" Value="35" />
         <Setter Property="Padding" Value="0" />
+        <Setter Property="TextColor" Value="White" />
     </Style>
     <Style TargetType="Button" x:Key="SupervisorDashboardButton">
         <Setter Property="FontSize" Value="18"/>
@@ -416,7 +418,6 @@
         <Setter Property="BackgroundColor" Value="{StaticResource LoginButtonColor}" />
         <Setter Property="TextColor" Value="White" />
     </Style>
-
     <Style TargetType="Button" x:Key="SubmitButton">
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="FontAttributes" Value="Bold"/>
@@ -444,4 +445,17 @@
         <Setter Property="HorizontalOptions" Value="CenterAndExpand" />
         <Setter Property="VerticalOptions" Value="CenterAndExpand" />
     </Style>
+    <Style TargetType="Frame" x:Key="AddFormFrame">
+        <Setter Property="Padding" Value="5, -7" />
+        <Setter Property="Margin" Value="0, 7" />
+        <Setter Property="BorderColor" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
+
+    <Style TargetType="Label" x:Key="AddFormTitleLabel">
+        <Setter Property="TextColor" Value="{StaticResource MatGreenButtonColor}" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontAttributes" Value="Bold" />
+    </Style>
+
 </ResourceDictionary>

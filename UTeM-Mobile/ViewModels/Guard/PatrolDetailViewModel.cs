@@ -7,9 +7,11 @@ using UTeM_Mobile.Models;
 namespace UTeM_Mobile.ViewModels.Guard
 {
     [QueryProperty(nameof(Id), "Id")]
-    public class PatrolDetailViewModel : BaseViewModel
+    public class PatrolDetailViewModel : BaseViewModel, IOnAppearing
     {
+        private AuthToken token;
         private IGenericService<Patrol> _genericService;
+        private IGenericService<PatrolCheckpoint> _patrolCheckpointService;
         private string id;
         private Patrol patrol;
 
@@ -19,19 +21,57 @@ namespace UTeM_Mobile.ViewModels.Guard
         public PatrolDetailViewModel()
         {
             _genericService = new GenericService<Patrol>();
+            _patrolCheckpointService = new GenericService<PatrolCheckpoint>();
             Patrol = new Patrol();
         }
 
         public void OnAppearing()
         {
-            Task.Run(async () => { await GetPatrolDetailAsync(); });
+            Task.Run(async () => { await GetTokenAsync(); });
+        }
+
+        public async Task GetTokenAsync()
+        {
+            token = await LocalDBService.GetToken();
+            if (token != null)
+            {
+                await GetPatrolDetailAsync();
+            }
         }
 
         private async Task GetPatrolDetailAsync()
         {
-            string url = "patrols/" + Id;
-            ObjectResponse<Patrol> response = await _genericService.GetDetailsAsync(url);
-            Patrol = response.Data;
+            IsBusy = true;
+            if (Id != null)
+            {
+                string url = "patrols/" + Id;
+                ObjectResponse<Patrol> response = await _genericService.GetDetailsAsync(url, token);
+                Patrol = response.Data;
+                await CheckRouteCheckpointStatusAsync();
+            }
+            else
+            {
+                Console.WriteLine("Exception");
+            }
+            IsBusy = false;
+        }
+
+        private async Task CheckRouteCheckpointStatusAsync()
+        {
+            string url = "";
+            for (int i = 0; i < Patrol.Route.RouteCheckpoints.Count; i++)
+            {
+                Patrol.Route.RouteCheckpoints[i].IsNotLast = i < Patrol.Route.RouteCheckpoints.Count - 1;
+                url = "patrolCheckpoints/check";
+                var content = new { patrolId = Id, checkpointId = Patrol.Route.RouteCheckpoints[i].CheckpointId };
+                ObjectResponse<PatrolCheckpoint> res = await _patrolCheckpointService.InsertAsync(url, content);
+                if (res.Data != null)
+                {
+                    Patrol.Route.RouteCheckpoints[i].IsChecked = res.Data.Status == "Completed";
+                    Patrol.Route.RouteCheckpoints[i].IsScheduled = res.Data.Status == "Scheduled";
+                    Patrol.Route.RouteCheckpoints[i].NotFound = false;
+                }
+            }
         }
     }
 }

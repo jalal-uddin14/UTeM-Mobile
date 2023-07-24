@@ -5,31 +5,38 @@ using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Models;
-using UTeM_Mobile.Views.Guard;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
-    public class PatrolListViewModel : BaseViewModel, IOnAppearing
+    public class ProfileViewModel : BaseViewModel, IOnAppearing
     {
         private AuthToken token;
-        private IGenericService<Patrol> _genericService;
         private IGenericService<ApplicationUser> _genericUserService;
         private ApplicationUser user;
 
-        public ICommand NavigateToSendSoSCommand { get; }
-        public ObservableRangeCollection<Patrol> PatrolList { get; }
+        public ICommand LogoutCommand { get; }
+
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
 
-        public PatrolListViewModel()
+        public ProfileViewModel()
         {
-            _genericService = new GenericService<Patrol>();
             _genericUserService = new GenericService<ApplicationUser>();
-            PatrolList = new ObservableRangeCollection<Patrol>();
-            NavigateToSendSoSCommand = new AsyncCommand(ExecuteNavigateToSendSoSAsync);
+            LogoutCommand = new AsyncCommand(ExecuteLogout);
         }
-        private async Task ExecuteNavigateToSendSoSAsync()
+        private async Task ExecuteLogout()
         {
-            await Shell.Current.GoToAsync($"//{nameof(ReportSendPage)}");
+            try
+            {
+                await LocalDBService.RemoveToken();
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    Application.Current.MainPage = new AppShell();
+                });
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         public void OnAppearing()
@@ -42,7 +49,6 @@ namespace UTeM_Mobile.ViewModels.Guard
             token = await LocalDBService.GetToken();
             if (token != null)
             {
-                await GetPatrolList();
                 await GetUserDetailAsync();
             }
         }
@@ -54,26 +60,6 @@ namespace UTeM_Mobile.ViewModels.Guard
             if (response != null)
             {
                 User = response.Data;
-            }
-        }
-
-        private async Task GetPatrolList()
-        {
-            try
-            {
-                IsBusy = true;
-                string url = "patrols";
-                PaginatedResponse<Patrol> response = await _genericService.GetPagedListAsync(url, token);
-                PatrolList.Clear();
-                PatrolList.AddRange(response.Data.Data);
-            }
-            catch(Exception ex)
-            {
-
-            }
-            finally
-            {
-                IsBusy = false;
             }
         }
     }

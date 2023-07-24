@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="UTeM_Mobile.Views.Supervisor.ProfilePage"
-             BackgroundColor="White"
-             xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
-             xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
+             x:Class="UTeM_Mobile.Views.Guard.ProfilePage"
+             xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Guard"
              Shell.NavBarIsVisible="False"
-             Title="Profile">
+             BackgroundColor="White">
     <ContentPage.BindingContext>
         <viewModel:ProfileViewModel />
     </ContentPage.BindingContext>
@@ -18,7 +16,7 @@
                 </Frame>
                 <StackLayout VerticalOptions="CenterAndExpand">
                     <Label Text="{Binding User.Name}" TextColor="White" FontAttributes="Bold"/>
-                    <Label Text="{Binding User.Role}" TextColor="White" FontAttributes="Bold"/>
+                    <Label Text="{Binding User.Role}" TextColor="White" FontSize="12" FontAttributes="Bold"/>
                 </StackLayout>
             </StackLayout>
             <StackLayout Grid.Column="1" VerticalOptions="CenterAndExpand">

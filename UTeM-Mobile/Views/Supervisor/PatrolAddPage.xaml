@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="UTeM_Mobile.Views.Supervisor.PatrolAddPage"
-             BackgroundColor="White"
+             BackgroundColor="{StaticResource FormBackgroundColor}"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
              Shell.NavBarIsVisible="False"
@@ -17,49 +17,48 @@
         </StackLayout>
         <Grid Grid.Row="1" Margin="20" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
             <StackLayout Grid.Row="0">
-                <Label Text="Guard" />
-                <Frame Padding="5, -7" Margin="0, 7">
+                <Label Text="Guard"  Style="{StaticResource AddFormTitleLabel}"/>
+                <Frame Style="{StaticResource AddFormFrame}">
                     <Picker x:Name="guardPicker"
-                        TextColor="{StaticResource Primary}"
-                        Title="Select Guard"
-                        ItemsSource="{Binding GuardList}"
-                        ItemDisplayBinding="{Binding Name}"
-                        SelectedItem="{Binding SelectedGuard}"/>
+                            TextColor="{StaticResource Black}"
+                            FontSize="16"
+                            Title="Select Guard"
+                            ItemsSource="{Binding GuardList}"
+                            ItemDisplayBinding="{Binding Name}"
+                            SelectedItem="{Binding SelectedGuard}"/>
                 </Frame>
             </StackLayout>
             <StackLayout Grid.Row="1">
-                <Label Text="Route" />
-                <Frame Padding="5, -7" Margin="0, 7">
+                <Label Text="Route" Style="{StaticResource AddFormTitleLabel}"/>
+                <Frame Style="{StaticResource AddFormFrame}">
                     <Picker x:Name="routePicker"
-                        TextColor="{StaticResource Primary}"
-                        Title="Select Route"
-                        ItemsSource="{Binding RouteList}"
-                        ItemDisplayBinding="{Binding Name}"
-                        SelectedItem="{Binding SelectedRoute}"/>
+                            TextColor="{StaticResource Black}"
+                            FontSize="16"
+                            Title="Select Route"
+                            ItemsSource="{Binding RouteList}"
+                            ItemDisplayBinding="{Binding Name}"
+                            SelectedItem="{Binding SelectedRoute}"/>
                 </Frame>
             </StackLayout>
             <StackLayout Grid.Row="2">
-                <Label Text="Date" />
-            </StackLayout>
-            <StackLayout Grid.Row="3">
-                <Label Text="Start" />
+                <Label Text="Start"  Style="{StaticResource AddFormTitleLabel}"/>
                 <HorizontalStackLayout>
-                    <Frame Padding="5, -7" Margin="0, 7">
-                        <DatePicker Date="{Binding StartDate}" />
+                    <Frame Style="{StaticResource AddFormFrame}">
+                        <DatePicker Date="{Binding StartDate}" FontSize="16"/>
                     </Frame>
-                    <Frame Padding="5, -7" Margin="0, 7">
-                        <TimePicker Time="{Binding StartTime}" />
+                    <Frame Style="{StaticResource AddFormFrame}" Margin="5, 7">
+                        <TimePicker Time="{Binding StartTime}" FontSize="16"/>
                     </Frame>
                 </HorizontalStackLayout>
             </StackLayout>
             <StackLayout Grid.Row="4">
-                <Label Text="End" />
+                <Label Text="End"  Style="{StaticResource AddFormTitleLabel}"/>
                 <HorizontalStackLayout>
-                    <Frame Padding="5, -7" Margin="0, 7">
-                        <DatePicker Date="{Binding EndDate}" />
+                    <Frame Style="{StaticResource AddFormFrame}">
+                        <DatePicker Date="{Binding EndDate}" FontSize="16"/>
                     </Frame>
-                    <Frame Padding="5, -7" Margin="0, 7">
-                        <TimePicker Time="{Binding EndTime}" />
+                    <Frame Style="{StaticResource AddFormFrame}" Margin="5, 7">
+                        <TimePicker Time="{Binding EndTime}" FontSize="16"/>
                     </Frame>
                 </HorizontalStackLayout>
             </StackLayout>

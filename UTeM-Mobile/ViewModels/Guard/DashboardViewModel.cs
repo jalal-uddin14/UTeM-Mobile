@@ -5,18 +5,37 @@ using UTeM_Mobile.Models;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Core.IServices;
+using UTeM_Mobile.Views.Guard;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
     public class DashboardViewModel : BaseViewModel, IOnAppearing
     {
         private IGenericService<Patrol> _genericService;
+        private IGenericService<ApplicationUser> _genericUserService;
         private AuthToken token;
+        private bool hasNoPatrol;
+        private bool hasPatrol;
         private bool isStarted;
         private bool isNotStarted;
         private Patrol patrol;
+        private ApplicationUser user;
+
+        public ICommand NavigateToProfileCommand { get; }
+        public ICommand NavigateToPatrolListCommand { get; }
+        public ICommand NavigateToSendSoSCommand { get; }
         public ICommand StartCommand { get; }
         public ICommand EndCommand { get; }
+        public bool HasNoPatrol
+        {
+            get => hasNoPatrol;
+            set
+            {
+                SetProperty(ref hasNoPatrol, value);
+                HasPatrol = !value;
+            }
+        }
+        public bool HasPatrol { get => hasPatrol; set => SetProperty(ref hasPatrol, value); }
         public bool IsStarted
         {
             get => isStarted;
@@ -28,14 +47,33 @@ namespace UTeM_Mobile.ViewModels.Guard
         }
         public bool IsNotStarted { get => isNotStarted; set => SetProperty(ref isNotStarted, value); }
         public Patrol Patrol { get => patrol; set => SetProperty(ref patrol, value); }
+        public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
 
         public DashboardViewModel()
         {
             Patrol = new Patrol();
             IsStarted = false;
             _genericService = new GenericService<Patrol>();
+            _genericUserService = new GenericService<ApplicationUser>();
+            NavigateToProfileCommand = new AsyncCommand(ExecuteNavigateToProfile);
+            NavigateToPatrolListCommand = new AsyncCommand(ExecuteNavigateToPatrolListAsync);
+            NavigateToSendSoSCommand = new AsyncCommand(ExecuteNavigateToSendSoSAsync);
             StartCommand = new AsyncCommand(ExecuteStart);
             EndCommand = new AsyncCommand(ExecuteEnd);
+        }
+
+        private async Task ExecuteNavigateToProfile()
+        {
+            await Shell.Current.GoToAsync($"{nameof(ProfilePage)}");
+        }
+
+        private async Task ExecuteNavigateToPatrolListAsync()
+        {
+            await Shell.Current.GoToAsync($"{nameof(PatrolListPage)}");
+        }
+        private async Task ExecuteNavigateToSendSoSAsync()
+        {
+            await Shell.Current.GoToAsync($"//{nameof(ReportSendPage)}");
         }
 
         private async Task ExecuteStart()
@@ -53,7 +91,15 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         private async Task ExecuteEnd()
         {
-            IsStarted = false;
+            string url = "patrols/update-status";
+            var content = new
+            {
+                Id = Patrol.Id,
+                Status = "Completed",
+                StartedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+            };
+            ObjectResponse<Patrol> response = await _genericService.UpdateAsync(url, content, token);
+            IsStarted = !response.IsSuccess;
         }
 
         public void OnAppearing()
@@ -66,7 +112,18 @@ namespace UTeM_Mobile.ViewModels.Guard
             token = await LocalDBService.GetToken();
             if (token != null)
             {
+                await GetUserDetailAsync();
                 await GetUserPatrol();
+            }
+        }
+
+        private async Task GetUserDetailAsync()
+        {
+            string url = "accounts/me";
+            ObjectResponse<ApplicationUser> response = await _genericUserService.GetDetailsAsync(url, token);
+            if (response != null)
+            {
+                User = response.Data;
             }
         }
 
@@ -74,8 +131,16 @@ namespace UTeM_Mobile.ViewModels.Guard
         {
             string url = "patrols/status";
             ObjectResponse<Patrol> response = await _genericService.InsertAsync(url, null, token);
-            Patrol = response.Data;
-            IsStarted = Patrol.Status == "Started";
+            if (response.IsSuccess && response.Data != null)
+            {
+                HasNoPatrol = false;
+                Patrol = response.Data;
+                IsStarted = Patrol.Status == "Started";
+            }
+            else
+            {
+                HasNoPatrol = true;
+            }
         }
     }
 }

@@ -4,39 +4,103 @@
              x:Class="UTeM_Mobile.Views.Guard.PatrolListPage"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Guard"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
-             Title="Patrol List">
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="White">
     <ContentPage.BindingContext>
         <viewModel:PatrolListViewModel />
     </ContentPage.BindingContext>
-    <VerticalStackLayout>
-        <ListView ItemsSource="{Binding PatrolList}" ItemTapped="ListView_ItemTapped" Margin="10" RowHeight="120">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="model:Patrol">
-                    <ViewCell>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Row="0">
-                                <Label Text="{Binding Route.Name, StringFormat='Route: {0}'}" />
+    <Grid RowDefinitions="100, 50, *, 50">
+        <StackLayout Grid.Row="0" Orientation="Horizontal" BackgroundColor="{StaticResource DashboardHeadColor}" Padding="20">
+            <StackLayout.GestureRecognizers>
+                <TapGestureRecognizer/>
+            </StackLayout.GestureRecognizers>
+            <Frame BackgroundColor="Transparent" Margin="10, 0" Padding="0" CornerRadius="25" HeightRequest="55">
+                <Image Source="logo" HeightRequest="50"/>
+            </Frame>
+            <StackLayout VerticalOptions="CenterAndExpand">
+                <Label Text="{Binding User.Name}" TextColor="White" FontAttributes="Bold"/>
+                <Label Text="{Binding User.Role}" TextColor="White" FontSize="12" FontAttributes="Bold"/>
+            </StackLayout>
+        </StackLayout>
+        <StackLayout Grid.Row="1" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
+            <Label Text="Patrol Schedule List" Style="{StaticResource HeaderLabel}"/>
+        </StackLayout>
+        <StackLayout Grid.Row="2" IsVisible="{Binding IsBusy}" Margin="0, 20">
+            <ActivityIndicator IsRunning="{Binding IsBusy}" />
+        </StackLayout>
+        <StackLayout Grid.Row="2" IsVisible="{Binding IsNotBusy}">
+            <ListView ItemsSource="{Binding PatrolList}" ItemTapped="ListView_ItemTapped" Margin="10" RowHeight="110">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="model:Patrol">
+                        <ViewCell>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0">
+                                    <Label Text="{Binding Route.Name}" TextColor="Green" FontSize="16" FontAttributes="Bold" />
+                                </Grid>
+                                <Grid Grid.Row="1">
+                                    <HorizontalStackLayout>
+                                        <Label Text="Guard: " TextColor="Grey" FontSize="14" />
+                                        <Label Text="{Binding Guard.Name}" TextColor="Black" FontSize="14" FontAttributes="Bold" />
+                                    </HorizontalStackLayout>
+                                </Grid>
+                                <Grid Grid.Row="2">
+                                    <HorizontalStackLayout>
+                                        <Label Text="Date: " TextColor="Grey" FontSize="14" />
+                                        <Label>
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Start, StringFormat='{}{0:D}'}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                    </HorizontalStackLayout>
+                                </Grid>
+                                <Grid Grid.Row="3">
+                                    <HorizontalStackLayout>
+                                        <Label Text="Schedule: " TextColor="Grey" FontSize="14" />
+                                        <Label>
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Start, StringFormat='{}{0:t}'}" />
+                                                    <Span Text=" - " />
+                                                    <Span Text="{Binding End, StringFormat='{} {0:t}'}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                    </HorizontalStackLayout>
+                                </Grid>
+                                <Grid Grid.Row="4">
+                                    <HorizontalStackLayout>
+                                        <Label Text="Status: " TextColor="Grey" FontSize="14" />
+                                        <Label IsVisible="{Binding IsScheduled}" Text="{Binding Status}" TextColor="Black" FontSize="14" FontAttributes="Bold" />
+                                        <Label IsVisible="{Binding IsStarted}" Text="{Binding Status}" TextColor="{StaticResource StartedStatusLabelColor}" FontSize="14" FontAttributes="Bold" />
+                                        <Label IsVisible="{Binding IsCompleted}" Text="{Binding Status}" TextColor="{StaticResource CompletedStatusLabelColor}" FontSize="14" FontAttributes="Bold" />
+                                        <Label IsVisible="{Binding IsMissed}" Text="{Binding Status}" TextColor="{StaticResource MissedStatusLabelColor}" FontSize="14" FontAttributes="Bold" />
+                                    </HorizontalStackLayout>
+                                </Grid>
                             </Grid>
-                            <Grid Grid.Row="2">
-                                <Label Text="{Binding Start, StringFormat='Start: {0}'}" />
-                            </Grid>
-                            <Grid Grid.Row="3">
-                                <Label Text="{Binding End, StringFormat='End: {0}'}" />
-                            </Grid>
-                            <Grid Grid.Row="4">
-                                <Label Text="{Binding Status, StringFormat='Status: {0}'}" />
-                            </Grid>
-                        </Grid>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </VerticalStackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+        <StackLayout Grid.Row="3">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*" />
+                    <ColumnDefinition Width="0.5*" />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="1" Margin="5">
+                    <Button Text="Send SoS" Style="{StaticResource SupervisorDashboardButton}" BackgroundColor="{StaticResource RedButtonColor}" Command="{Binding NavigateToSendSoSCommand}"/>
+                </Grid>
+            </Grid>
+        </StackLayout>
+    </Grid>
 </ContentPage>

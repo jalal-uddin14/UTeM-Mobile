@@ -98,6 +98,9 @@
 	  <MauiXaml Update="Views\Guard\PatrolListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\Guard\ProfilePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Guard\ReportSendPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

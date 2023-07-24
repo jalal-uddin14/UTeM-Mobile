@@ -20,8 +20,9 @@ public partial class PatrolListPage : ContentPage
 
     private async void ListView_ItemTapped(object sender, ItemTappedEventArgs e)
     {
+        ((ListView)sender).SelectedItem = null;
+        ((ListView)sender).BackgroundColor = Colors.Transparent;
         var Item = e.Item as Patrol;
-        Console.WriteLine(Item.Id);
         await Shell.Current.GoToAsync($"{nameof(PatrolDetailPage)}?Id={Item.Id}");
     }
 }

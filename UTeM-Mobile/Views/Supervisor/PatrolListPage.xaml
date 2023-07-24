@@ -27,7 +27,7 @@
             </Frame>
             <StackLayout VerticalOptions="CenterAndExpand">
                 <Label Text="{Binding User.Name}" TextColor="White" FontAttributes="Bold"/>
-                <Label Text="{Binding User.Role}" TextColor="White" FontAttributes="Bold"/>
+                <Label Text="{Binding User.Role}" TextColor="White" FontSize="12" FontAttributes="Bold"/>
             </StackLayout>
         </StackLayout>
         <StackLayout Grid.Row="1" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
@@ -58,16 +58,27 @@
                                         <Label Text="{Binding Guard.Name}" TextColor="Black" FontSize="14" FontAttributes="Bold" />
                                     </HorizontalStackLayout>
                                 </Grid>
-                                
+                                <Grid Grid.Row="2">
+                                    <HorizontalStackLayout>
+                                        <Label Text="Date: " TextColor="Grey" FontSize="14" />
+                                        <Label>
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Start, StringFormat='{}{0:D}'}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                    </HorizontalStackLayout>
+                                </Grid>
                                 <Grid Grid.Row="3">
                                     <HorizontalStackLayout>
                                         <Label Text="Schedule: " TextColor="Grey" FontSize="14" />
                                         <Label>
                                             <Label.FormattedText>
                                                 <FormattedString>
-                                                    <Span Text="{Binding Start, StringFormat='{}{0}'}" />
+                                                    <Span Text="{Binding Start, StringFormat='{}{0:t}'}" />
                                                     <Span Text=" - " />
-                                                    <Span Text="{Binding End, StringFormat='{} {0}'}" />
+                                                    <Span Text="{Binding End, StringFormat='{} {0:t}'}" />
                                                 </FormattedString>
                                             </Label.FormattedText>
                                         </Label>

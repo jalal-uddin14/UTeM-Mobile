@@ -13,6 +13,6 @@ namespace UTeM_Mobile.Core.IServices
         Task<ObjectResponse<T>> InsertAsync(string url, object content, AuthToken? token = null);
         Task<ObjectResponse<T>> UpdateAsync(string url, object content, AuthToken? token = null);
         Task<ObjectResponse<T>> DeleteAsync(string url, AuthToken? token = null);
-        Task<ObjectResponse<T>> PostFile(string url, MultipartFormDataContent content);
+        Task<ObjectResponse<T>> PostFile(string url, MultipartFormDataContent content, AuthToken? token = null);
     }
 }
