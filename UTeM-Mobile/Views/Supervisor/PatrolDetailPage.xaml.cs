@@ -16,4 +16,10 @@ public partial class PatrolDetailPage : ContentPage
         base.OnAppearing();
         viewModel.OnAppearing();
     }
+
+    private void ListView_ItemTapped(object sender, ItemTappedEventArgs e)
+    {
+        ((ListView)sender).SelectedItem = null;
+        ((ListView)sender).BackgroundColor = Colors.Transparent;
+    }
 }

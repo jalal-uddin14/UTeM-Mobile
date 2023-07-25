@@ -48,7 +48,7 @@
                     <ColumnDefinition Width="0.4*" />
                 </Grid.ColumnDefinitions>
                 <StackLayout Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="10, 0">
-                    <Button Text="Scan" Style="{StaticResource DashboardButton}" BackgroundColor="{StaticResource BlueButtonColor}"/>
+                    <Button Text="Scan" Style="{StaticResource DashboardButton}" BackgroundColor="{StaticResource BlueButtonColor}" Command="{Binding ScanCommand}"/>
                 </StackLayout>
                 <StackLayout Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Margin="10, 0">
                     <Button Text="Send SoS" Style="{StaticResource DashboardButton}" BackgroundColor="{StaticResource RedButtonColor}" Command="{Binding NavigateToSendSoSCommand}"/>

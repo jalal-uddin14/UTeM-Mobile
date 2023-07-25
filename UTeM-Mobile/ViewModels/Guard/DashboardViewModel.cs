@@ -14,6 +14,7 @@ namespace UTeM_Mobile.ViewModels.Guard
     {
         private IGenericService<Patrol> _genericService;
         private IGenericService<ApplicationUser> _genericUserService;
+        private IGenericService<PatrolCheckpoint> _genericPatrolCheckpointService;
         private AuthToken token;
         private bool hasNoPatrol;
         private bool hasPatrol;
@@ -22,6 +23,7 @@ namespace UTeM_Mobile.ViewModels.Guard
         private Patrol patrol;
         private ApplicationUser user;
 
+        public ICommand ScanCommand { get; }
         public ICommand NavigateToProfileCommand { get; }
         public ICommand NavigateToPatrolListCommand { get; }
         public ICommand NavigateToSendSoSCommand { get; }
@@ -56,11 +58,52 @@ namespace UTeM_Mobile.ViewModels.Guard
             IsStarted = false;
             _genericService = new GenericService<Patrol>();
             _genericUserService = new GenericService<ApplicationUser>();
+            _genericPatrolCheckpointService = new GenericService<PatrolCheckpoint>();
+            ScanCommand = new AsyncCommand(ExecuteScanAsync);
             NavigateToProfileCommand = new AsyncCommand(ExecuteNavigateToProfile);
             NavigateToPatrolListCommand = new AsyncCommand(ExecuteNavigateToPatrolListAsync);
             NavigateToSendSoSCommand = new AsyncCommand(ExecuteNavigateToSendSoSAsync);
             StartCommand = new AsyncCommand(ExecuteStart);
             EndCommand = new AsyncCommand(ExecuteEnd);
+        }
+
+        private async Task ExecuteScanAsync()
+        {
+            string url = "patrols/" + Patrol.Id;
+            string patrolCheckpointUrl = "patrolCheckpoints/mark";
+            ObjectResponse<Patrol> response = await _genericService.GetDetailsAsync(url, token);
+            ObjectResponse<PatrolCheckpoint> objectResponse = null;
+            if (response.Data.PatrolCheckpoints.Count <= 0)
+            {
+                var content = new
+                {
+                    patrolId = Patrol.Id,
+                    checkpointId = response.Data.Route.RouteCheckpoints.FirstOrDefault().CheckpointId,
+                    checkedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                };
+                objectResponse = await _genericPatrolCheckpointService.InsertAsync(patrolCheckpointUrl, content, token);
+            }
+            else
+            {
+                int index = 0;
+                var checkpoints = response.Data.Route.RouteCheckpoints;
+                for (int i = 0; i < checkpoints.Count; i++)
+                {
+                    var isFound = response.Data.PatrolCheckpoints.Where(p => p.CheckpointId == checkpoints[i].CheckpointId).FirstOrDefault();
+                    if (isFound == null)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+                var content = new
+                {
+                    patrolId = Patrol.Id,
+                    checkpointId = response.Data.Route.RouteCheckpoints[index].CheckpointId,
+                    checkedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                };
+                objectResponse = await _genericPatrolCheckpointService.InsertAsync(patrolCheckpointUrl, content, token);
+            }
         }
 
         private async Task ExecuteNavigateToProfile()

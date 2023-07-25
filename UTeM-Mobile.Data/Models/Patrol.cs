@@ -12,6 +12,7 @@
         public virtual Route Route { get; set; }
         public string GuardId { get; set; }
         public virtual ApplicationUser Guard { get; set; }
+        public virtual IList<PatrolCheckpoint> PatrolCheckpoints { get; set; }
         public bool IsStarted { get { return Status == "Started"; } }
         public bool IsMissed { get { return Status == "Missed"; } }
         public bool IsCompleted { get { return Status == "Completed"; } }

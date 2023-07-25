@@ -62,4 +62,5 @@
     <Color x:Key="CheckpointRouteColor">#607D8B</Color>
 
     <Color x:Key="FormBackgroundColor">#F8F8F8</Color>
+    <Color x:Key="RouteLineColor">#607D8B</Color>
 </ResourceDictionary>

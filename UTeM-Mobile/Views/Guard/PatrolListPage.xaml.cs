@@ -23,6 +23,6 @@ public partial class PatrolListPage : ContentPage
         ((ListView)sender).SelectedItem = null;
         ((ListView)sender).BackgroundColor = Colors.Transparent;
         var Item = e.Item as Patrol;
-        await Shell.Current.GoToAsync($"{nameof(PatrolDetailPage)}?Id={Item.Id}");
+        await Shell.Current.GoToAsync($"GuardPatrolDetailPage?Id={Item.Id}");
     }
 }
