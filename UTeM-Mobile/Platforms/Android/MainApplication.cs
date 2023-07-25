@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Runtime;
+using UTeM_Mobile.Platforms.Android.Helpers;
 
 namespace UTeM_Mobile;
 
@@ -13,7 +14,8 @@ public class MainApplication : MauiApplication
 	public MainApplication(IntPtr handle, JniHandleOwnership ownership)
 		: base(handle, ownership)
 	{
-	}
+        DependencyService.Register<DroidKeyboardHelper>();
+    }
 
 	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
 }

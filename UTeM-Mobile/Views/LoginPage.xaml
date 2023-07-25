@@ -30,7 +30,7 @@
                             <FontImageSource FontFamily="FAsolid" Glyph="{StaticResource IconUser}" Color="Grey"></FontImageSource>
                         </Image.Source>
                     </Image>
-                    <Entry Placeholder="Email" MinimumWidthRequest="200" Text="{Binding User.Email}" Keyboard="Email"/>
+                    <Entry Placeholder="Email" MinimumWidthRequest="200" Text="{Binding User.Email}" Keyboard="Email" Completed="Entry_Completed"/>
                 </HorizontalStackLayout>
             </Frame>
             <Frame Grid.Row="2" Style="{StaticResource LoginPageFrame}" Margin="20, 10" BorderColor="Grey">
@@ -40,7 +40,7 @@
                             <FontImageSource FontFamily="FAsolid" Glyph="{StaticResource IconLock}" Color="Grey"></FontImageSource>
                         </Image.Source>
                     </Image>
-                    <Entry Placeholder="Password" MinimumWidthRequest="200" Text="{Binding User.Password}" IsPassword="True" HorizontalOptions="Fill"/>
+                    <Entry Placeholder="Password" MinimumWidthRequest="200" Text="{Binding User.Password}" IsPassword="True" HorizontalOptions="Fill" Completed="Entry_Completed" />
                 </HorizontalStackLayout>
             </Frame>
             <Frame Grid.Row="3" Style="{StaticResource LoginPageFrame}" Padding="0" BorderColor="Transparent">

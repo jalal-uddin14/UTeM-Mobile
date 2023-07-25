@@ -2,6 +2,7 @@
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
+using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Models;
 
 namespace UTeM_Mobile.ViewModels.Guard

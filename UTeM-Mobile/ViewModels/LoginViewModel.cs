@@ -4,6 +4,7 @@ using System.Windows.Input;
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
+using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Models;
 
 namespace UTeM_Mobile.ViewModels
@@ -35,34 +36,45 @@ namespace UTeM_Mobile.ViewModels
 
         private async Task ExecuteLogin()
         {
-            IsError = false;
-            string url = "accounts/login";
-            ObjectResponse<AuthToken> response = await _authService.InsertAsync(url, User);
-            if (response.IsSuccess && response.Data != null)
+            try
             {
-                AuthToken = response.Data;
-                AuthToken.ValidTo = DateTime.Now.AddMinutes(response.Data.LifetimeMinutes);
-                AuthToken.IsRemember = IsRemember;
-                await LocalDBService.InsertToken(AuthToken);
-                if (response.Data.UserRole == "Supervisor")
+                IsError = false;
+                string url = "accounts/login";
+                ObjectResponse<AuthToken> response = await _authService.InsertAsync(url, User);
+                if (response.IsSuccess && response.Data != null)
                 {
-                    await MainThread.InvokeOnMainThreadAsync(() =>
+                    AuthToken = response.Data;
+                    AuthToken.ValidTo = DateTime.Now.AddMinutes(response.Data.LifetimeMinutes);
+                    AuthToken.IsRemember = IsRemember;
+                    await LocalDBService.InsertToken(AuthToken);
+                    if (response.Data.UserRole == "Supervisor")
                     {
-                        Application.Current.MainPage = new SupervisorShell();
-                    });
+                        await MainThread.InvokeOnMainThreadAsync(() =>
+                        {
+                            Application.Current.MainPage = new SupervisorShell();
+                        });
+                    }
+                    else if (response.Data.UserRole == "Guard")
+                    {
+                        await MainThread.InvokeOnMainThreadAsync(() =>
+                        {
+                            Application.Current.MainPage = new GuardShell();
+                        });
+                    }
                 }
-                else if (response.Data.UserRole == "Guard")
+                else
                 {
-                    await MainThread.InvokeOnMainThreadAsync(() =>
-                    {
-                        Application.Current.MainPage = new GuardShell();
-                    });
+                    IsError = true;
+                    ErrorMessage = response.Message;
                 }
             }
-            else
+            catch (Exception ex)
             {
-                IsError = true;
-                ErrorMessage = response.Message;
+
+            }
+            finally
+            {
+                DependencyService.Get<IKeyboardHelper>().HideKeyboard();
             }
         }
 

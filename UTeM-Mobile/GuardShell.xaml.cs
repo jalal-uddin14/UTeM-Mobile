@@ -7,9 +7,9 @@ public partial class GuardShell : Shell
 	public GuardShell()
 	{
 		InitializeComponent();
-		Routing.RegisterRoute(nameof(PatrolListPage), typeof(PatrolListPage));
-		Routing.RegisterRoute(nameof(PatrolDetailPage), typeof(PatrolDetailPage));
-		Routing.RegisterRoute(nameof(ProfilePage), typeof(ProfilePage));
+		Routing.RegisterRoute("GuardPatrolListPage", typeof(PatrolListPage));
+		Routing.RegisterRoute("GuardPatrolDetailPage", typeof(PatrolDetailPage));
+		Routing.RegisterRoute("GuardProfilePage", typeof(ProfilePage));
 	}
 
     private void Button_Clicked(object sender, EventArgs e)

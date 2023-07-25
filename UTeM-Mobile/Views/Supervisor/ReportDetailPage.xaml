@@ -14,7 +14,7 @@
         <StackLayout Grid.Row="0" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
             <Label Text="SoS Detail" Style="{StaticResource HeaderLabel}"/>
         </StackLayout>
-        <StackLayout Grid.Row="1" BackgroundColor="{StaticResource White}" Padding="10">
+        <StackLayout Grid.Row="1" BackgroundColor="{StaticResource White}" Padding="10, 5">
             <StackLayout Orientation="Horizontal">
                 <Frame BackgroundColor="Transparent" Margin="10, 0" Padding="0" CornerRadius="25" HeightRequest="45">
                     <Image Source="logo" HeightRequest="40"/>

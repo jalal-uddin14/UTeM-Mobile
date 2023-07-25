@@ -4,6 +4,7 @@ using System.Windows.Input;
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
+using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Models;
 
 namespace UTeM_Mobile.ViewModels.Guard
@@ -15,6 +16,7 @@ namespace UTeM_Mobile.ViewModels.Guard
         private ApplicationUser user;
 
         public ICommand LogoutCommand { get; }
+        public ICommand UpdateProfileCommand { get; }
 
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
 
@@ -22,6 +24,18 @@ namespace UTeM_Mobile.ViewModels.Guard
         {
             _genericUserService = new GenericService<ApplicationUser>();
             LogoutCommand = new AsyncCommand(ExecuteLogout);
+        }
+        private async Task ExecuteUpdateProfile()
+        {
+            try
+            {
+                string url = "accounts/update";
+                ObjectResponse<ApplicationUser> response = await _genericUserService.UpdateAsync(url, User, token);
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
         private async Task ExecuteLogout()
         {

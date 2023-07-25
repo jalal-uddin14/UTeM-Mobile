@@ -1,6 +1,4 @@
-﻿using UTeM_Mobile.Models;
-
-namespace UTeM_Mobile
+﻿namespace UTeM_Mobile.Interfaces
 {
     public interface IOnAppearing
     {

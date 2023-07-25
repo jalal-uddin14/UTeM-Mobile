@@ -6,6 +6,7 @@ using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Views.Guard;
+using UTeM_Mobile.Interfaces;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
@@ -64,12 +65,12 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         private async Task ExecuteNavigateToProfile()
         {
-            await Shell.Current.GoToAsync($"{nameof(ProfilePage)}");
+            await Shell.Current.GoToAsync("GuardProfilePage");
         }
 
         private async Task ExecuteNavigateToPatrolListAsync()
         {
-            await Shell.Current.GoToAsync($"{nameof(PatrolListPage)}");
+            await Shell.Current.GoToAsync("GuardPatrolListPage");
         }
         private async Task ExecuteNavigateToSendSoSAsync()
         {

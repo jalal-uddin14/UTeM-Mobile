@@ -67,7 +67,7 @@
                 <Button Text="Start" Style="{StaticResource DashboarCenterdButton}" BackgroundColor="{StaticResource GreenButtonColor}" Command="{Binding StartCommand}"/>
             </Grid>
         </Grid>
-        <Grid Grid.Row="1" IsVisible="{Binding HasNoPatrol}">
+        <Grid Grid.Row="2" IsVisible="{Binding HasNoPatrol}">
             <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
                 <Label Text="No patrol yet" FontSize="16" FontAttributes="Bold"/>
             </StackLayout>

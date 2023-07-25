@@ -55,8 +55,8 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             string url = "reports/" + Id;
             ObjectResponse<Report> response = await _genericService.GetDetailsAsync(url,Token);
             Report = response.Data;
-            //Report.FilePath = ServerCredential.BaseUrl + "reports/files/" + Report.File;
-            Report.FilePath = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7FB0RcV2PQHhD0kuwIWEAXkrAVGT74EoieA&usqp=CAU";
+            Report.FilePath = ServerCredential.BaseUrl + "reports/files/" + Report.File;
+            //Report.FilePath = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7FB0RcV2PQHhD0kuwIWEAXkrAVGT74EoieA&usqp=CAU";
         }
     }
 }
