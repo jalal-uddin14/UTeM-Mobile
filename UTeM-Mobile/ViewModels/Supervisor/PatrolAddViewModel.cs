@@ -67,7 +67,12 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             ObjectResponse<Patrol> response = await _patrolService.InsertAsync(createPatrollUrl, content, Token);
             if (response.IsSuccess)
             {
+                await App.Current.MainPage.DisplayAlert("Success", "Route successfully assigned.", "OK");
                 await Shell.Current.GoToAsync("//PatrolListPage");
+            }
+            else
+            {
+                await App.Current.MainPage.DisplayAlert("Failed", "Route assign failed.", "OK");
             }
         }
 

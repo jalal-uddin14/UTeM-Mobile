@@ -39,6 +39,18 @@ namespace UTeM_Mobile.ViewModels
             try
             {
                 IsError = false;
+                if (User.Email == null || User.Email == "")
+                {
+                    IsError = true;
+                    ErrorMessage = "Email is required";
+                    return;
+                }
+                if (User.Password == null || User.Password == "")
+                {
+                    IsError = true;
+                    ErrorMessage = "Password is required";
+                    return;
+                }
                 string url = "accounts/login";
                 ObjectResponse<AuthToken> response = await _authService.InsertAsync(url, User);
                 if (response.IsSuccess && response.Data != null)

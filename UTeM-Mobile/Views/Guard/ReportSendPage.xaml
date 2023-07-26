@@ -10,14 +10,14 @@
     <ContentPage.BindingContext>
         <viewModel:ReportSendViewModel />
     </ContentPage.BindingContext>
-    <Grid RowDefinitions="50, 50, *, *, 80">
+    <Grid RowDefinitions="50, 50, *, *, 80, Auto">
         <StackLayout Grid.Row="0" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
             <Label Text="SoS" Style="{StaticResource HeaderLabel}"/>
         </StackLayout>
         <Grid Grid.Row="1" BackgroundColor="{StaticResource DashboardHeadColor}">
             <Label Text="{Binding User.Name}" TextColor="White" VerticalTextAlignment="Center" HorizontalOptions="CenterAndExpand"/>
         </Grid>
-        <Grid Grid.Row="2" ColumnDefinitions="0.3*, 0.7*" RowDefinitions="Auto, Auto, *" Margin="10">
+        <Grid Grid.Row="2" IsVisible="{Binding HasPatrol}" ColumnDefinitions="0.3*, 0.7*" RowDefinitions="Auto, Auto, *" Margin="10">
             <Frame Grid.Row="0" Grid.Column="0" Margin="5, 10" Padding="5, 10" HorizontalOptions="FillAndExpand" BorderColor="Gray">
                 <StackLayout HorizontalOptions="CenterAndExpand">
                     <Label Text="Route Name:" FontSize="12" HorizontalOptions="CenterAndExpand"/>
@@ -36,18 +36,31 @@
                     </Image>
                 </HorizontalStackLayout>
             </Frame>
-            <Frame Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" Margin="10" Padding="5">
+            <Frame IsVisible="{Binding HasPatrol}" Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" Margin="10" Padding="5">
                 <Image Source="{Binding PhotoResult.FullPath}" />
             </Frame>
         </Grid>
-        <Grid Grid.Row="3" Margin="5">
+        <Grid IsVisible="{Binding HasPatrol}" Grid.Row="3" Margin="5">
             <Frame Padding="5">
-                <Editor Text="{Binding Report.Description}" MinimumWidthRequest="350" WidthRequest="350" HorizontalOptions="StartAndExpand" HorizontalTextAlignment="Start"/>
+                <Editor Text="{Binding Report.Description}" MinimumWidthRequest="350" WidthRequest="350" HorizontalOptions="StartAndExpand" HorizontalTextAlignment="Start" Completed="Editor_Completed"/>
             </Frame>
         </Grid>
-        <Grid Grid.Row="4">
+        <Grid IsVisible="{Binding HasPatrol}" Grid.Row="5">
             <StackLayout Margin="10">
                 <Button Text="Send SoS" Style="{StaticResource SubmitButton}" Command="{Binding SendReportCommand}"/>
+            </StackLayout>
+        </Grid>
+        <Grid IsVisible="{Binding HasNoPatrol}" Grid.Row="2">
+            <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                <Label Text="No patrol today." />
+            </StackLayout>
+        </Grid>
+        <Grid IsVisible="{Binding HasPatrol}" Grid.Row="4">
+            <StackLayout IsVisible="{Binding IsErrorMessage}" VerticalOptions="CenterAndExpand">
+                <Label Text="{Binding Message}" TextColor="Red" HorizontalOptions="CenterAndExpand"/>
+            </StackLayout>
+            <StackLayout IsVisible="{Binding IsSuccessMessage}" VerticalOptions="CenterAndExpand">
+                <Label Text="{Binding Message}" TextColor="Green" HorizontalOptions="CenterAndExpand" />
             </StackLayout>
         </Grid>
     </Grid>

@@ -4,11 +4,12 @@ using System.Windows.Input;
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
+using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Models;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
-    public class ProfileViewModel : BaseViewModel
+    public class ProfileViewModel : MainViewModel, IOnAppearing
     {
         private IGenericService<ApplicationUser> _genericService;
         private ApplicationUser user;
@@ -46,11 +47,19 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             try
             {
                 string url = "accounts/update";
-                ObjectResponse<ApplicationUser> response = await _genericService.UpdateAsync(url, User, Token);
+                ObjectResponse<ApplicationUser> response = await _genericService.UpdateAsync(url, User, token);
+                IsSuccessMessage = response.IsSuccess;
+                Message = response.Message;
+                await GetProfileAsync();
             }
             catch (Exception ex)
             {
-
+                IsSuccessMessage = false;
+                Message = "Unexpected error occured!";
+            }
+            finally
+            {
+                DependencyService.Get<IKeyboardHelper>().HideKeyboard();
             }
         }
 
@@ -59,7 +68,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             Task.Run(async () => { await GetTokenAsync(); });
         }
 
-        private async Task GetTokenAsync()
+        public async Task GetTokenAsync()
         {
             Token = await LocalDBService.GetToken();
             if (Token != null)

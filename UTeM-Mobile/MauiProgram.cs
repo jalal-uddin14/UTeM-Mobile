@@ -20,7 +20,8 @@ public static class MauiProgram
 				fonts.AddFont("fa-regular-400.ttf", "FAregular");
 				fonts.AddFont("fa-solid-900.ttf", "FAsolid");
 				fonts.AddFont("fa-v4compatibility.ttf", "FAv4");
-			});
+			})
+			.UseMauiMaps();
         builder.Services.AddTransient<IGenericService<ApplicationUser>, GenericService<ApplicationUser>>();
         builder.Services.AddTransient<IGenericService<Route>, GenericService<Route>>();
         builder.Services.AddTransient<IGenericService<Patrol>, GenericService<Patrol>>();

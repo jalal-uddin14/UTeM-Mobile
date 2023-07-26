@@ -4,6 +4,8 @@
              x:Class="UTeM_Mobile.Views.Guard.PatrolDetailPage"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Guard"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
+             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
+             xmlns:sensors="clr-namespace:Microsoft.Maui.Devices.Sensors;assembly=Microsoft.Maui.Essentials"
              BackgroundColor="White"
              Shell.NavBarIsVisible="False">
 

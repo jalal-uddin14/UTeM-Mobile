@@ -12,20 +12,31 @@ using UTeM_Mobile.Models;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
-    public class ReportSendViewModel : BaseViewModel, IOnAppearing
+    public class ReportSendViewModel : MainViewModel, IOnAppearing
     {
         private IGenericService<Report> _genericService;
         private IGenericService<ApplicationUser> _genericUserService;
         private IGenericService<Patrol> _genericPatrolService;
+        private bool hasPatrol;
+        private bool hasNoPatrol;
         private Report report;
         private FileResult photoResult;
-        private AuthToken token;
         private ApplicationUser user;
         private Patrol patrol;
 
         public ICommand TakePhotoCommand { get; }
         public ICommand SendReportCommand { get; }
 
+        public bool HasPatrol
+        {
+            get => hasPatrol;
+            set
+            {
+                SetProperty(ref hasPatrol, value);
+                HasNoPatrol = !value;
+            }
+        }
+        public bool HasNoPatrol { get => hasNoPatrol; set => SetProperty(ref hasNoPatrol, value); }
         public Report Report { get => report; set => SetProperty(ref report, value); }
         public FileResult PhotoResult { get => photoResult; set => SetProperty(ref photoResult, value); }
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
@@ -70,17 +81,43 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         private async Task ExecuteSendReport()
         {
-            string url = "reports";
-            var requestContent = new MultipartFormDataContent();
-            var imageContent = new ByteArrayContent(File.ReadAllBytes(PhotoResult.FullPath));
-            imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
-            requestContent.Add(imageContent, "file", "image.jpg");
-            requestContent.Add(new StringContent(Report.Description), "Description");
-            requestContent.Add(new StringContent(token.UserId), "guardId");
-            requestContent.Add(new StringContent(Patrol.Id.ToString()), "patrolId");
-            requestContent.Add(new StringContent(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")), "date");
-            ObjectResponse<Report> response = await _genericService.PostFile(url, requestContent, token);
-            var report = response.Data;
+            try
+            {
+                if (string.IsNullOrWhiteSpace(Report.Description))
+                {
+                    IsSuccessMessage = false;
+                    Message = "SoS Message required";
+                    return;
+                }
+                string url = "reports";
+                var requestContent = new MultipartFormDataContent();
+                if (PhotoResult != null)
+                {
+                    var imageContent = new ByteArrayContent(File.ReadAllBytes(PhotoResult.FullPath));
+                    imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
+                    requestContent.Add(imageContent, "file", "image.jpg");
+                }
+                requestContent.Add(new StringContent(Report.Description), "Description");
+                requestContent.Add(new StringContent(token.UserId), "guardId");
+                requestContent.Add(new StringContent(Patrol.Id.ToString()), "patrolId");
+                requestContent.Add(new StringContent(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")), "date");
+                ObjectResponse<Report> response = await _genericService.PostFile(url, requestContent, token);
+                IsSuccessMessage = response.IsSuccess;
+                Message = response.Message;
+                if (IsSuccessMessage)
+                {
+                    Report = new Report();
+                }
+            }
+            catch(Exception ex)
+            {
+                IsSuccessMessage = false;
+                Message = "Unexpected error occured!";
+            }
+            finally
+            {
+                DependencyService.Get<IKeyboardHelper>().HideKeyboard();
+            }
         }
 
         public void OnAppearing()
@@ -106,9 +143,17 @@ namespace UTeM_Mobile.ViewModels.Guard
         }
         private async Task GetUserPatrol()
         {
-            string url = "patrols/status";
-            ObjectResponse<Patrol> response = await _genericPatrolService.InsertAsync(url, null, token);
-            Patrol = response.Data;
+            try
+            {
+                string url = "patrols/status";
+                ObjectResponse<Patrol> response = await _genericPatrolService.InsertAsync(url, null, token);
+                Patrol = response.Data;
+                HasPatrol = response.Data != null;
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ using UTeM_Mobile.Models;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
-    public class ProfileViewModel : BaseViewModel, IOnAppearing
+    public class ProfileViewModel : MainViewModel, IOnAppearing
     {
         private AuthToken token;
         private IGenericService<ApplicationUser> _genericUserService;
@@ -23,6 +23,7 @@ namespace UTeM_Mobile.ViewModels.Guard
         public ProfileViewModel()
         {
             _genericUserService = new GenericService<ApplicationUser>();
+            UpdateProfileCommand = new AsyncCommand(ExecuteUpdateProfile);
             LogoutCommand = new AsyncCommand(ExecuteLogout);
         }
         private async Task ExecuteUpdateProfile()
@@ -31,10 +32,18 @@ namespace UTeM_Mobile.ViewModels.Guard
             {
                 string url = "accounts/update";
                 ObjectResponse<ApplicationUser> response = await _genericUserService.UpdateAsync(url, User, token);
+                IsSuccessMessage = response.IsSuccess;
+                Message = response.Message;
+                await GetUserDetailAsync();
             }
             catch (Exception ex)
             {
-
+                IsSuccessMessage = false;
+                Message = "Unexpected error occured!";
+            }
+            finally
+            {
+                DependencyService.Get<IKeyboardHelper>().HideKeyboard();
             }
         }
         private async Task ExecuteLogout()

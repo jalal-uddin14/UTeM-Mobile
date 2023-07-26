@@ -8,7 +8,7 @@
     <ContentPage.BindingContext>
         <viewModel:ProfileViewModel />
     </ContentPage.BindingContext>
-    <Grid RowDefinitions="100, 50, *, *">
+    <Grid RowDefinitions="80, 50, Auto, Auto, Auto">
         <Grid Grid.Row="0" ColumnDefinitions="0.8*, 0.2*">
             <StackLayout Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" BackgroundColor="{StaticResource DashboardHeadColor}" Padding="20">
                 <Frame BackgroundColor="Transparent" Margin="10, 0" Padding="0" CornerRadius="25" HeightRequest="55">
@@ -33,8 +33,8 @@
         <StackLayout Grid.Row="1" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
             <Label Text="Basic Information" Style="{StaticResource HeaderLabel}"/>
         </StackLayout>
-        <StackLayout Grid.Row="2" Padding="5" Margin="50, 10">
-            <Grid RowDefinitions="*, *, *, *" ColumnDefinitions="0.5*, 0.5*" RowSpacing="20">
+        <StackLayout Grid.Row="2" Padding="5" Margin="20, 10">
+            <Grid RowDefinitions="*, *, *, *" ColumnDefinitions="0.4*, 0.60*" RowSpacing="20">
                 <Grid Grid.Row="0" Grid.Column="0">
                     <Label Text="Name:" VerticalOptions="CenterAndExpand"/>
                 </Grid>
@@ -65,7 +65,15 @@
                 </Grid>
             </Grid>
         </StackLayout>
-        <Grid Grid.Row="3" Margin="50, 0">
+        <Grid Grid.Row="3" Margin="5" Padding="5">
+            <StackLayout IsVisible="{Binding IsErrorMessage}" VerticalOptions="CenterAndExpand">
+                <Label Text="{Binding Message}" TextColor="Red" HorizontalOptions="CenterAndExpand"/>
+            </StackLayout>
+            <StackLayout IsVisible="{Binding IsSuccessMessage}" VerticalOptions="CenterAndExpand">
+                <Label Text="{Binding Message}" TextColor="Green" HorizontalOptions="CenterAndExpand" />
+            </StackLayout>
+        </Grid>
+        <Grid Grid.Row="4" Margin="50, 0">
             <Button Text="Update Profile" Command="{Binding UpdateProfileCommand}" Style="{StaticResource SubmitButton}"/>
         </Grid>
     </Grid>

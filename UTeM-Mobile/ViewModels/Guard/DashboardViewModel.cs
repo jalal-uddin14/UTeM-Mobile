@@ -1,5 +1,4 @@
 ﻿using MvvmHelpers.Commands;
-using MvvmHelpers;
 using System.Windows.Input;
 using UTeM_Mobile.Models;
 using UTeM_Mobile.Core.Services;
@@ -10,12 +9,11 @@ using UTeM_Mobile.Interfaces;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
-    public class DashboardViewModel : BaseViewModel, IOnAppearing
+    public class DashboardViewModel : MainViewModel, IOnAppearing
     {
         private IGenericService<Patrol> _genericService;
         private IGenericService<ApplicationUser> _genericUserService;
         private IGenericService<PatrolCheckpoint> _genericPatrolCheckpointService;
-        private AuthToken token;
         private bool hasNoPatrol;
         private bool hasPatrol;
         private bool isStarted;
@@ -82,8 +80,16 @@ namespace UTeM_Mobile.ViewModels.Guard
                     checkedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
                 };
                 objectResponse = await _genericPatrolCheckpointService.InsertAsync(patrolCheckpointUrl, content, token);
+                if (objectResponse.IsSuccess)
+                {
+                    await App.Current.MainPage.DisplayAlert("Success", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint successfully scaned.", "OK");
+                }
+                else
+                {
+                    await App.Current.MainPage.DisplayAlert("Failed", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint scan failed.", "OK");
+                }
             }
-            else
+            else if (response.Data.PatrolCheckpoints.Count < response.Data.Route.RouteCheckpoints.Count)
             {
                 int index = 0;
                 var checkpoints = response.Data.Route.RouteCheckpoints;
@@ -103,6 +109,22 @@ namespace UTeM_Mobile.ViewModels.Guard
                     checkedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
                 };
                 objectResponse = await _genericPatrolCheckpointService.InsertAsync(patrolCheckpointUrl, content, token);
+                if (objectResponse.IsSuccess)
+                {
+                    await App.Current.MainPage.DisplayAlert("Success", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint successfully scaned.", "OK");
+                }
+                else
+                {
+                    await App.Current.MainPage.DisplayAlert("Failed", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint scan failed.", "OK");
+                }
+                if (index == checkpoints.Count - 1)
+                {
+                    await ExecuteEnd();
+                }
+            }
+            else
+            {
+                await App.Current.MainPage.DisplayAlert("Success", "All checkpoint scanned.", "OK", FlowDirection.RightToLeft);
             }
         }
 
@@ -131,6 +153,14 @@ namespace UTeM_Mobile.ViewModels.Guard
             };
             ObjectResponse<Patrol> response = await _genericService.UpdateAsync(url, content, token);
             IsStarted = response.IsSuccess;
+            if (response.IsSuccess)
+            {
+                await App.Current.MainPage.DisplayAlert("Success", "Patrol started.", "OK");
+            }
+            else
+            {
+                await App.Current.MainPage.DisplayAlert("Failed", "Patrol start failed.", "OK");
+            }
         }
 
         private async Task ExecuteEnd()
@@ -144,6 +174,14 @@ namespace UTeM_Mobile.ViewModels.Guard
             };
             ObjectResponse<Patrol> response = await _genericService.UpdateAsync(url, content, token);
             IsStarted = !response.IsSuccess;
+            if (response.IsSuccess)
+            {
+                await App.Current.MainPage.DisplayAlert("Success", "Patrol ended.", "OK");
+            }
+            else
+            {
+                await App.Current.MainPage.DisplayAlert("Failed", "Patrol end failed.", "OK");
+            }
         }
 
         public void OnAppearing()
@@ -175,7 +213,7 @@ namespace UTeM_Mobile.ViewModels.Guard
         {
             string url = "patrols/status";
             ObjectResponse<Patrol> response = await _genericService.InsertAsync(url, null, token);
-            if (response.IsSuccess && response.Data != null)
+            if (response.IsSuccess && response.Data != null && response.Data.Status != "Completed")
             {
                 HasNoPatrol = false;
                 Patrol = response.Data;
