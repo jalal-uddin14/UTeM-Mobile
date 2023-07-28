@@ -1,28 +1,19 @@
+using UTeM_Mobile.ViewModels.Supervisor;
+
 namespace UTeM_Mobile.Views.Supervisor;
 
 public partial class WhatsAppPage : ContentPage
 {
+    private WhatsAppViewModel viewModel;
 	public WhatsAppPage()
 	{
 		InitializeComponent();
 	}
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
-    }
-
-    private async void Button_Clicked(object sender, EventArgs e)
-    {
-        var phoneNumber = "01924241969";
-        try
-        {
-            await Launcher.Default.OpenAsync($"whatsapp://send?phone=+88{phoneNumber}");
-        }
-        catch (Exception ex)
-        {
-
-        }
-
+        viewModel = BindingContext as WhatsAppViewModel;
+        viewModel.OnAppearing();
     }
 }

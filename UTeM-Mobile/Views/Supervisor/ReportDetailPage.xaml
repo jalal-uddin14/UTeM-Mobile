@@ -17,7 +17,7 @@
         <StackLayout Grid.Row="1" BackgroundColor="{StaticResource White}" Padding="10, 5">
             <StackLayout Orientation="Horizontal">
                 <Frame BackgroundColor="Transparent" Margin="10, 0" Padding="0" CornerRadius="25" HeightRequest="45">
-                    <Image Source="logo" HeightRequest="40"/>
+                    <Image Source="logo_only.jpg" HeightRequest="40"/>
                 </Frame>
                 <StackLayout VerticalOptions="CenterAndExpand">
                     <Label Text="{Binding Report.GuardName}" TextColor="Black" FontAttributes="Bold"/>

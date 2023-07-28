@@ -52,7 +52,7 @@
         </Grid>
         <Grid IsVisible="{Binding HasNoPatrol}" Grid.Row="2">
             <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                <Label Text="No patrol today." />
+                <Label Text="Patrol not started." />
             </StackLayout>
         </Grid>
         <Grid IsVisible="{Binding HasPatrol}" Grid.Row="4">

@@ -52,8 +52,10 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         public DashboardViewModel()
         {
+            User = new ApplicationUser();
             Patrol = new Patrol();
             IsStarted = false;
+            HasNoPatrol = true;
             _genericService = new GenericService<Patrol>();
             _genericUserService = new GenericService<ApplicationUser>();
             _genericPatrolCheckpointService = new GenericService<PatrolCheckpoint>();
@@ -67,64 +69,71 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         private async Task ExecuteScanAsync()
         {
-            string url = "patrols/" + Patrol.Id;
-            string patrolCheckpointUrl = "patrolCheckpoints/mark";
-            ObjectResponse<Patrol> response = await _genericService.GetDetailsAsync(url, token);
-            ObjectResponse<PatrolCheckpoint> objectResponse = null;
-            if (response.Data.PatrolCheckpoints.Count <= 0)
+            try
             {
-                var content = new
+                string url = "patrols/" + Patrol.Id;
+                string patrolCheckpointUrl = "patrolCheckpoints/mark";
+                ObjectResponse<Patrol> response = await _genericService.GetDetailsAsync(url, token);
+                ObjectResponse<PatrolCheckpoint> objectResponse = null;
+                if (response.Data.PatrolCheckpoints.Count <= 0)
                 {
-                    patrolId = Patrol.Id,
-                    checkpointId = response.Data.Route.RouteCheckpoints.FirstOrDefault().CheckpointId,
-                    checkedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                };
-                objectResponse = await _genericPatrolCheckpointService.InsertAsync(patrolCheckpointUrl, content, token);
-                if (objectResponse.IsSuccess)
-                {
-                    await App.Current.MainPage.DisplayAlert("Success", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint successfully scaned.", "OK");
-                }
-                else
-                {
-                    await App.Current.MainPage.DisplayAlert("Failed", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint scan failed.", "OK");
-                }
-            }
-            else if (response.Data.PatrolCheckpoints.Count < response.Data.Route.RouteCheckpoints.Count)
-            {
-                int index = 0;
-                var checkpoints = response.Data.Route.RouteCheckpoints;
-                for (int i = 0; i < checkpoints.Count; i++)
-                {
-                    var isFound = response.Data.PatrolCheckpoints.Where(p => p.CheckpointId == checkpoints[i].CheckpointId).FirstOrDefault();
-                    if (isFound == null)
+                    var content = new
                     {
-                        index = i;
-                        break;
+                        patrolId = Patrol.Id,
+                        checkpointId = response.Data.Route.RouteCheckpoints.FirstOrDefault().CheckpointId,
+                        checkedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    };
+                    objectResponse = await _genericPatrolCheckpointService.InsertAsync(patrolCheckpointUrl, content, token);
+                    if (objectResponse.IsSuccess)
+                    {
+                        await App.Current.MainPage.DisplayAlert("Success", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint successfully scaned.", "OK");
+                    }
+                    else
+                    {
+                        await App.Current.MainPage.DisplayAlert("Failed", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint scan failed.", "OK");
                     }
                 }
-                var content = new
+                else if (response.Data.PatrolCheckpoints.Count < response.Data.Route.RouteCheckpoints.Count)
                 {
-                    patrolId = Patrol.Id,
-                    checkpointId = response.Data.Route.RouteCheckpoints[index].CheckpointId,
-                    checkedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                };
-                objectResponse = await _genericPatrolCheckpointService.InsertAsync(patrolCheckpointUrl, content, token);
-                if (objectResponse.IsSuccess)
-                {
-                    await App.Current.MainPage.DisplayAlert("Success", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint successfully scaned.", "OK");
+                    int index = 0;
+                    var checkpoints = response.Data.Route.RouteCheckpoints;
+                    for (int i = 0; i < checkpoints.Count; i++)
+                    {
+                        var isFound = response.Data.PatrolCheckpoints.Where(p => p.CheckpointId == checkpoints[i].CheckpointId).FirstOrDefault();
+                        if (isFound == null)
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+                    var content = new
+                    {
+                        patrolId = Patrol.Id,
+                        checkpointId = response.Data.Route.RouteCheckpoints[index].CheckpointId,
+                        checkedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    };
+                    objectResponse = await _genericPatrolCheckpointService.InsertAsync(patrolCheckpointUrl, content, token);
+                    if (objectResponse.IsSuccess)
+                    {
+                        await App.Current.MainPage.DisplayAlert("Success", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint successfully scaned.", "OK");
+                    }
+                    else
+                    {
+                        await App.Current.MainPage.DisplayAlert("Failed", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint scan failed.", "OK");
+                    }
+                    if (index == checkpoints.Count - 1)
+                    {
+                        await ExecuteEnd();
+                    }
                 }
                 else
                 {
-                    await App.Current.MainPage.DisplayAlert("Failed", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint scan failed.", "OK");
-                }
-                if (index == checkpoints.Count - 1)
-                {
-                    await ExecuteEnd();
+                    await App.Current.MainPage.DisplayAlert("Success", "All checkpoint scanned.", "OK", FlowDirection.RightToLeft);
                 }
             }
-            else
+            catch(Exception ex)
             {
-                await App.Current.MainPage.DisplayAlert("Success", "All checkpoint scanned.", "OK", FlowDirection.RightToLeft);
+
             }
         }
 
@@ -144,22 +153,29 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         private async Task ExecuteStart()
         {
-            string url = "patrols/update-status";
-            var content = new
+            try
             {
-                Id = Patrol.Id,
-                Status = "Started",
-                StartedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-            };
-            ObjectResponse<Patrol> response = await _genericService.UpdateAsync(url, content, token);
-            IsStarted = response.IsSuccess;
-            if (response.IsSuccess)
-            {
-                await App.Current.MainPage.DisplayAlert("Success", "Patrol started.", "OK");
+                string url = "patrols/update-status";
+                var content = new
+                {
+                    Id = Patrol.Id,
+                    Status = "Started",
+                    StartedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                };
+                ObjectResponse<Patrol> response = await _genericService.UpdateAsync(url, content, token);
+                IsStarted = response.IsSuccess;
+                if (response.IsSuccess)
+                {
+                    await App.Current.MainPage.DisplayAlert("Success", "Patrol started.", "OK");
+                }
+                else
+                {
+                    await App.Current.MainPage.DisplayAlert("Failed", "Patrol start failed.", "OK");
+                }
             }
-            else
+            catch(Exception ex )
             {
-                await App.Current.MainPage.DisplayAlert("Failed", "Patrol start failed.", "OK");
+
             }
         }
 
@@ -191,35 +207,56 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         public async Task GetTokenAsync()
         {
-            token = await LocalDBService.GetToken();
-            if (token != null)
+            try
             {
-                await GetUserDetailAsync();
-                await GetUserPatrol();
+                token = await LocalDBService.GetToken();
+                if (token != null)
+                {
+                    await GetUserDetailAsync();
+                    await GetUserPatrol();
+                }
+            }
+            catch(Exception ex)
+            {
+
             }
         }
 
         private async Task GetUserDetailAsync()
         {
-            string url = "accounts/me";
-            ObjectResponse<ApplicationUser> response = await _genericUserService.GetDetailsAsync(url, token);
-            if (response != null)
+            try
             {
-                User = response.Data;
+                string url = "accounts/me";
+                ObjectResponse<ApplicationUser> response = await _genericUserService.GetDetailsAsync(url, token);
+                if (response != null)
+                {
+                    User = response.Data;
+                }
+            }
+            catch(Exception ex)
+            {
+
             }
         }
 
         private async Task GetUserPatrol()
         {
-            string url = "patrols/status";
-            ObjectResponse<Patrol> response = await _genericService.InsertAsync(url, null, token);
-            if (response.IsSuccess && response.Data != null && response.Data.Status != "Completed")
+            try
             {
-                HasNoPatrol = false;
-                Patrol = response.Data;
-                IsStarted = Patrol.Status == "Started";
+                string url = "patrols/status";
+                ObjectResponse<Patrol> response = await _genericService.InsertAsync(url, null, token);
+                if (response.IsSuccess && response.Data != null && response.Data.Status != "Completed")
+                {
+                    HasNoPatrol = false;
+                    Patrol = response.Data;
+                    IsStarted = Patrol.Status == "Started";
+                }
+                else
+                {
+                    HasNoPatrol = true;
+                }
             }
-            else
+            catch (Exception ex)
             {
                 HasNoPatrol = true;
             }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UTeM_Mobile.PopupViews.SoSPopupPage"
+             xmlns:viewmodel="clr-namespace:UTeM_Mobile.PopupViewModels"
+             Title="SoSPopupPage">
+    <ContentPage.BindingContext>
+        <viewmodel:SoSPopupViewModel />
+    </ContentPage.BindingContext>
+    <Frame VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Margin="20, 10" Padding="10">
+        <StackLayout>
+            <StackLayout BackgroundColor="{StaticResource DashboardHeadColor}" Padding="10">
+                <Label Text="SoS Notification" TextColor="White" HorizontalOptions="CenterAndExpand"/>
+            </StackLayout>
+            <StackLayout BackgroundColor="Transparent" Margin="10">
+                <Label Text="{Binding NotificationMessage}" TextColor="Black" FontSize="12" FontAttributes="Bold" />
+            </StackLayout>
+            <StackLayout BackgroundColor="Transparent" Padding="10">
+                <Label Text="{Binding Description, StringFormat='Description: {0}'}" TextColor="Black"/>
+            </StackLayout>
+            <StackLayout BackgroundColor="Transparent" Padding="10" Orientation="Horizontal" Margin="5, 10">
+                <Button Text="Close" Style="{StaticResource ModalButton}" BackgroundColor="Red" HorizontalOptions="StartAndExpand" Command="{Binding ClosePopViewCommand}"/>
+                <Button Text="SoS List" Style="{StaticResource ModalButton}" BackgroundColor="Green" HorizontalOptions="EndAndExpand" Command="{Binding NavigateToSoSListCommand}"/>
+            </StackLayout>
+        </StackLayout>
+    </Frame>
+</ContentPage>

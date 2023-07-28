@@ -1,10 +1,8 @@
 ﻿using MvvmHelpers;
-using MvvmHelpers.Commands;
-using System.Windows.Input;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Models;
-using UTeM_Mobile.Views;
+using UTeM_Mobile.Services;
 
 namespace UTeM_Mobile.ViewModels
 {
@@ -33,6 +31,7 @@ namespace UTeM_Mobile.ViewModels
             {
                 if (token.UserRole == "Supervisor")
                 {
+                    await PusherService.SubscribeGuardChannel();
                     await MainThread.InvokeOnMainThreadAsync(() =>
                     {
                         Application.Current.MainPage = new SupervisorShell();

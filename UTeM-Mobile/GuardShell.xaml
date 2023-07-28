@@ -16,9 +16,7 @@
             <Tab.Icon>
                 <FontImageSource FontFamily="FAbrands" Glyph="{StaticResource IconWhatsapp}" Color="Green" />
             </Tab.Icon>
-            <ShellContent ContentTemplate="{DataTemplate views:WhatsAppPage}" Route="WhatsAppPage">
-                <Button Clicked="Button_Clicked" />
-            </ShellContent>
+            <ShellContent ContentTemplate="{DataTemplate views:WhatsAppPage}" Route="WhatsAppPage" />
         </Tab>
         <Tab Title="Report">
             <Tab.Icon>

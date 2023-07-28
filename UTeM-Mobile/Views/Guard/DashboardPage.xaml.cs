@@ -1,5 +1,4 @@
 using UTeM_Mobile.ViewModels.Guard;
-using Flashlight = Xamarin.Essentials.Flashlight;
 
 namespace UTeM_Mobile.Views.Guard;
 
@@ -26,18 +25,18 @@ public partial class DashboardPage : ContentPage
         {
             if (!isFlashOn)
             {
-                await Flashlight.TurnOnAsync();
+                await Flashlight.Default.TurnOnAsync();
                 isFlashOn = true;
             }
             else
             {
-                await Flashlight.TurnOffAsync();
+                await Flashlight.Default.TurnOffAsync();
                 isFlashOn = false;
             }
         }
         catch (Exception ex)
         {
-            // Unable to turn on/off flashlight
+            await DisplayAlert("Error", ex.Message, "Ok");
         }
     }
 }

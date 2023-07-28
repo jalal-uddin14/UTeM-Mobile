@@ -2,10 +2,14 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="UTeM_Mobile.Views.Guard.WhatsAppPage"
+             xmlns:viewmodel="clr-namespace:UTeM_Mobile.ViewModels.Guard"
              BackgroundColor="White"
-             Shell.NavBarIsVisible="False"
-             Title="WhatsAppPage">
+             Shell.NavBarIsVisible="False">
+    <ContentPage.BindingContext>
+        <viewmodel:WhatsAppViewModel />
+    </ContentPage.BindingContext>
     <VerticalStackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-        <Button Text="Open WhatsApp" Clicked="Button_Clicked" />
+        <Label Text="Opening WhatsApp" />
+        <ActivityIndicator IsRunning="True" Color="Black"/>
     </VerticalStackLayout>
 </ContentPage>

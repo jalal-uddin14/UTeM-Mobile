@@ -148,7 +148,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 string url = "patrols/status";
                 ObjectResponse<Patrol> response = await _genericPatrolService.InsertAsync(url, null, token);
                 Patrol = response.Data;
-                HasPatrol = response.Data != null;
+                HasPatrol = response.Data != null && response.Data.Status == "Started";
             }
             catch(Exception ex)
             {

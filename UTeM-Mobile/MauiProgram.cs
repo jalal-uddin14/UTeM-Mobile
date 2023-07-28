@@ -1,4 +1,5 @@
-﻿using UTeM_Mobile.Core.IServices;
+﻿using Plugin.LocalNotification;
+using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Models;
@@ -21,6 +22,7 @@ public static class MauiProgram
 				fonts.AddFont("fa-solid-900.ttf", "FAsolid");
 				fonts.AddFont("fa-v4compatibility.ttf", "FAv4");
 			})
+			.UseLocalNotification()
 			.UseMauiMaps();
         builder.Services.AddTransient<IGenericService<ApplicationUser>, GenericService<ApplicationUser>>();
         builder.Services.AddTransient<IGenericService<Route>, GenericService<Route>>();

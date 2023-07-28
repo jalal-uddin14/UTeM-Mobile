@@ -11,9 +11,4 @@ public partial class GuardShell : Shell
 		Routing.RegisterRoute("GuardPatrolDetailPage", typeof(PatrolDetailPage));
 		Routing.RegisterRoute("GuardProfilePage", typeof(ProfilePage));
 	}
-
-    private void Button_Clicked(object sender, EventArgs e)
-    {
-
-    }
 }

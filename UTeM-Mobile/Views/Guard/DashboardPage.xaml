@@ -23,7 +23,7 @@
                 <TapGestureRecognizer Command="{Binding NavigateToProfileCommand}"/>
             </StackLayout.GestureRecognizers>
             <Frame BackgroundColor="Transparent" Margin="10, 0" Padding="0" CornerRadius="25" HeightRequest="55">
-                <Image Source="logo" HeightRequest="50"/>
+                <Image Source="logo_only.jpg" HeightRequest="50"/>
             </Frame>
             <StackLayout VerticalOptions="CenterAndExpand">
                 <Label Text="{Binding User.Name}" TextColor="White" FontAttributes="Bold"/>
@@ -33,8 +33,8 @@
         <Frame Grid.Row="1" VerticalOptions="CenterAndExpand" BorderColor="Transparent">
             <Image Source="logo.jpg" />
         </Frame>
-        <Grid Grid.Row="2" IsVisible="{Binding HasPatrol}">
-            <Grid Grid.Row="1" IsVisible="{Binding IsStarted}">
+        <Grid Grid.Row="2" RowDefinitions="*" IsVisible="{Binding HasPatrol}">
+            <Grid Grid.Row="0" IsVisible="{Binding IsStarted}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="0.25*" />
                     <RowDefinition Height="0.25*" />
@@ -63,9 +63,9 @@
                     <Button Text="End" Style="{StaticResource DashboarCenterdButton}" BackgroundColor="{StaticResource RedButtonColor}" Command="{Binding EndCommand}"/>
                 </Frame>
             </Grid>
-            <Grid Grid.Row="1" IsVisible="{Binding IsNotStarted}" Style="{StaticResource DashboardButtonFrame}">
+            <Frame Grid.Row="0" IsVisible="{Binding IsNotStarted}" Style="{StaticResource DashboardButtonFrame}">
                 <Button Text="Start" Style="{StaticResource DashboarCenterdButton}" BackgroundColor="{StaticResource GreenButtonColor}" Command="{Binding StartCommand}"/>
-            </Grid>
+            </Frame>
         </Grid>
         <Grid Grid.Row="2" IsVisible="{Binding HasNoPatrol}">
             <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">

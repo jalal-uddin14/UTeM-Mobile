@@ -12,7 +12,7 @@
         <Grid Grid.Row="0" ColumnDefinitions="0.8*, 0.2*">
             <StackLayout Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" BackgroundColor="{StaticResource DashboardHeadColor}" Padding="20">
                 <Frame BackgroundColor="Transparent" Margin="10, 0" Padding="0" CornerRadius="25" HeightRequest="55">
-                    <Image Source="logo" HeightRequest="50"/>
+                    <Image Source="logo_only.jpg" HeightRequest="50"/>
                 </Frame>
                 <StackLayout VerticalOptions="CenterAndExpand">
                     <Label Text="{Binding User.Name}" TextColor="White" FontAttributes="Bold"/>

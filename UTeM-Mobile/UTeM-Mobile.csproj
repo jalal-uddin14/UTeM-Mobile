@@ -64,10 +64,16 @@
 	  <None Remove="Resources\Images\e_smartguardheader.png" />
 	  <None Remove="Resources\Images\guard.png" />
 	  <None Remove="Resources\Images\logo.jpg" />
+	  <None Remove="Resources\Images\logo_only.jpg" />
+	  <None Remove="Resources\Images\logo_only.png" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.Maui.Controls.Maps" Version="7.0.92" />
+	  <PackageReference Include="Microsoft.Maui.Maps" Version="7.0.92" />
+	  <PackageReference Include="Nito.AsyncEx.Context" Version="5.1.2" />
+	  <PackageReference Include="Plugin.LocalNotification" Version="10.1.8" />
+	  <PackageReference Include="PusherClient" Version="2.2.1" />
 	  <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
 	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.5" />
@@ -82,6 +88,9 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="GuardShell.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="PopupViews\SoSPopupPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Resources\Styles\Icons.xaml">

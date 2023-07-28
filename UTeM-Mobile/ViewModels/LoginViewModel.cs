@@ -4,8 +4,10 @@ using System.Windows.Input;
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
+using UTeM_Mobile.Data.StaticCredentials;
 using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Models;
+using UTeM_Mobile.Services;
 
 namespace UTeM_Mobile.ViewModels
 {
@@ -61,6 +63,7 @@ namespace UTeM_Mobile.ViewModels
                     await LocalDBService.InsertToken(AuthToken);
                     if (response.Data.UserRole == "Supervisor")
                     {
+                        await PusherService.SubscribeGuardChannel();
                         await MainThread.InvokeOnMainThreadAsync(() =>
                         {
                             Application.Current.MainPage = new SupervisorShell();

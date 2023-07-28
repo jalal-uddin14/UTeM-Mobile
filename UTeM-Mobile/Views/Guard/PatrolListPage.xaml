@@ -15,7 +15,7 @@
                 <TapGestureRecognizer/>
             </StackLayout.GestureRecognizers>
             <Frame BackgroundColor="Transparent" Margin="10, 0" Padding="0" CornerRadius="25" HeightRequest="55">
-                <Image Source="logo" HeightRequest="50"/>
+                <Image Source="logo_only.jpg" HeightRequest="50"/>
             </Frame>
             <StackLayout VerticalOptions="CenterAndExpand">
                 <Label Text="{Binding User.Name}" TextColor="White" FontAttributes="Bold"/>
