@@ -3,6 +3,7 @@ using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Core.Models;
+using UTeM_Mobile.PopupViews;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
@@ -42,19 +43,60 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         private async Task GetPatrolDetailAsync()
         {
-            IsBusy = true;
-            if (Id != null)
+            try
             {
-                string url = "patrols/" + Id;
-                ObjectResponse<Patrol> response = await _genericService.GetDetailsAsync(url, Token);
-                Patrol = response.Data;
-                await CheckRouteCheckpointStatusAsync();
+                IsBusy = true;
+                if (Id != null)
+                {
+                    string url = "patrols/" + Id;
+                    ObjectResponse<Patrol> response = await _genericService.GetDetailsAsync(url, Token);
+                    if (response.IsSuccess && response.Data != null)
+                    {
+                        Patrol = response.Data;
+                        await CheckRouteCheckpointStatusAsync();
+                    }
+                    else
+                    {
+                        Dictionary<string, string> popupContent = new Dictionary<string, string>
+                        {
+                            { "Heading", "Error" },
+                            { "Title", "Unexpected error occured" },
+                            { "Message",  response.Message},
+                            { "NavigateTo", "" },
+                            { "HasNavigate", "" },
+                        };
+                        await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                    }
+                }
+                else
+                {
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                    {
+                        { "Heading", "Error" },
+                        { "Title", "Internal error occured" },
+                        { "Message", "" },
+                        { "NavigateTo", "" },
+                        { "HasNavigate", "" },
+                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                }
             }
-            else
+            catch(Exception ex)
             {
-                Console.WriteLine("Exception");
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                {
+                    { "Heading", "Error" },
+                    { "Title", "Server error occured" },
+                    { "Message", "" },
+                    { "NavigateTo", "" },
+                    { "HasNavigate", "" },
+                };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
             }
-            IsBusy = false;
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task CheckRouteCheckpointStatusAsync()
@@ -65,11 +107,11 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                 Patrol.Route.RouteCheckpoints[i].IsNotLast = i < Patrol.Route.RouteCheckpoints.Count - 1;
                 url = "patrolCheckpoints/check";
                 var content = new { patrolId = Id, checkpointId = Patrol.Route.RouteCheckpoints[i].CheckpointId };
-                ObjectResponse<PatrolCheckpoint> res = await _patrolCheckpointService.PostAsync(url, content);
-                if (res.Data != null)
+                ObjectResponse<PatrolCheckpoint> response = await _patrolCheckpointService.PostAsync(url, content, Token);
+                if (response.IsSuccess && response.Data != null)
                 {
-                    Patrol.Route.RouteCheckpoints[i].IsChecked = res.Data.Status == "Completed";
-                    Patrol.Route.RouteCheckpoints[i].IsScheduled = res.Data.Status == "Scheduled";
+                    Patrol.Route.RouteCheckpoints[i].IsChecked = response.Data.Status == "Completed";
+                    Patrol.Route.RouteCheckpoints[i].IsScheduled = response.Data.Status == "Scheduled";
                     Patrol.Route.RouteCheckpoints[i].NotFound = false;
                 }
             }

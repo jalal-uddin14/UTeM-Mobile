@@ -3,6 +3,7 @@ using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Core.Models;
+using UTeM_Mobile.PopupViews;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
@@ -40,9 +41,39 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         private async Task GetGuardDetail()
         {
-            string url = "guards/" + Id;
-            ObjectResponse<ApplicationUser> response = await _genericService.GetDetailsAsync(url, Token);
-            Guard = response.Data;
+            try
+            {
+                string url = "guards/" + Id;
+                ObjectResponse<ApplicationUser> response = await _genericService.GetDetailsAsync(url, Token);
+                if (response != null && response.Data != null)
+                {
+                    Guard = response.Data;
+                }
+                else
+                {
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                    {
+                        { "Heading", "Error" },
+                        { "Title", "Unexpected error occured" },
+                        { "Message",  response.Message},
+                        { "NavigateTo", "" },
+                        { "HasNavigate", "" },
+                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                }
+            }
+            catch (Exception ex)
+            {
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                {
+                    { "Heading", "Error" },
+                    { "Title", "Server error occured" },
+                    { "Message", "" },
+                    { "NavigateTo", "" },
+                    { "HasNavigate", "" },
+                };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+            }
         }
     }
 }

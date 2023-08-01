@@ -4,6 +4,7 @@ using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Core.Models;
+using UTeM_Mobile.PopupViews;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
@@ -42,19 +43,60 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         private async Task GetPatrolDetailAsync()
         {
-            IsBusy = true;
-            if (Id != null)
+            try
             {
-                string url = "patrols/" + Id;
-                ObjectResponse<Patrol> response = await _genericService.GetDetailsAsync(url, token);
-                Patrol = response.Data;
-                await CheckRouteCheckpointStatusAsync();
+                IsBusy = true;
+                if (Id != null)
+                {
+                    string url = "patrols/" + Id;
+                    ObjectResponse<Patrol> response = await _genericService.GetDetailsAsync(url, token);
+                    if (response.IsSuccess && response.Data != null)
+                    {
+                        Patrol = response.Data;
+                        await CheckRouteCheckpointStatusAsync();
+                    }
+                    else
+                    {
+                        Dictionary<string, string> popupContent = new Dictionary<string, string>
+                        {
+                            { "Heading", "Error" },
+                            { "Title", "Unexpected error occured" },
+                            { "Message",  response.Message},
+                            { "NavigateTo", "" },
+                            { "HasNavigate", "" },
+                        };
+                        await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                    }
+                }
+                else
+                {
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                    {
+                        { "Heading", "Error" },
+                        { "Title", "Internal error occured" },
+                        { "Message", "" },
+                        { "NavigateTo", "" },
+                        { "HasNavigate", "" },
+                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine("Exception");
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                {
+                    { "Heading", "Error" },
+                    { "Title", "Server error occured" },
+                    { "Message", "" },
+                    { "NavigateTo", "" },
+                    { "HasNavigate", "" },
+                };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
             }
-            IsBusy = false;
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task CheckRouteCheckpointStatusAsync()

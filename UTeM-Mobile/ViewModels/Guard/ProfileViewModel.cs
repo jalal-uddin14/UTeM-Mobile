@@ -1,11 +1,11 @@
-﻿using MvvmHelpers;
-using MvvmHelpers.Commands;
+﻿using MvvmHelpers.Commands;
 using System.Windows.Input;
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Core.Models;
+using UTeM_Mobile.PopupViews;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
@@ -33,17 +33,40 @@ namespace UTeM_Mobile.ViewModels.Guard
                 string url = "accounts/update";
                 ObjectResponse<ApplicationUser> response = await _genericUserService.PutAsync(url, User, token);
                 IsSuccessMessage = response.IsSuccess;
-                Message = response.Message;
-                await GetUserDetailAsync();
+                if (IsSuccessMessage)
+                {
+                    Message = response.Message;
+                }
+                else
+                {
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                    {
+                        { "Heading", "Error" },
+                        { "Title", "Internal error occured" },
+                        { "Message", response.Message },
+                        { "NavigateTo", "" },
+                        { "HasNavigate", "" },
+                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                }
             }
             catch (Exception ex)
             {
                 IsSuccessMessage = false;
-                Message = "Unexpected error occured!";
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                    {
+                        { "Heading", "Error" },
+                        { "Title", "Internal error occured" },
+                        { "Message", "" },
+                        { "NavigateTo", "" },
+                        { "HasNavigate", "" },
+                    };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
             }
             finally
             {
                 DependencyService.Get<IKeyboardHelper>().HideKeyboard();
+                await GetUserDetailAsync();
             }
         }
         private async Task ExecuteLogout()
@@ -78,11 +101,38 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         private async Task GetUserDetailAsync()
         {
-            string url = "accounts/me";
-            ObjectResponse<ApplicationUser> response = await _genericUserService.GetDetailsAsync(url, token);
-            if (response != null)
+            try
             {
-                User = response.Data;
+                string url = "accounts/me";
+                ObjectResponse<ApplicationUser> response = await _genericUserService.GetDetailsAsync(url, token);
+                if (response.IsSuccess && response.Data != null)
+                {
+                    User = response.Data;
+                }
+                else
+                {
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                    {
+                        { "Heading", "Error" },
+                        { "Title", "Internal error occured" },
+                        { "Message", response.Message },
+                        { "NavigateTo", "" },
+                        { "HasNavigate", "" },
+                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                }
+            }
+            catch (Exception ex)
+            {
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                {
+                    { "Heading", "Error" },
+                    { "Title", "Server error occured" },
+                    { "Message", "" },
+                    { "NavigateTo", "" },
+                    { "HasNavigate", "" },
+                };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
             }
         }
     }

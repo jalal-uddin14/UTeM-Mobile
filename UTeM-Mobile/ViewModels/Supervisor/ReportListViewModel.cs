@@ -3,6 +3,8 @@ using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Core.Models;
+using System.Windows.Input;
+using UTeM_Mobile.PopupViews;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
@@ -10,6 +12,8 @@ namespace UTeM_Mobile.ViewModels.Supervisor
     {
         private IGenericService<Report> _genericService;
         private AuthToken token;
+
+        public ICommand NavigateToDetailCommand { get; }
 
         public ObservableRangeCollection<Report> ReportList { get; set; }
         public AuthToken Token { get => token; set => SetProperty(ref token, value); }
@@ -39,14 +43,38 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         {
             try
             {
+                ReportList.Clear();
                 string url = "reports";
                 PaginatedResponse<Report> response = await _genericService.GetPagedListAsync(url, Token);
-                ReportList.Clear();
-                ReportList.AddRange(response.Data.Data);
+                if (response.IsSuccess && response.Data != null && response.Data.Data != null)
+                {
+                    ReportList.AddRange(response.Data.Data);
+                }
+                else
+                {
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                {
+                    { "Heading", "Error" },
+                    { "Title", "Internal error occured" },
+                    { "Message", response.Message },
+                    { "NavigateTo", "" },
+                    { "HasNavigate", "" },
+                };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                }
+
             }
             catch(Exception ex)
             {
-
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                {
+                    { "Heading", "Error" },
+                    { "Title", "Server error occured" },
+                    { "Message", "" },
+                    { "NavigateTo", "" },
+                    { "HasNavigate", "" },
+                };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
             }
             finally
             {

@@ -34,11 +34,17 @@
                 <Label Text="Route name" FontSize="12" TextColor="Black"/>
                 <Label Text="{Binding Patrol.Route.Name}" FontAttributes="Bold" TextColor="Black"/>
             </StackLayout>
+            <StackLayout Grid.Row="1">
+                <Label Text="Patrol schedule" FontSize="12" TextColor="Black"/>
+                <HorizontalStackLayout>
+                    <Label Text="{Binding Patrol.Start, StringFormat='{0:D}'}" FontAttributes="Bold" TextColor="Black"/>
+                </HorizontalStackLayout>
+            </StackLayout>
             <StackLayout Grid.Row="2">
                 <Label Text="Patrol schedule" FontSize="12" TextColor="Black"/>
                 <HorizontalStackLayout>
-                    <Label Text="{Binding Patrol.Start, StringFormat='{0} - '}" FontAttributes="Bold" TextColor="Black"/>
-                    <Label Text="{Binding Patrol.End, StringFormat=' {0}'}" FontAttributes="Bold" TextColor="Black"/>
+                    <Label Text="{Binding Patrol.Start, StringFormat='{0:t} - '}" FontAttributes="Bold" TextColor="Black"/>
+                    <Label Text="{Binding Patrol.End, StringFormat=' {0:t}'}" FontAttributes="Bold" TextColor="Black"/>
                 </HorizontalStackLayout>
             </StackLayout>
             <StackLayout Grid.Row="3">

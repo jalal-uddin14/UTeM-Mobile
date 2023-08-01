@@ -6,6 +6,7 @@ using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Core.Models;
+using UTeM_Mobile.PopupViews;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
@@ -22,6 +23,10 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         private TimeSpan startTime;
         private DateTime endDate;
         private TimeSpan endTime;
+        private bool isGuardNotVisible;
+        private bool isGuardVisible;
+        private bool isRouteNotVisible;
+        private bool isRouteVisible;
 
         public ICommand CreatePatrolCommand { get; }
         public ObservableRangeCollection<ApplicationUser> GuardList { get; }
@@ -34,6 +39,26 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         public TimeSpan StartTime { get => startTime; set => SetProperty(ref startTime, value); }
         public DateTime EndDate { get => endDate; set => SetProperty(ref endDate, value); }
         public TimeSpan EndTime { get => endTime; set => SetProperty(ref endTime, value); }
+        public bool IsGuardNotVisible
+        {
+            get => isGuardNotVisible;
+            set
+            {
+                SetProperty(ref isGuardNotVisible, value);
+                IsGuardVisible = !value;
+            }
+        }
+        public bool IsGuardVisible { get => isGuardVisible; set => SetProperty(ref isGuardVisible, value); }
+        public bool IsRouteNotVisible
+        {
+            get => isRouteNotVisible;
+            set
+            {
+                SetProperty(ref isRouteNotVisible, value);
+                IsRouteVisible = !value;
+            }
+        }
+        public bool IsRouteVisible { get => isRouteVisible; set => SetProperty(ref isRouteVisible, value); }
 
         public PatrolAddViewModel()
         {
@@ -54,30 +79,62 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         private async Task ExecuteCreatePatrol()
         {
-            string createPatrollUrl = "patrols";
-            string start = StartDate.ToString("yyyy-MM-dd ") + new DateTime(StartTime.Ticks).ToString("HH:mm:ss");
-            string end = EndDate.ToString("yyyy-MM-dd ") + new DateTime(EndTime.Ticks).ToString("HH:mm:ss");
-            var content = new
+            try
             {
-                GuardId = SelectedGuard.Id,
-                RouteId = SelectedRoute.Id,
-                Start = start,
-                End = end,
-            };
-            ObjectResponse<Patrol> response = await _patrolService.PostAsync(createPatrollUrl, content, Token);
-            if (response.IsSuccess)
-            {
-                await App.Current.MainPage.DisplayAlert("Success", "Route successfully assigned.", "OK");
-                await Shell.Current.GoToAsync("//PatrolListPage");
+                string createPatrollUrl = "patrols";
+                string start = StartDate.ToString("yyyy-MM-dd ") + new DateTime(StartTime.Ticks).ToString("HH:mm:ss");
+                string end = EndDate.ToString("yyyy-MM-dd ") + new DateTime(EndTime.Ticks).ToString("HH:mm:ss");
+                var content = new
+                {
+                    GuardId = SelectedGuard.Id,
+                    RouteId = SelectedRoute.Id,
+                    Start = start,
+                    End = end,
+                };
+                ObjectResponse<Patrol> response = await _patrolService.PostAsync(createPatrollUrl, content, Token);
+                if (response.IsSuccess)
+                {
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                    {
+                        { "Type", "Patrol" },
+                        { "Heading", "Route assign" },
+                        { "Title", "Route successfully assigned." },
+                        { "Message", "" },
+                        { "NavigateTo", "PatrolListPage" },
+                        { "HasNavigate", "true" },
+                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                }
+                else
+                {
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                    {
+                        { "Heading", "Error" },
+                        { "Title", "Route assign failed." },
+                        { "Message", response.Message },
+                        { "NavigateTo", "" },
+                        { "HasNavigate", "" },
+                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await App.Current.MainPage.DisplayAlert("Failed", "Route assign failed.", "OK");
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                {
+                    { "Heading", "Error" },
+                    { "Title", "Server error occured" },
+                    { "Message", "" },
+                    { "NavigateTo", "" },
+                    { "HasNavigate", "" },
+                };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
             }
         }
 
         public void OnAppearing()
         {
+            IsGuardNotVisible = IsRouteNotVisible = true;
             Task.Run(async () => { await GetTokenAsync(); });
         }
 
@@ -93,18 +150,85 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         private async Task GetGuardListAsync()
         {
-            string guardUrl = "guards";
-            PaginatedResponse<ApplicationUser> response = await _userService.GetPagedListAsync(guardUrl, Token);
-            GuardList.Clear();
-            GuardList.AddRange(response.Data.Data);
+            try
+            {
+                IsGuardNotVisible = true;
+                GuardList.Clear();
+                string guardUrl = "guards";
+                PaginatedResponse<ApplicationUser> response = await _userService.GetPagedListAsync(guardUrl, Token);
+                if (response.IsSuccess && response.Data != null && response.Data.Data != null)
+                {
+                    GuardList.AddRange(response.Data.Data);
+                    IsGuardNotVisible = false;
+                }
+                else
+                {
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                    {
+                        { "Heading", "Error" },
+                        { "Title", "Unexpected error occured" },
+                        { "Message",  response.Message},
+                        { "NavigateTo", "" },
+                        { "HasNavigate", "" },
+                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                }
+
+            }
+            catch(Exception ex)
+            {
+                GuardList.Clear();
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                {
+                    { "Heading", "Error" },
+                    { "Title", "Server error occured" },
+                    { "Message", "" },
+                    { "NavigateTo", "" },
+                    { "HasNavigate", "" },
+                };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+            }
         }
 
         private async Task GetRouteListAsync()
         {
-            string guardUrl = "routes";
-            PaginatedResponse<Route> response = await _routeService.GetPagedListAsync(guardUrl, Token);
-            RouteList.Clear();
-            RouteList.AddRange(response.Data.Data);
+            try
+            {
+                IsRouteNotVisible = true;
+                RouteList.Clear();
+                string guardUrl = "routes";
+                PaginatedResponse<Route> response = await _routeService.GetPagedListAsync(guardUrl, Token);
+                if (response.IsSuccess && response.Data != null && response.Data.Data != null)
+                {
+                    RouteList.AddRange(response.Data.Data);
+                    IsRouteNotVisible = false;
+                }
+                else
+                {
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                    {
+                        { "Heading", "Error" },
+                        { "Title", "Unexpected error occured" },
+                        { "Message",  response.Message},
+                        { "NavigateTo", "" },
+                        { "HasNavigate", "" },
+                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                }
+            }
+            catch(Exception ex)
+            {
+                RouteList.Clear();
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                {
+                    { "Heading", "Error" },
+                    { "Title", "Server error occured" },
+                    { "Message", "" },
+                    { "NavigateTo", "" },
+                    { "HasNavigate", "" },
+                };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+            }
         }
     }
 }

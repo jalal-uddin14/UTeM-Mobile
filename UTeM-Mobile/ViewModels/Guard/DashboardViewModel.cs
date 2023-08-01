@@ -298,9 +298,21 @@ namespace UTeM_Mobile.ViewModels.Guard
             {
                 string url = "accounts/me";
                 ObjectResponse<ApplicationUser> response = await _genericUserService.GetDetailsAsync(url, token);
-                if (response != null)
+                if (response.IsSuccess && response != null)
                 {
                     User = response.Data;
+                }
+                else
+                {
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                                    {
+                                        { "Heading", "Error" },
+                                        { "Title", "Internal error occured." },
+                                        { "Message", response.Message },
+                                        { "NavigateTo", "" },
+                                        { "HasNavigate", "false" }
+                                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
                 }
             }
             catch(Exception ex)
@@ -308,8 +320,8 @@ namespace UTeM_Mobile.ViewModels.Guard
                 Dictionary<string, string> popupContent = new Dictionary<string, string>
                                     {
                                         { "Heading", "Error" },
-                                        { "Title", "" },
-                                        { "Message", "Internal error occured." },
+                                        { "Title", "Internal error occured." },
+                                        { "Message", "" },
                                         { "NavigateTo", "" },
                                         { "HasNavigate", "false" }
                                     };
@@ -336,9 +348,21 @@ namespace UTeM_Mobile.ViewModels.Guard
                         NoPatrolMessage = "Patrol complete for today.";
                     }
                 }
+                else if (response.IsSuccess)
+                {
+                    NoPatrolMessage = "No patrol for today.";
+                }
                 else
                 {
-                    NoPatrolMessage = "No patrol for today";
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                                    {
+                                        { "Heading", "Error" },
+                                        { "Title", "Internal error occured." },
+                                        { "Message", response.Message },
+                                        { "NavigateTo", "" },
+                                        { "HasNavigate", "false" }
+                                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
                 }
             }
             catch (Exception ex)

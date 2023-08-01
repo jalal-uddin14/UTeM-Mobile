@@ -6,6 +6,7 @@ using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Core.Models;
+using UTeM_Mobile.PopupViews;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
@@ -49,16 +50,39 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                 string url = "accounts/update";
                 ObjectResponse<ApplicationUser> response = await _genericService.PutAsync(url, User, token);
                 IsSuccessMessage = response.IsSuccess;
-                Message = response.Message;
-                await GetProfileAsync();
+                if (IsSuccessMessage)
+                {
+                    Message = response.Message;
+                }
+                else
+                {
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                    {
+                        { "Heading", "Error" },
+                        { "Title", "Internal error occured" },
+                        { "Message", response.Message },
+                        { "NavigateTo", "" },
+                        { "HasNavigate", "" },
+                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                }
             }
             catch (Exception ex)
             {
                 IsSuccessMessage = false;
-                Message = "Unexpected error occured!";
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                    {
+                        { "Heading", "Error" },
+                        { "Title", "Internal error occured" },
+                        { "Message", "" },
+                        { "NavigateTo", "" },
+                        { "HasNavigate", "" },
+                    };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
             }
             finally
             {
+                await GetProfileAsync();
                 DependencyService.Get<IKeyboardHelper>().HideKeyboard();
             }
         }
@@ -79,9 +103,39 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         private async Task GetProfileAsync()
         {
-            string url = "accounts/me";
-            ObjectResponse<ApplicationUser> response = await _genericService.GetDetailsAsync(url, Token);
-            User = response.Data;
+            try
+            {
+                string url = "accounts/me";
+                ObjectResponse<ApplicationUser> response = await _genericService.GetDetailsAsync(url, Token);
+                if (response.IsSuccess && response.Data != null)
+                {
+                    User = response.Data;
+                }
+                else
+                {
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                    {
+                        { "Heading", "Error" },
+                        { "Title", "Internal error occured" },
+                        { "Message", response.Message },
+                        { "NavigateTo", "" },
+                        { "HasNavigate", "" },
+                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                }
+            }
+            catch (Exception ex)
+            {
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                {
+                    { "Heading", "Error" },
+                    { "Title", "Server error occured" },
+                    { "Message", "" },
+                    { "NavigateTo", "" },
+                    { "HasNavigate", "" },
+                };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+            }
         }
     }
 }

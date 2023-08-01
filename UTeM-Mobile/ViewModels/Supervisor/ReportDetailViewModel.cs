@@ -4,6 +4,7 @@ using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Data.StaticCredentials;
 using UTeM_Mobile.Core.Models;
+using UTeM_Mobile.PopupViews;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
@@ -47,11 +48,25 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         private async Task GetReportDetail()
         {
-            string url = "reports/" + Id;
-            ObjectResponse<Report> response = await _genericService.GetDetailsAsync(url,Token);
-            Report = response.Data;
-            Report.FilePath = ServerCredential.BaseUrl + "reports/files/" + Report.File;
-            //Report.FilePath = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7FB0RcV2PQHhD0kuwIWEAXkrAVGT74EoieA&usqp=CAU";
+            try
+            {
+                string url = "reports/" + Id;
+                ObjectResponse<Report> response = await _genericService.GetDetailsAsync(url, Token);
+                Report = response.Data;
+                Report.FilePath = ServerCredential.BaseUrl + "reports/files/" + Report.File;
+            }
+            catch (Exception ex)
+            {
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                {
+                    { "Heading", "Error" },
+                    { "Title", "Server error occured" },
+                    { "Message", "" },
+                    { "NavigateTo", "" },
+                    { "HasNavigate", "" },
+                };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+            }
         }
     }
 }

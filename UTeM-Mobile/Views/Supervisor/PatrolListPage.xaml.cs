@@ -1,6 +1,5 @@
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.ViewModels.Supervisor;
-using DeviceDisplay = Microsoft.Maui.Devices.DeviceDisplay;
 
 namespace UTeM_Mobile.Views.Supervisor;
 

@@ -75,7 +75,15 @@ namespace UTeM_Mobile.ViewModels.Guard
             }
             catch (Exception ex)
             {
-
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                    {
+                        { "Heading", "Error" },
+                        { "Title", "Internal error occured" },
+                        { "Message", "" },
+                        { "NavigateTo", "" },
+                        { "HasNavigate", "" },
+                    };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
             }
         }
 
@@ -106,7 +114,20 @@ namespace UTeM_Mobile.ViewModels.Guard
                 Message = response.Message;
                 if (IsSuccessMessage)
                 {
+                    PhotoResult = null;
                     Report = new Report();
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                                    {
+                                        { "Heading", "SoS notification" },
+                                        { "Title", response.Message },
+                                        { "Message", "" },
+                                        { "NavigateTo", "" },
+                                        { "HasNavigate", "false" }
+                                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                }
+                else
+                {
                     Dictionary<string, string> popupContent = new Dictionary<string, string>
                                     {
                                         { "Heading", "SoS notification" },

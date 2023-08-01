@@ -2,7 +2,7 @@
 {
     public class ServerCredential
     {
-        public static string BaseUrl { get; set; } = "https://10.0.2.2:7082/api/";
-        //public static string BaseUrl { get; set; } = "http://shahadat001-001-site1.ctempurl.com/api/";
+        //public static string BaseUrl { get; set; } = "https://10.0.2.2:7082/api/";
+        public static string BaseUrl { get; set; } = "http://shahadat001-001-site1.ctempurl.com/api/";
     }
 }
