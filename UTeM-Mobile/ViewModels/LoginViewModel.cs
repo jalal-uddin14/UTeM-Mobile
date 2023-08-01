@@ -1,20 +1,18 @@
-﻿using MvvmHelpers;
-using MvvmHelpers.Commands;
+﻿using MvvmHelpers.Commands;
+using Plugin.NFC;
 using System.Windows.Input;
 using UTeM_Mobile.Core.IServices;
+using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
-using UTeM_Mobile.Data.StaticCredentials;
 using UTeM_Mobile.Interfaces;
-using UTeM_Mobile.Models;
 using UTeM_Mobile.Services;
 
 namespace UTeM_Mobile.ViewModels
 {
-    public class LoginViewModel : BaseViewModel
+    public class LoginViewModel : MainViewModel
     {
         private bool isRemember;
-        private bool isError;
         private string errorMessage;
         private AuthToken authToken;
         private ApplicationUser user;
@@ -22,14 +20,12 @@ namespace UTeM_Mobile.ViewModels
 
         public ICommand LoginCommand { get; }
         public bool IsRemember { get => isRemember; set => SetProperty(ref isRemember, value); }
-        public bool IsError { get => isError; set => SetProperty(ref isError, value); }
         public string ErrorMessage { get => errorMessage; set => SetProperty(ref errorMessage, value); }
         public AuthToken AuthToken { get => authToken; set => SetProperty(ref authToken, value); }
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
 
         public LoginViewModel()
         {
-            IsError = false;
             AuthToken = new AuthToken();
             User = new ApplicationUser();
             _authService = new GenericService<AuthToken>();
@@ -40,21 +36,22 @@ namespace UTeM_Mobile.ViewModels
         {
             try
             {
-                IsError = false;
+                IsErrorMessage = false;
+                Message_list.Clear();
+                ErrorHeight = 0;
                 if (User.Email == null || User.Email == "")
                 {
-                    IsError = true;
-                    ErrorMessage = "Email is required";
+                    SetErrorMessage("Email is required");
                     return;
                 }
                 if (User.Password == null || User.Password == "")
                 {
-                    IsError = true;
-                    ErrorMessage = "Password is required";
+                    SetErrorMessage("Password is required");
                     return;
                 }
+                IsBusy = true;
                 string url = "accounts/login";
-                ObjectResponse<AuthToken> response = await _authService.InsertAsync(url, User);
+                ObjectResponse<AuthToken> response = await _authService.PostAsync(url, User);
                 if (response.IsSuccess && response.Data != null)
                 {
                     AuthToken = response.Data;
@@ -71,6 +68,18 @@ namespace UTeM_Mobile.ViewModels
                     }
                     else if (response.Data.UserRole == "Guard")
                     {
+                        if (!CrossNFC.Current.IsAvailable)
+                        {
+                            await App.Current.MainPage.DisplayAlert("Failed", "NFC is not available in your phone.", "OK");
+                        }
+                        else if (!CrossNFC.Current.IsEnabled)
+                        {
+                            await App.Current.MainPage.DisplayAlert("Failed", "NFC is not active in your phone.", "OK");
+                        }
+                        else
+                        {
+                            NFCService.SubscribeNFC();
+                        }
                         await MainThread.InvokeOnMainThreadAsync(() =>
                         {
                             Application.Current.MainPage = new GuardShell();
@@ -79,8 +88,8 @@ namespace UTeM_Mobile.ViewModels
                 }
                 else
                 {
-                    IsError = true;
-                    ErrorMessage = response.Message;
+                    IsBusy = false;
+                    SetErrorMessage(response.Message, response.Errors);
                 }
             }
             catch (Exception ex)

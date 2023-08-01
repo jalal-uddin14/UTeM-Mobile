@@ -1,17 +1,20 @@
 ﻿using MvvmHelpers.Commands;
 using System.Windows.Input;
-using UTeM_Mobile.Models;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Views.Guard;
 using UTeM_Mobile.Interfaces;
+using UTeM_Mobile.StaticProperties;
+using UTeM_Mobile.Core.Models;
+using UTeM_Mobile.PopupViews;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
     public class DashboardViewModel : MainViewModel, IOnAppearing
     {
-        private IGenericService<Patrol> _genericService;
+        private IGenericService<Patrol> _genericPatrolService;
+        private IGenericService<Checkpoint> _genericCheckpointService;
         private IGenericService<ApplicationUser> _genericUserService;
         private IGenericService<PatrolCheckpoint> _genericPatrolCheckpointService;
         private bool hasNoPatrol;
@@ -20,6 +23,7 @@ namespace UTeM_Mobile.ViewModels.Guard
         private bool isNotStarted;
         private Patrol patrol;
         private ApplicationUser user;
+        private string noPatrolMessage;
 
         public ICommand ScanCommand { get; }
         public ICommand NavigateToProfileCommand { get; }
@@ -49,6 +53,7 @@ namespace UTeM_Mobile.ViewModels.Guard
         public bool IsNotStarted { get => isNotStarted; set => SetProperty(ref isNotStarted, value); }
         public Patrol Patrol { get => patrol; set => SetProperty(ref patrol, value); }
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
+        public string NoPatrolMessage { get => noPatrolMessage; set => SetProperty(ref noPatrolMessage, value); }
 
         public DashboardViewModel()
         {
@@ -56,7 +61,8 @@ namespace UTeM_Mobile.ViewModels.Guard
             Patrol = new Patrol();
             IsStarted = false;
             HasNoPatrol = true;
-            _genericService = new GenericService<Patrol>();
+            _genericPatrolService = new GenericService<Patrol>();
+            _genericCheckpointService = new GenericService<Checkpoint>();
             _genericUserService = new GenericService<ApplicationUser>();
             _genericPatrolCheckpointService = new GenericService<PatrolCheckpoint>();
             ScanCommand = new AsyncCommand(ExecuteScanAsync);
@@ -73,7 +79,7 @@ namespace UTeM_Mobile.ViewModels.Guard
             {
                 string url = "patrols/" + Patrol.Id;
                 string patrolCheckpointUrl = "patrolCheckpoints/mark";
-                ObjectResponse<Patrol> response = await _genericService.GetDetailsAsync(url, token);
+                ObjectResponse<Patrol> response = await _genericPatrolService.GetDetailsAsync(url, token);
                 ObjectResponse<PatrolCheckpoint> objectResponse = null;
                 if (response.Data.PatrolCheckpoints.Count <= 0)
                 {
@@ -83,7 +89,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                         checkpointId = response.Data.Route.RouteCheckpoints.FirstOrDefault().CheckpointId,
                         checkedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
                     };
-                    objectResponse = await _genericPatrolCheckpointService.InsertAsync(patrolCheckpointUrl, content, token);
+                    objectResponse = await _genericPatrolCheckpointService.PostAsync(patrolCheckpointUrl, content, token);
                     if (objectResponse.IsSuccess)
                     {
                         await App.Current.MainPage.DisplayAlert("Success", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint successfully scaned.", "OK");
@@ -112,7 +118,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                         checkpointId = response.Data.Route.RouteCheckpoints[index].CheckpointId,
                         checkedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
                     };
-                    objectResponse = await _genericPatrolCheckpointService.InsertAsync(patrolCheckpointUrl, content, token);
+                    objectResponse = await _genericPatrolCheckpointService.PostAsync(patrolCheckpointUrl, content, token);
                     if (objectResponse.IsSuccess)
                     {
                         await App.Current.MainPage.DisplayAlert("Success", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint successfully scaned.", "OK");
@@ -162,41 +168,96 @@ namespace UTeM_Mobile.ViewModels.Guard
                     Status = "Started",
                     StartedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
                 };
-                ObjectResponse<Patrol> response = await _genericService.UpdateAsync(url, content, token);
+                ObjectResponse<Patrol> response = await _genericPatrolService.PutAsync(url, content, token);
                 IsStarted = response.IsSuccess;
-                if (response.IsSuccess)
+                if (IsStarted)
                 {
-                    await App.Current.MainPage.DisplayAlert("Success", "Patrol started.", "OK");
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                                    {
+                                        { "Heading", "Patrol notification" },
+                                        { "Title", response.Message },
+                                        { "Message", "" },
+                                        { "NavigateTo", "" },
+                                        { "HasNavigate", "false" }
+                                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
                 }
                 else
                 {
-                    await App.Current.MainPage.DisplayAlert("Failed", "Patrol start failed.", "OK");
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                                    {
+                                        { "Heading", "Patrol notification" },
+                                        { "Title", "Patrol Start Failed." },
+                                        { "Message", response.Message },
+                                        { "NavigateTo", "" },
+                                        { "HasNavigate", "false" }
+                                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
                 }
             }
             catch(Exception ex )
             {
-
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                                    {
+                                        { "Heading", "Error" },
+                                        { "Title", "" },
+                                        { "Message", "Internal error occured." },
+                                        { "NavigateTo", "" },
+                                        { "HasNavigate", "false" }
+                                    };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
             }
         }
 
         private async Task ExecuteEnd()
         {
-            string url = "patrols/update-status";
-            var content = new
+            try
             {
-                Id = Patrol.Id,
-                Status = "Completed",
-                StartedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-            };
-            ObjectResponse<Patrol> response = await _genericService.UpdateAsync(url, content, token);
-            IsStarted = !response.IsSuccess;
-            if (response.IsSuccess)
-            {
-                await App.Current.MainPage.DisplayAlert("Success", "Patrol ended.", "OK");
+                string url = "patrols/update-status";
+                var content = new
+                {
+                    Id = Patrol.Id,
+                    Status = "Completed",
+                    CompletedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                };
+                ObjectResponse<Patrol> response = await _genericPatrolService.PutAsync(url, content, token);
+                IsStarted = !response.IsSuccess;
+                if (response.IsSuccess)
+                {
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                                    {
+                                        { "Heading", "Patrol notification" },
+                                        { "Title", response.Message },
+                                        { "Message", "" },
+                                        { "NavigateTo", "" },
+                                        { "HasNavigate", "false" }
+                                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                }
+                else
+                {
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                                    {
+                                        { "Heading", "Patrol notification" },
+                                        { "Title", "Patrol End Failed." },
+                                        { "Message", response.Message },
+                                        { "NavigateTo", "" },
+                                        { "HasNavigate", "false" }
+                                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                }
             }
-            else
+            catch(Exception ex)
             {
-                await App.Current.MainPage.DisplayAlert("Failed", "Patrol end failed.", "OK");
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                                    {
+                                        { "Heading", "Error" },
+                                        { "Title", "" },
+                                        { "Message", "Internal error occured." },
+                                        { "NavigateTo", "" },
+                                        { "HasNavigate", "false" }
+                                    };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
             }
         }
 
@@ -214,11 +275,20 @@ namespace UTeM_Mobile.ViewModels.Guard
                 {
                     await GetUserDetailAsync();
                     await GetUserPatrol();
+                    await ShowMessageAsync();
                 }
             }
             catch(Exception ex)
             {
-
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                                    {
+                                        { "Heading", "Error" },
+                                        { "Title", "" },
+                                        { "Message", "Internal error occured." },
+                                        { "NavigateTo", "" },
+                                        { "HasNavigate", "false" }
+                                    };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
             }
         }
 
@@ -235,7 +305,15 @@ namespace UTeM_Mobile.ViewModels.Guard
             }
             catch(Exception ex)
             {
-
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                                    {
+                                        { "Heading", "Error" },
+                                        { "Title", "" },
+                                        { "Message", "Internal error occured." },
+                                        { "NavigateTo", "" },
+                                        { "HasNavigate", "false" }
+                                    };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
             }
         }
 
@@ -244,21 +322,48 @@ namespace UTeM_Mobile.ViewModels.Guard
             try
             {
                 string url = "patrols/status";
-                ObjectResponse<Patrol> response = await _genericService.InsertAsync(url, null, token);
-                if (response.IsSuccess && response.Data != null && response.Data.Status != "Completed")
+                ObjectResponse<Patrol> response = await _genericPatrolService.PostAsync(url, null, token);
+                if (response.IsSuccess && response.Data != null)
                 {
-                    HasNoPatrol = false;
-                    Patrol = response.Data;
-                    IsStarted = Patrol.Status == "Started";
+                    if (response.Data.Status == "Scheduled" || response.Data.Status == "Started")
+                    {
+                        HasNoPatrol = false;
+                        Patrol = response.Data;
+                        IsStarted = Patrol.Status == "Started";
+                    }
+                    else if (response.Data.Status == "Completed" || response.Data.Status == "Missed")
+                    {
+                        NoPatrolMessage = "Patrol complete for today.";
+                    }
                 }
                 else
                 {
-                    HasNoPatrol = true;
+                    NoPatrolMessage = "No patrol for today";
                 }
             }
             catch (Exception ex)
             {
                 HasNoPatrol = true;
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                                    {
+                                        { "Heading", "Error" },
+                                        { "Title", "" },
+                                        { "Message", "Internal error occured." },
+                                        { "NavigateTo", "" },
+                                        { "HasNavigate", "false" }
+                                    };
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+            }
+        }
+
+        private async Task ShowMessageAsync()
+        {
+
+            if (StaticMessage.HasNFCMessage)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() => App.Current.MainPage.DisplayAlert("Warning", StaticMessage.NFCMessage, "Ok"));
+                StaticMessage.NFCMessage = null;
+                StaticMessage.HasNFCMessage = false;
             }
         }
     }

@@ -4,7 +4,7 @@ using System.Windows.Input;
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
-using UTeM_Mobile.Models;
+using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Views.Supervisor;
 
 namespace UTeM_Mobile.ViewModels.Supervisor

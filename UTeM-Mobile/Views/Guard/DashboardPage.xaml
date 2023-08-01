@@ -22,10 +22,13 @@
             <StackLayout.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding NavigateToProfileCommand}"/>
             </StackLayout.GestureRecognizers>
-            <Frame BackgroundColor="Transparent" Margin="10, 0" Padding="0" CornerRadius="25" HeightRequest="55">
+            <Frame BackgroundColor="Transparent" Margin="10, 0" Padding="0" CornerRadius="25" HeightRequest="50">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NavigateToProfileCommand}"/>
+                </Frame.GestureRecognizers>
                 <Image Source="logo_only.jpg" HeightRequest="50"/>
             </Frame>
-            <StackLayout VerticalOptions="CenterAndExpand">
+            <StackLayout VerticalOptions="StartAndExpand">
                 <Label Text="{Binding User.Name}" TextColor="White" FontAttributes="Bold"/>
                 <Label Text="{Binding User.Role}" TextColor="White" FontSize="12" FontAttributes="Bold"/>
             </StackLayout>
@@ -68,8 +71,8 @@
             </Frame>
         </Grid>
         <Grid Grid.Row="2" IsVisible="{Binding HasNoPatrol}">
-            <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                <Label Text="No patrol today" FontSize="16" FontAttributes="Bold"/>
+            <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand">
+                <Label Text="{Binding NoPatrolMessage}" FontSize="16" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
             </StackLayout>
         </Grid>
     </Grid>

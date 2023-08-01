@@ -2,7 +2,7 @@
 using UTeM_Mobile.Data.StaticCredentials;
 using Newtonsoft.Json;
 using healholmes_xamarin.Services;
-using UTeM_Mobile.Models;
+using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Core.Services;
 using Nito.AsyncEx;
 using Plugin.LocalNotification;
@@ -59,7 +59,7 @@ namespace UTeM_Mobile.Services
                 Dictionary<string, string> response = JsonConvert.DeserializeObject<Dictionary<string, string>>(dictionary["data"]);
                 var request = new NotificationRequest
                 {
-                    Title = "SoS Notification",
+                    Title = response["title"],
                     Subtitle = response["message"],
                     Description = response["description"],
                     Android = new Plugin.LocalNotification.AndroidOption.AndroidOptions
@@ -67,10 +67,27 @@ namespace UTeM_Mobile.Services
                         VisibilityType = Plugin.LocalNotification.AndroidOption.AndroidVisibilityType.Public
                     }
                 };
+                Dictionary<string, string> popupContent = new Dictionary<string, string>
+                {
+                    { "Type", response["type"] },
+                    { "Heading", response["title"] },
+                    { "Title", response["message"] },
+                    { "Message", response["description"] }
+                };
+                if (response["type"] == "SoS")
+                {
+                    popupContent.Add("NavigateTo", "ReportListPage");
+                    popupContent.Add("HasNavigate", "true");
+                }
+                else if (response["type"] == "Patrol")
+                {
+                    popupContent.Add("NavigateTo", "PatrolListPage");
+                    popupContent.Add("HasNavigate", "true");
+                }
                 await LocalNotificationCenter.Current.Show(request);
                 LocalNotificationCenter.Current.NotificationActionTapped += NoficationAction_Tapped;
                 await Application.Current.MainPage.Navigation.PopToRootAsync(true);
-                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new SoSPopupPage(response)));
+                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
             }
             catch(Exception ex)
             {

@@ -5,7 +5,7 @@ using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
-using UTeM_Mobile.Models;
+using UTeM_Mobile.Core.Models;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
@@ -47,7 +47,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             try
             {
                 string url = "accounts/update";
-                ObjectResponse<ApplicationUser> response = await _genericService.UpdateAsync(url, User, token);
+                ObjectResponse<ApplicationUser> response = await _genericService.PutAsync(url, User, token);
                 IsSuccessMessage = response.IsSuccess;
                 Message = response.Message;
                 await GetProfileAsync();

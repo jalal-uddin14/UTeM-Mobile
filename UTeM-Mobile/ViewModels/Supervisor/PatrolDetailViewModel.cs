@@ -2,7 +2,7 @@
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
-using UTeM_Mobile.Models;
+using UTeM_Mobile.Core.Models;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
@@ -65,7 +65,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                 Patrol.Route.RouteCheckpoints[i].IsNotLast = i < Patrol.Route.RouteCheckpoints.Count - 1;
                 url = "patrolCheckpoints/check";
                 var content = new { patrolId = Id, checkpointId = Patrol.Route.RouteCheckpoints[i].CheckpointId };
-                ObjectResponse<PatrolCheckpoint> res = await _patrolCheckpointService.InsertAsync(url, content);
+                ObjectResponse<PatrolCheckpoint> res = await _patrolCheckpointService.PostAsync(url, content);
                 if (res.Data != null)
                 {
                     Patrol.Route.RouteCheckpoints[i].IsChecked = res.Data.Status == "Completed";

@@ -5,7 +5,7 @@ using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
-using UTeM_Mobile.Models;
+using UTeM_Mobile.Core.Models;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
@@ -64,7 +64,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                 Start = start,
                 End = end,
             };
-            ObjectResponse<Patrol> response = await _patrolService.InsertAsync(createPatrollUrl, content, Token);
+            ObjectResponse<Patrol> response = await _patrolService.PostAsync(createPatrollUrl, content, Token);
             if (response.IsSuccess)
             {
                 await App.Current.MainPage.DisplayAlert("Success", "Route successfully assigned.", "OK");

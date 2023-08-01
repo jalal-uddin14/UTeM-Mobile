@@ -73,6 +73,7 @@
 	  <PackageReference Include="Microsoft.Maui.Maps" Version="7.0.92" />
 	  <PackageReference Include="Nito.AsyncEx.Context" Version="5.1.2" />
 	  <PackageReference Include="Plugin.LocalNotification" Version="10.1.8" />
+	  <PackageReference Include="Plugin.NFC" Version="0.1.26" />
 	  <PackageReference Include="PusherClient" Version="2.2.1" />
 	  <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
@@ -90,7 +91,7 @@
 	  <MauiXaml Update="GuardShell.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="PopupViews\SoSPopupPage.xaml">
+	  <MauiXaml Update="PopupViews\MessagePopupPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Resources\Styles\Icons.xaml">

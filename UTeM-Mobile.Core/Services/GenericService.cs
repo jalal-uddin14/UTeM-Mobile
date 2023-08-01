@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System.Text;
 using UTeM_Mobile.Core.IServices;
+using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Data.StaticCredentials;
-using UTeM_Mobile.Models;
 
 namespace UTeM_Mobile.Core.Services
 {
@@ -77,7 +77,7 @@ namespace UTeM_Mobile.Core.Services
             }
         }
 
-        public async Task<ObjectResponse<T>> InsertAsync(string url, object content, AuthToken? token = null)
+        public async Task<ObjectResponse<T>> PostAsync(string url, object content, AuthToken? token = null)
         {
             try
             {
@@ -103,7 +103,7 @@ namespace UTeM_Mobile.Core.Services
             }
         }
 
-        public async Task<ObjectResponse<T>> UpdateAsync(string url, object content, AuthToken? token = null)
+        public async Task<ObjectResponse<T>> PutAsync(string url, object content, AuthToken? token = null)
         {
             try
             {

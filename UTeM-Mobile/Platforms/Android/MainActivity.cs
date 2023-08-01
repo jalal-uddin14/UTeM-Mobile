@@ -1,8 +1,10 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Javax.Net.Ssl;
 using Org.Apache.Http.Conn.Ssl;
+using Plugin.NFC;
 
 namespace UTeM_Mobile;
 
@@ -11,9 +13,26 @@ public class MainActivity : MauiAppCompatActivity
 {
     protected override void OnCreate(Bundle savedInstanceState)
     {
+        CrossNFC.Init(this);
 #if DEBUG
         HttpsURLConnection.DefaultHostnameVerifier = new AllowAllHostnameVerifier();
 #endif
         base.OnCreate(savedInstanceState);
+    }
+
+    protected override void OnResume()
+    {
+        base.OnResume();
+
+        // Plugin NFC: Restart NFC listening on resume (needed for Android 10+) 
+        CrossNFC.OnResume();
+    }
+
+    protected override void OnNewIntent(Intent intent)
+    {
+        base.OnNewIntent(intent);
+
+        // Plugin NFC: Tag Discovery Interception
+        CrossNFC.OnNewIntent(intent);
     }
 }

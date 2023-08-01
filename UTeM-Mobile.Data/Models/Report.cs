@@ -29,16 +29,12 @@ namespace UTeM_Mobile.Data.Models
         {
             get
             {
-                DateTime now = DateTime.Now;
+                DateTime now = DateTime.UtcNow.AddHours(8);
                 string difference = "";
                 var diff = now.Subtract(Date);
                 difference += diff.Days > 0 ? diff.Days + "d " : "";
                 difference += diff.Hours > 0 ? diff.Hours + "h " : diff.Days > 0 ? diff.Hours + "h " : "";
                 difference += diff.Minutes + "m";
-                //var days = diff.Days;
-                //var hours = diff.Hours;
-                //var minutes = diff.Minutes;
-                //return string.Format("{0}d {1}h {2}m", days, diff.Hours, diff.Minutes);
                 return difference;
             }
         }

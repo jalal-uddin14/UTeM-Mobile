@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using PusherClient;
 using UTeM_Mobile.Data.StaticCredentials;
-using UTeM_Mobile.Models;
+using UTeM_Mobile.Core.Models;
 
 namespace healholmes_xamarin.Services
 {

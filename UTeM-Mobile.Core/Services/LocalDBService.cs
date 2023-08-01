@@ -1,7 +1,7 @@
 ﻿using SQLite;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Data.StaticCredentials;
-using UTeM_Mobile.Models;
+using UTeM_Mobile.Core.Models;
 using Xamarin.Essentials;
 
 namespace UTeM_Mobile.Core.Services

@@ -1,3 +1,4 @@
+using UTeM_Mobile.StaticProperties;
 using UTeM_Mobile.ViewModels.Guard;
 
 namespace UTeM_Mobile.Views.Guard;

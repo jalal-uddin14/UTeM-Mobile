@@ -1,4 +1,4 @@
-﻿namespace UTeM_Mobile.Models
+﻿namespace UTeM_Mobile.Core.Models
 {
     public class ErrorView
     {

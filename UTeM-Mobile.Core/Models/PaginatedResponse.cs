@@ -1,6 +1,6 @@
-﻿namespace UTeM_Mobile.Models
+﻿namespace UTeM_Mobile.Core.Models
 {
-    public class PaginatedResponse<T>
+    public class PaginatedResponse<T> : Error
     {
         public Pagination<T> Data;
         public string Path;

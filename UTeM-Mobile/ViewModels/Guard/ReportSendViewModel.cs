@@ -1,5 +1,4 @@
-﻿using MvvmHelpers;
-using MvvmHelpers.Commands;
+﻿using MvvmHelpers.Commands;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
 using System.Net.Http.Headers;
@@ -8,7 +7,8 @@ using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
-using UTeM_Mobile.Models;
+using UTeM_Mobile.Core.Models;
+using UTeM_Mobile.PopupViews;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
@@ -107,6 +107,15 @@ namespace UTeM_Mobile.ViewModels.Guard
                 if (IsSuccessMessage)
                 {
                     Report = new Report();
+                    Dictionary<string, string> popupContent = new Dictionary<string, string>
+                                    {
+                                        { "Heading", "SoS notification" },
+                                        { "Title", response.Message },
+                                        { "Message", "" },
+                                        { "NavigateTo", "" },
+                                        { "HasNavigate", "false" }
+                                    };
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
                 }
             }
             catch(Exception ex)
@@ -146,7 +155,7 @@ namespace UTeM_Mobile.ViewModels.Guard
             try
             {
                 string url = "patrols/status";
-                ObjectResponse<Patrol> response = await _genericPatrolService.InsertAsync(url, null, token);
+                ObjectResponse<Patrol> response = await _genericPatrolService.PostAsync(url, null, token);
                 Patrol = response.Data;
                 HasPatrol = response.Data != null && response.Data.Status == "Started";
             }

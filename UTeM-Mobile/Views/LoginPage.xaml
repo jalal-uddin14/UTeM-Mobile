@@ -4,6 +4,7 @@
              x:Class="UTeM_Mobile.Views.LoginPage"
              BackgroundColor="White"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels"
+             xmlns:models="clr-namespace:UTeM_Mobile.Core.Models;assembly=UTeM-Mobile.Core"
              Shell.NavBarIsVisible="False"
              Title="Login">
 
@@ -21,8 +22,11 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
-                <Image Source="logo.jpg" />
+                <Image Source="logo.jpg"/>
             </Grid>
+            <StackLayout IsVisible="{Binding IsBusy}" Grid.Row="0" Margin="15, 5, 15, 20" Padding="0" VerticalOptions="EndAndExpand" BackgroundColor="White">
+                <ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource LoginButtonColor}" />
+            </StackLayout>
             <Frame Grid.Row="1" Style="{StaticResource LoginPageFrame}" BorderColor="Grey">
                 <HorizontalStackLayout>
                     <Image HeightRequest="20" Margin="10, 0" HorizontalOptions="StartAndExpand">
@@ -43,24 +47,36 @@
                     <Entry Placeholder="Password" MinimumWidthRequest="200" Text="{Binding User.Password}" IsPassword="True" HorizontalOptions="Fill" Completed="Entry_Completed" />
                 </HorizontalStackLayout>
             </Frame>
-            <Frame Grid.Row="3" Style="{StaticResource LoginPageFrame}" Padding="0" BorderColor="Transparent">
+            <Frame Grid.Row="3" Style="{StaticResource LoginPageFrame}" Padding="0, 0, 0, 5" BorderColor="Transparent">
                 <HorizontalStackLayout VerticalOptions="CenterAndExpand">
-                    <CheckBox IsChecked="{Binding IsRemember}" Color="Blue"/>
+                    <CheckBox IsChecked="{Binding IsRemember}" Color="{StaticResource LoginButtonColor}"/>
                     <StackLayout>
                         <StackLayout.GestureRecognizers>
                             <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
                         </StackLayout.GestureRecognizers>
                         <Label Text="Remember me" VerticalOptions="CenterAndExpand"/>
                     </StackLayout>
-                    
                 </HorizontalStackLayout>
             </Frame>
             <Frame Grid.Row="4" Style="{StaticResource LoginPageFrame}" Padding="0"  BorderColor="Transparent">
                 <Button Text="Log In" Style="{StaticResource LogindButton}" Command="{Binding LoginCommand}"/>
             </Frame>
-            <Frame Grid.Row="5" IsVisible="{Binding IsError}" Style="{StaticResource LoginPageFrame}" BorderColor="Transparent">
-                <Label Text="{Binding ErrorMessage}" TextColor="Red" />
-            </Frame>
+
+            <StackLayout Grid.Row="5" Margin="15, 5" Padding="0" IsVisible="{Binding IsErrorMessage}">
+                <ListView BackgroundColor="Transparent" SeparatorVisibility="None" VerticalScrollBarVisibility="Never" Margin="0" HasUnevenRows="True" ItemsSource="{Binding Message_list}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="models:ErrorView">
+                            <ViewCell>
+                                <Grid>
+                                    <Frame Padding="5" Margin="0" BackgroundColor="Transparent" HasShadow="True" BorderColor="Transparent">
+                                        <Label TextColor="Red" Text="{Binding Message}" />
+                                    </Frame>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
         </Grid>
     </VerticalStackLayout>
 </ContentPage>
