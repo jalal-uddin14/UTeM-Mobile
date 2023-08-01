@@ -26,43 +26,50 @@ namespace UTeM_Mobile.ViewModels
 
         private async Task GetTokenAsync()
         {
-            await LocalDBService.InitDB();
-            AuthToken token = await LocalDBService.GetToken();
-            if (token != null && token.IsRemember && token.ValidTo > DateTime.Now)
+            try
             {
-                if (token.UserRole == "Supervisor")
+                await LocalDBService.InitDB();
+                AuthToken token = await LocalDBService.GetToken();
+                if (token != null && token.IsRemember && token.ValidTo > DateTime.Now)
                 {
-                    await PusherService.SubscribeGuardChannel();
-                    await MainThread.InvokeOnMainThreadAsync(() =>
+                    if (token.UserRole == "Supervisor")
                     {
-                        Application.Current.MainPage = new SupervisorShell();
-                    });
+                        await PusherService.SubscribeGuardChannel();
+                        await MainThread.InvokeOnMainThreadAsync(() =>
+                        {
+                            Application.Current.MainPage = new SupervisorShell();
+                        });
+                    }
+                    else if (token.UserRole == "Guard")
+                    {
+                        if (!CrossNFC.Current.IsAvailable)
+                        {
+                            StaticMessage.HasNFCMessage = true;
+                            StaticMessage.NFCMessage = "NFC is not available in your phone.";
+                        }
+                        else if (!CrossNFC.Current.IsEnabled)
+                        {
+                            StaticMessage.HasNFCMessage = true;
+                            StaticMessage.NFCMessage = "Please turn on NFC.";
+                        }
+                        else
+                        {
+                            NFCService.SubscribeNFC();
+                        }
+                        await MainThread.InvokeOnMainThreadAsync(() =>
+                        {
+                            Application.Current.MainPage = new GuardShell();
+                        });
+                    }
                 }
-                else if (token.UserRole == "Guard")
+                else
                 {
-                    if (!CrossNFC.Current.IsAvailable)
-                    {
-                        StaticMessage.HasNFCMessage = true;
-                        StaticMessage.NFCMessage = "NFC is not available in your phone.";
-                    }
-                    else if (!CrossNFC.Current.IsEnabled)
-                    {
-                        StaticMessage.HasNFCMessage = true;
-                        StaticMessage.NFCMessage = "Please turn on NFC.";
-                    }
-                    else
-                    {
-                        NFCService.SubscribeNFC();
-                    }
-                    await MainThread.InvokeOnMainThreadAsync(() =>
-                    {
-                        Application.Current.MainPage = new GuardShell();
-                    });
+                    await MainThread.InvokeOnMainThreadAsync(() => Shell.Current.GoToAsync("LoginPage"));
                 }
             }
-            else
+            catch(Exception ex)
             {
-                await MainThread.InvokeOnMainThreadAsync(() => Shell.Current.GoToAsync("LoginPage"));
+
             }
         }
     }

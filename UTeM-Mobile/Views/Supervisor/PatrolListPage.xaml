@@ -18,7 +18,7 @@
         <viewModel:PatrolListViewModel />
     </ContentPage.BindingContext>
     <Grid RowDefinitions="80, 50, *, 50">
-        <Grid Grid.Row="0" ColumnDefinitions="0.9*, 0.1*" BackgroundColor="{StaticResource DashboardHeadColor}" Padding="10">
+        <Grid Grid.Row="0" ColumnDefinitions="0.8*, 0.2*" BackgroundColor="{StaticResource DashboardHeadColor}" Padding="10">
             <StackLayout Grid.Column="0" Orientation="Horizontal">
                 <StackLayout.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding NavigateToProfileCommand}"/>
@@ -31,18 +31,16 @@
                     <Label Text="{Binding User.Role}" TextColor="White" FontSize="12" FontAttributes="Bold"/>
                 </StackLayout>
             </StackLayout>
-            <!--<Grid Grid.Column="1" RowDefinitions="0.1*, 0.9*" ColumnDefinitions="0.9*, 0.1*" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="0">
-                <Frame Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" CornerRadius="50" Padding="0" Margin="0" BackgroundColor="White" HeightRequest="40" WidthRequest="40">
-                    <Image HeightRequest="25" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                        <Image.Source>
-                            <FontImageSource FontFamily="FAsolid" Glyph="{StaticResource IconBell}" Color="{StaticResource DashboardHeadColor}"></FontImageSource>
-                        </Image.Source>
-                    </Image>
-                </Frame>
-                <Frame Grid.Row="0" Grid.Column="1" Padding="0" Margin="0, -5, -5, 0" HeightRequest="5" WidthRequest="5" CornerRadius="10" VerticalOptions="StartAndExpand" HorizontalOptions="EndAndExpand" BackgroundColor="Red" BorderColor="{StaticResource DashboardHeadColor}">
-                    <Label Text="10" TextColor="White" VerticalTextAlignment="Center" HorizontalTextAlignment="Center"/>
-                </Frame>
-            </Grid>-->
+            <StackLayout Grid.Column="1" VerticalOptions="CenterAndExpand">
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding LogoutCommand}"/>
+                </StackLayout.GestureRecognizers>
+                <Image HeightRequest="20" Margin="20, 0" HorizontalOptions="EndAndExpand">
+                    <Image.Source>
+                        <FontImageSource FontFamily="FAsolid" Glyph="{StaticResource IconLogout}" Color="White"></FontImageSource>
+                    </Image.Source>
+                </Image>
+            </StackLayout>
         </Grid>
         <StackLayout Grid.Row="1" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
             <Label Text="Patrol Schedule List" Style="{StaticResource HeaderLabel}"/>

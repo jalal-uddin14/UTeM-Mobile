@@ -25,6 +25,7 @@ namespace UTeM_Mobile.ViewModels.Guard
         private ApplicationUser user;
         private string noPatrolMessage;
 
+        public ICommand LogoutCommand { get; }
         public ICommand ScanCommand { get; }
         public ICommand NavigateToProfileCommand { get; }
         public ICommand NavigateToPatrolListCommand { get; }
@@ -71,6 +72,22 @@ namespace UTeM_Mobile.ViewModels.Guard
             NavigateToSendSoSCommand = new AsyncCommand(ExecuteNavigateToSendSoSAsync);
             StartCommand = new AsyncCommand(ExecuteStart);
             EndCommand = new AsyncCommand(ExecuteEnd);
+            LogoutCommand = new AsyncCommand(ExecuteLogout);
+        }
+        private async Task ExecuteLogout()
+        {
+            try
+            {
+                await LocalDBService.RemoveToken();
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    Application.Current.MainPage = new AppShell();
+                });
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         private async Task ExecuteScanAsync()

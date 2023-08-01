@@ -17,7 +17,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         private AuthToken token;
         private ApplicationUser user;
 
-
+        public ICommand LogoutCommand { get; }
         public ICommand NavigateToGuardListCommand { get; set; }
         public ICommand NavigateToPatrolAddCommand { get; }
         public ICommand NavigateToProfileCommand { get; }
@@ -34,8 +34,24 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             NavigateToGuardListCommand = new AsyncCommand(ExecuteNavigateToGuardList);
             NavigateToPatrolAddCommand = new AsyncCommand(ExecuteNavigateToPatrolAdd);
             NavigateToProfileCommand = new AsyncCommand(ExecuteNavigateToProfile);
+            LogoutCommand = new AsyncCommand(ExecuteLogout);
         }
 
+        private async Task ExecuteLogout()
+        {
+            try
+            {
+                await LocalDBService.RemoveToken();
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    Application.Current.MainPage = new AppShell();
+                });
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
         private async Task ExecuteNavigateToGuardList()
         {
             await Shell.Current.GoToAsync($"{nameof(GuardListPage)}");
