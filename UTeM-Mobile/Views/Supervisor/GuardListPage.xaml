@@ -5,15 +5,31 @@
              BackgroundColor="White"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
+             xmlns:models="clr-namespace:UTeM_Mobile.Core.Models;assembly=UTeM-Mobile.Core"
              Shell.NavBarIsVisible="False">
     <ContentPage.BindingContext>
         <viewModel:GuardListViewModel />
     </ContentPage.BindingContext>
-    <Grid RowDefinitions="50, *">
+    <Grid RowDefinitions="50, Auto, *">
         <StackLayout Grid.Row="0" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
             <Label Text="Guard List" Style="{StaticResource HeaderLabel}"/>
         </StackLayout>
-        <StackLayout Grid.Row="1" Margin="10">
+        <Grid Grid.Row="1" IsVisible="{Binding IsErrorMessage}" VerticalOptions="CenterAndExpand">
+            <ListView BackgroundColor="Transparent" SeparatorVisibility="None" VerticalScrollBarVisibility="Never" Margin="0" HasUnevenRows="True" ItemsSource="{Binding Message_list}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:ErrorView">
+                        <ViewCell>
+                            <Grid>
+                                <Frame Padding="5" Margin="0" BackgroundColor="Transparent" HasShadow="True" BorderColor="Transparent">
+                                    <Label Text="{Binding Message}" Style="{StaticResource ErrorLabel}"/>
+                                </Frame>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+        <StackLayout Grid.Row="2" Margin="10">
             <ListView ItemsSource="{Binding GuardList}" ItemTapped="ListView_ItemTapped" RowHeight="55">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="model:ApplicationUser">

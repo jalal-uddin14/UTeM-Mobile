@@ -5,6 +5,7 @@
              BackgroundColor="White"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
+             xmlns:models="clr-namespace:UTeM_Mobile.Core.Models;assembly=UTeM-Mobile.Core"
              Shell.BackgroundColor="{StaticResource NavbarColor}">
     
     <Shell.TitleView>
@@ -17,7 +18,7 @@
     <ContentPage.BindingContext>
         <viewModel:PatrolListViewModel />
     </ContentPage.BindingContext>
-    <Grid RowDefinitions="80, 50, *, 50">
+    <Grid RowDefinitions="80, 50, Auto, *, 50">
         <Grid Grid.Row="0" ColumnDefinitions="0.8*, 0.2*" BackgroundColor="{StaticResource DashboardHeadColor}" Padding="10">
             <StackLayout Grid.Column="0" Orientation="Horizontal">
                 <StackLayout.GestureRecognizers>
@@ -45,10 +46,25 @@
         <StackLayout Grid.Row="1" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
             <Label Text="Patrol Schedule List" Style="{StaticResource HeaderLabel}"/>
         </StackLayout>
-        <StackLayout Grid.Row="2" IsVisible="{Binding IsBusy}" Margin="0, 20">
+        <Grid Grid.Row="2" IsVisible="{Binding IsErrorMessage}" VerticalOptions="CenterAndExpand">
+            <ListView BackgroundColor="Transparent" SeparatorVisibility="None" VerticalScrollBarVisibility="Never" Margin="0" HasUnevenRows="True" ItemsSource="{Binding Message_list}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:ErrorView">
+                        <ViewCell>
+                            <Grid>
+                                <Frame Padding="5" Margin="0" BackgroundColor="Transparent" HasShadow="True" BorderColor="Transparent">
+                                    <Label Text="{Binding Message}" Style="{StaticResource ErrorLabel}"/>
+                                </Frame>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+        <StackLayout Grid.Row="3" IsVisible="{Binding IsBusy}" Margin="0, 20">
             <ActivityIndicator IsRunning="{Binding IsBusy}" />
         </StackLayout>
-        <StackLayout Grid.Row="2" IsVisible="{Binding IsNotBusy}">
+        <StackLayout Grid.Row="3" IsVisible="{Binding IsNotBusy}">
             <ListView ItemsSource="{Binding PatrolList}" ItemTapped="ListView_ItemTapped" RowHeight="105" Margin="10" SeparatorVisibility="Default" SeparatorColor="Grey">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="model:Patrol">
@@ -111,7 +127,7 @@
                 </ListView.ItemTemplate>
             </ListView>
         </StackLayout>
-        <StackLayout Grid.Row="3">
+        <StackLayout Grid.Row="4">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.5*" />

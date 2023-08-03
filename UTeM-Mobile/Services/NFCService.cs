@@ -3,6 +3,7 @@ using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
+using UTeM_Mobile.Models;
 using UTeM_Mobile.PopupViews;
 
 namespace UTeM_Mobile.Services
@@ -46,41 +47,23 @@ namespace UTeM_Mobile.Services
                     }
                     else
                     {
-                        Dictionary<string, string> popupContent = new Dictionary<string, string>
-                                    {
-                                        { "Heading", "Scan Error" },
-                                        { "Title", "Scan failed" },
-                                        { "Message", "Appropriate data not found in tag." },
-                                        { "NavigateTo", "ReportListPage" },
-                                        { "HasNavigate", "false" }
-                                    };
-                        await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                        await MainThread.InvokeOnMainThreadAsync(() => 
+                            Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan Error", "Scan Failed", "Appropriate data not found in tag.")))
+                        );
                     }
                 }
                 else
                 {
-                    Dictionary<string, string> popupContent = new Dictionary<string, string>
-                                    {
-                                        { "Heading", "Scan Error" },
-                                        { "Title", "Scan failed" },
-                                        { "Message", "NFC data reading failed." },
-                                        { "NavigateTo", "ReportListPage" },
-                                        { "HasNavigate", "false" }
-                                    };
-                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan Error", "NFC Error", "NFC data reading failed.")))
+                    );
                 }
             }
             catch(Exception ex)
             {
-                Dictionary<string, string> popupContent = new Dictionary<string, string>
-                                    {
-                                        { "Heading", "Scan Error" },
-                                        { "Title", "Scan failed" },
-                                        { "Message", "Unexpected error occured." },
-                                        { "NavigateTo", "ReportListPage" },
-                                        { "HasNavigate", "false" }
-                                    };
-                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan Error", "NFC Failed", "Unexpected error occured.")))
+                );
             }
         }
 
@@ -143,79 +126,43 @@ namespace UTeM_Mobile.Services
                                     };
                                     ObjectResponse<Patrol> response = await _genericPatrolService.PutAsync(updateStatusUrl, updateStatusContent, token);
                                 }
-                                Dictionary<string, string> popupContent = new Dictionary<string, string>
-                                        {
-                                            { "Heading", "Scan sucessfull" },
-                                            { "Title", "Checkpoint reached" },
-                                            { "Message", checkpoint.Name + " checkpoint successfully scaned." },
-                                            { "NavigateTo", "ReportListPage" },
-                                            { "HasNavigate", "false" }
-                                        };
-                                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                                await MainThread.InvokeOnMainThreadAsync(() =>
+                                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessfull", "Checkpoint reached", checkpoint.Name + " checkpoint successfully scaned.")))
+                                );
                             }
                             else
                             {
-                                Dictionary<string, string> popupContent = new Dictionary<string, string>
-                                        {
-                                            { "Heading", "Scan sucessfull" },
-                                            { "Title", "Checkpoint write error" },
-                                            { "Message", checkpoint.Name + " checkpoint failed to mark as scanned." },
-                                            { "NavigateTo", "ReportListPage" },
-                                            { "HasNavigate", "false" }
-                                        };
-                                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                                await MainThread.InvokeOnMainThreadAsync(() =>
+                                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessfull", "Checkpoint write error", checkpoint.Name + " checkpoint failed to mark as scanned.")))
+                                );
                             }
                         }
                         else
                         {
-                            Dictionary<string, string> popupContent = new Dictionary<string, string>
-                                    {
-                                        { "Heading", "Scan sucessfull" },
-                                        { "Title", "Checkpoint not found" },
-                                        { "Message", checkpoint.Name + " checkpoint not in this patrol." },
-                                        { "NavigateTo", "ReportListPage" },
-                                        { "HasNavigate", "false" }
-                                    };
-                            await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                            await MainThread.InvokeOnMainThreadAsync(() =>
+                                Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessfull", "Checkpoint not found", checkpoint.Name + " checkpoint not in this patrol.")))
+                            );
                         }
                     }
                     else
                     {
-                        Dictionary<string, string> popupContent = new Dictionary<string, string>
-                                    {
-                                        { "Heading", "Scan sucessfull" },
-                                        { "Title", "Checkpoint not found" },
-                                        { "Message", "Patrol not started." },
-                                        { "NavigateTo", "ReportListPage" },
-                                        { "HasNavigate", "false" }
-                                    };
-                        await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                        await MainThread.InvokeOnMainThreadAsync(() =>
+                            Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessfull", "Checkpoint not found", "Patrol not started.")))
+                        );
                     }
                 }
                 else
                 {
-                    Dictionary<string, string> popupContent = new Dictionary<string, string>
-                                    {
-                                        { "Heading", "Scan Error" },
-                                        { "Title", "Scan failed" },
-                                        { "Message", "Appropriate data not found in server." },
-                                        { "NavigateTo", "ReportListPage" },
-                                        { "HasNavigate", "false" }
-                                    };
-                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan Error", "Checkpoint failed", "Appropriate data not found in server.")))
+                    );
                 }
             }
             catch(Exception ex)
             {
-                Dictionary<string, string> popupContent = new Dictionary<string, string>
-                                    {
-                                        { "Heading", "Scan Error" },
-                                        { "Title", "Server error." },
-                                        { "Message", "Unexpected error occured in server." },
-                                        { "NavigateTo", "ReportListPage" },
-                                        { "HasNavigate", "false" }
-                                    };
-                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                await MainThread.InvokeOnMainThreadAsync(() => 
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage("Scan error", "Unexpected error occured in server.")))
+                );
             }
         }
     }

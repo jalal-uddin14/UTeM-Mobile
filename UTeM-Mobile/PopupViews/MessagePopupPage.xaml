@@ -11,16 +11,16 @@
     <Frame VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Margin="20, 10" Padding="10">
         <StackLayout>
             <StackLayout BackgroundColor="{StaticResource DashboardHeadColor}" Padding="10">
-                <Label Text="{Binding Heading}" TextColor="White" HorizontalOptions="CenterAndExpand"/>
+                <Label Text="{Binding PopMessage.Heading}" TextColor="White" HorizontalOptions="CenterAndExpand"/>
             </StackLayout>
             <StackLayout BackgroundColor="Transparent" Margin="10">
-                <Label Text="{Binding Title}" TextColor="Black" FontSize="16" FontAttributes="Bold" />
+                <Label Text="{Binding PopMessage.Title}" TextColor="Black" FontSize="16" FontAttributes="Bold" />
             </StackLayout>
             <StackLayout BackgroundColor="Transparent" Padding="10">
-                <Label Text="{Binding Message}" TextColor="Black"/>
+                <Label Text="{Binding PopMessage.Message}" TextColor="Black"/>
             </StackLayout>
             <StackLayout BackgroundColor="Transparent" Padding="10" Orientation="Horizontal" Margin="5, 10">
-                <Button IsVisible="{Binding ShowNavigate}" Text="{Binding ButtonText}" Style="{StaticResource ModalButton}" BackgroundColor="Green" HorizontalOptions="StartAndExpand" Command="{Binding NavigationCommand}"/>
+                <Button IsVisible="{Binding PopMessage.HasNavigate}" Text="{Binding ButtonText}" Style="{StaticResource ModalButton}" BackgroundColor="Green" HorizontalOptions="StartAndExpand" Command="{Binding NavigationCommand}"/>
                 <Button Text="Close" Style="{StaticResource ModalButton}" BackgroundColor="Red" HorizontalOptions="EndAndExpand" Command="{Binding ClosePopViewCommand}"/>
             </StackLayout>
         </StackLayout>

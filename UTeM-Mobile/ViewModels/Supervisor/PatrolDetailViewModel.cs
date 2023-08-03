@@ -4,21 +4,21 @@ using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.PopupViews;
+using UTeM_Mobile.Models;
+using UTeM_Mobile.Interfaces;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
     [QueryProperty(nameof(Id), "Id")]
-    public class PatrolDetailViewModel : BaseViewModel
+    public class PatrolDetailViewModel : MainViewModel, IOnAppearing
     {
         private IGenericService<Patrol> _genericService;
         private IGenericService<PatrolCheckpoint> _patrolCheckpointService;
         private string id;
         private Patrol patrol;
-        private AuthToken token;
 
         public string Id { get => id; set => id = value; }
         public Patrol Patrol { get => patrol; set => SetProperty(ref patrol, value); }
-        public AuthToken Token { get => token; set => SetProperty(ref token, value); }
 
         public PatrolDetailViewModel()
         {
@@ -29,15 +29,23 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         public void OnAppearing()
         {
+            IsErrorMessage = false;
             Task.Run(async () => { await GetTokenAsync(); });
         }
 
-        private async Task GetTokenAsync()
+        public async Task GetTokenAsync()
         {
-            Token = await LocalDBService.GetToken();
-            if (Token != null)
+            try
             {
-                await GetPatrolDetailAsync();
+                Token = await LocalDBService.GetToken();
+                if (Token != null)
+                {
+                    await GetPatrolDetailAsync();
+                }
+            }
+            catch(Exception ex)
+            {
+                SetErrorMessage("Internal error occured.");
             }
         }
 
@@ -57,41 +65,17 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     }
                     else
                     {
-                        Dictionary<string, string> popupContent = new Dictionary<string, string>
-                        {
-                            { "Heading", "Error" },
-                            { "Title", "Unexpected error occured" },
-                            { "Message",  response.Message},
-                            { "NavigateTo", "" },
-                            { "HasNavigate", "" },
-                        };
-                        await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                        SetErrorMessage(response.Message, response.Errors);
                     }
                 }
                 else
                 {
-                    Dictionary<string, string> popupContent = new Dictionary<string, string>
-                    {
-                        { "Heading", "Error" },
-                        { "Title", "Internal error occured" },
-                        { "Message", "" },
-                        { "NavigateTo", "" },
-                        { "HasNavigate", "" },
-                    };
-                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                    SetErrorMessage("Patrol not found.");
                 }
             }
             catch(Exception ex)
             {
-                Dictionary<string, string> popupContent = new Dictionary<string, string>
-                {
-                    { "Heading", "Error" },
-                    { "Title", "Server error occured" },
-                    { "Message", "" },
-                    { "NavigateTo", "" },
-                    { "HasNavigate", "" },
-                };
-                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                SetErrorMessage("Internal error occured.");
             }
             finally
             {
@@ -101,19 +85,26 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         private async Task CheckRouteCheckpointStatusAsync()
         {
-            string url = "";
-            for (int i = 0; i < Patrol.Route.RouteCheckpoints.Count; i++)
+            try
             {
-                Patrol.Route.RouteCheckpoints[i].IsNotLast = i < Patrol.Route.RouteCheckpoints.Count - 1;
-                url = "patrolCheckpoints/check";
-                var content = new { patrolId = Id, checkpointId = Patrol.Route.RouteCheckpoints[i].CheckpointId };
-                ObjectResponse<PatrolCheckpoint> response = await _patrolCheckpointService.PostAsync(url, content, Token);
-                if (response.IsSuccess && response.Data != null)
+                string url = "";
+                for (int i = 0; i < Patrol.Route.RouteCheckpoints.Count; i++)
                 {
-                    Patrol.Route.RouteCheckpoints[i].IsChecked = response.Data.Status == "Completed";
-                    Patrol.Route.RouteCheckpoints[i].IsScheduled = response.Data.Status == "Scheduled";
-                    Patrol.Route.RouteCheckpoints[i].NotFound = false;
+                    Patrol.Route.RouteCheckpoints[i].IsNotLast = i < Patrol.Route.RouteCheckpoints.Count - 1;
+                    url = "patrolCheckpoints/check";
+                    var content = new { patrolId = Id, checkpointId = Patrol.Route.RouteCheckpoints[i].CheckpointId };
+                    ObjectResponse<PatrolCheckpoint> response = await _patrolCheckpointService.PostAsync(url, content, Token);
+                    if (response.IsSuccess && response.Data != null)
+                    {
+                        Patrol.Route.RouteCheckpoints[i].IsChecked = response.Data.Status == "Completed";
+                        Patrol.Route.RouteCheckpoints[i].IsScheduled = response.Data.Status == "Scheduled";
+                        Patrol.Route.RouteCheckpoints[i].NotFound = false;
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+                SetErrorMessage("Internal error occured.");
             }
         }
     }

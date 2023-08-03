@@ -3,13 +3,14 @@ using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Core.Models;
+using UTeM_Mobile.PopupViews;
+using UTeM_Mobile.Models;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
     public class WhatsAppViewModel : MainViewModel, IOnAppearing
     {
         private IGenericService<ApplicationUser> _genericUserService;
-        private ApplicationUser user;
         private string phoneNumber;
 
         public WhatsAppViewModel()
@@ -19,14 +20,22 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         public void OnAppearing()
         {
+            IsErrorMessage = false;
             Task.Run(async () => { await GetTokenAsync(); });
         }
         public async Task GetTokenAsync()
         {
-            token = await LocalDBService.GetToken();
-            if (token != null)
+            try
             {
-                await GetProfileAsync();
+                Token = await LocalDBService.GetToken();
+                if (Token != null)
+                {
+                    await GetProfileAsync();
+                }
+            }
+            catch(Exception ex)
+            {
+
             }
         }
 
@@ -35,11 +44,11 @@ namespace UTeM_Mobile.ViewModels.Guard
             try
             {
                 string url = "accounts/me";
-                ObjectResponse<ApplicationUser> response = await _genericUserService.GetDetailsAsync(url, token);
+                ObjectResponse<ApplicationUser> response = await _genericUserService.GetDetailsAsync(url, Token);
                 if (response.IsSuccess && response.Data != null)
                 {
                     url = "supervisors/" + response.Data.SupervisorId;
-                    ObjectResponse<ApplicationUser> response1 = await _genericUserService.GetDetailsAsync(url, token);
+                    ObjectResponse<ApplicationUser> response1 = await _genericUserService.GetDetailsAsync(url, Token);
                     if (response.IsSuccess && response1.Data != null)
                     {
                         phoneNumber = response1.Data.PhoneNumber;
@@ -53,7 +62,9 @@ namespace UTeM_Mobile.ViewModels.Guard
             }
             catch (Exception ex)
             {
-
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
+                );
             }
             finally
             {
@@ -68,7 +79,9 @@ namespace UTeM_Mobile.ViewModels.Guard
             }
             catch (Exception ex)
             {
-
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage("Error openning whatsapp")))
+                );
             }
             finally
             {

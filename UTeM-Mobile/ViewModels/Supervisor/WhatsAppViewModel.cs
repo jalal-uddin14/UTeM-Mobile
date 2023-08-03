@@ -3,6 +3,8 @@ using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Core.Models;
+using UTeM_Mobile.PopupViews;
+using UTeM_Mobile.Models;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
@@ -21,8 +23,8 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         }
         public async Task GetTokenAsync()
         {
-            token = await LocalDBService.GetToken();
-            if (token != null)
+            Token = await LocalDBService.GetToken();
+            if (Token != null)
             {
                 await GetProfileAsync();
             }
@@ -38,13 +40,23 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             try
             {
                 string url = "accounts/me";
-                ObjectResponse<ApplicationUser> response = await _genericUserService.GetDetailsAsync(url, token);
-                user = response.Data;
-                phoneNumber = user.PhoneNumber;
+                ObjectResponse<ApplicationUser> response = await _genericUserService.GetDetailsAsync(url, Token);
+                if (response.IsSuccess && response.Data != null)
+                {
+                    user = response.Data;
+                    phoneNumber = user.PhoneNumber;
+                }
+                else
+                {
+                    await GetPatrolList();
+                }
+                
             }
             catch (Exception ex)
             {
-
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
+                );
             }
             finally
             {
@@ -57,16 +69,24 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             try
             {
                 string url = "patrols?date=" + DateTime.Now.Date;
-                PaginatedResponse<Patrol> response = await _genericPatrolService.GetPagedListAsync(url, token);
+                PaginatedResponse<Patrol> response = await _genericPatrolService.GetPagedListAsync(url, Token);
                 if (response.IsSuccess && response.Data != null && response.Data.Count > 0)
                 {
                     patrol = response.Data.Data.FirstOrDefault();
                     phoneNumber = patrol.Guard.PhoneNumber;
                 }
+                else
+                {
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetNavigationMessage("Patrol", "Internal error occured", "PatrolListPage")))
+                    );
+                }
             }
             catch (Exception ex)
             {
-
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
+                );
             }
             finally
             {

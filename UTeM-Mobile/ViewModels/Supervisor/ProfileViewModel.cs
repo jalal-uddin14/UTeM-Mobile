@@ -1,5 +1,4 @@
-﻿using MvvmHelpers;
-using MvvmHelpers.Commands;
+﻿using MvvmHelpers.Commands;
 using System.Windows.Input;
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
@@ -7,6 +6,7 @@ using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.PopupViews;
+using UTeM_Mobile.Models;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
@@ -56,29 +56,17 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                 }
                 else
                 {
-                    Dictionary<string, string> popupContent = new Dictionary<string, string>
-                    {
-                        { "Heading", "Error" },
-                        { "Title", "Internal error occured" },
-                        { "Message", response.Message },
-                        { "NavigateTo", "" },
-                        { "HasNavigate", "" },
-                    };
-                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                    await MainThread.InvokeOnMainThreadAsync(() => 
+                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Error", "Internal error occured", response.Message)))
+                    );
                 }
             }
             catch (Exception ex)
             {
                 IsSuccessMessage = false;
-                Dictionary<string, string> popupContent = new Dictionary<string, string>
-                    {
-                        { "Heading", "Error" },
-                        { "Title", "Internal error occured" },
-                        { "Message", "" },
-                        { "NavigateTo", "" },
-                        { "HasNavigate", "" },
-                    };
-                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                await MainThread.InvokeOnMainThreadAsync(() => 
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
+                );
             }
             finally
             {
@@ -113,28 +101,16 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                 }
                 else
                 {
-                    Dictionary<string, string> popupContent = new Dictionary<string, string>
-                    {
-                        { "Heading", "Error" },
-                        { "Title", "Internal error occured" },
-                        { "Message", response.Message },
-                        { "NavigateTo", "" },
-                        { "HasNavigate", "" },
-                    };
-                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                    await MainThread.InvokeOnMainThreadAsync(() => 
+                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Error", "Internal error occured", response.Message)))
+                    );
                 }
             }
             catch (Exception ex)
             {
-                Dictionary<string, string> popupContent = new Dictionary<string, string>
-                {
-                    { "Heading", "Error" },
-                    { "Title", "Server error occured" },
-                    { "Message", "" },
-                    { "NavigateTo", "" },
-                    { "HasNavigate", "" },
-                };
-                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                await MainThread.InvokeOnMainThreadAsync(() => 
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
+                );
             }
         }
     }

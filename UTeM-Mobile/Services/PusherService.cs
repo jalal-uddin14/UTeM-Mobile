@@ -8,6 +8,7 @@ using Nito.AsyncEx;
 using Plugin.LocalNotification;
 using Plugin.LocalNotification.EventArgs;
 using UTeM_Mobile.PopupViews;
+using UTeM_Mobile.Models;
 
 namespace UTeM_Mobile.Services
 {
@@ -74,20 +75,30 @@ namespace UTeM_Mobile.Services
                     { "Title", response["message"] },
                     { "Message", response["description"] }
                 };
+                PopMessage popMessage = new PopMessage
+                {
+                    Type = response["type"],
+                    Heading = response["title"],
+                    Title = response["message"],
+                    Message = response["description"]
+                };
                 if (response["type"] == "SoS")
                 {
-                    popupContent.Add("NavigateTo", "ReportListPage");
-                    popupContent.Add("HasNavigate", "true");
+                    popMessage.NavigateTo = "ReportListPage";
+                    popMessage.HasNavigate = true;
                 }
                 else if (response["type"] == "Patrol")
                 {
-                    popupContent.Add("NavigateTo", "PatrolListPage");
-                    popupContent.Add("HasNavigate", "true");
+                    popMessage.NavigateTo = "PatrolListPage";
+                    popMessage.HasNavigate = true;
                 }
+                
                 await LocalNotificationCenter.Current.Show(request);
                 LocalNotificationCenter.Current.NotificationActionTapped += NoficationAction_Tapped;
                 await Application.Current.MainPage.Navigation.PopToRootAsync(true);
-                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                await MainThread.InvokeOnMainThreadAsync(() => 
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popMessage))
+                );
             }
             catch(Exception ex)
             {

@@ -9,6 +9,7 @@ using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.PopupViews;
+using UTeM_Mobile.Models;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
@@ -56,6 +57,7 @@ namespace UTeM_Mobile.ViewModels.Guard
         {
             try
             {
+                IsSuccessMessage = false;
                 if (CrossMedia.Current.IsTakePhotoSupported)
                 {
                     var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
@@ -70,20 +72,18 @@ namespace UTeM_Mobile.ViewModels.Guard
                         var a = file.GetStream().ReadByte();
                         var b = File.ReadAllBytes(PhotoResult.FullPath);
                     }
-                    //await GenerateFileMessage();
+                }
+                else
+                {
+                    SetErrorMessage("Camera not supported");
                 }
             }
             catch (Exception ex)
             {
-                Dictionary<string, string> popupContent = new Dictionary<string, string>
-                    {
-                        { "Heading", "Error" },
-                        { "Title", "Internal error occured" },
-                        { "Message", "" },
-                        { "NavigateTo", "" },
-                        { "HasNavigate", "" },
-                    };
-                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
+                );
+                SetErrorMessage("Internal error occured.");
             }
         }
 
@@ -91,6 +91,7 @@ namespace UTeM_Mobile.ViewModels.Guard
         {
             try
             {
+                IsSuccessMessage = false;
                 if (string.IsNullOrWhiteSpace(Report.Description))
                 {
                     IsSuccessMessage = false;
@@ -106,43 +107,34 @@ namespace UTeM_Mobile.ViewModels.Guard
                     requestContent.Add(imageContent, "file", "image.jpg");
                 }
                 requestContent.Add(new StringContent(Report.Description), "Description");
-                requestContent.Add(new StringContent(token.UserId), "guardId");
+                requestContent.Add(new StringContent(Token.UserId), "guardId");
                 requestContent.Add(new StringContent(Patrol.Id.ToString()), "patrolId");
                 requestContent.Add(new StringContent(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")), "date");
-                ObjectResponse<Report> response = await _genericService.PostFile(url, requestContent, token);
+                ObjectResponse<Report> response = await _genericService.PostFile(url, requestContent, Token);
                 IsSuccessMessage = response.IsSuccess;
                 Message = response.Message;
                 if (IsSuccessMessage)
                 {
                     PhotoResult = null;
                     Report = new Report();
-                    Dictionary<string, string> popupContent = new Dictionary<string, string>
-                                    {
-                                        { "Heading", "SoS notification" },
-                                        { "Title", response.Message },
-                                        { "Message", "" },
-                                        { "NavigateTo", "" },
-                                        { "HasNavigate", "false" }
-                                    };
-                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("SoS notification", response.Message)))
+                    );
                 }
                 else
                 {
-                    Dictionary<string, string> popupContent = new Dictionary<string, string>
-                                    {
-                                        { "Heading", "SoS notification" },
-                                        { "Title", response.Message },
-                                        { "Message", "" },
-                                        { "NavigateTo", "" },
-                                        { "HasNavigate", "false" }
-                                    };
-                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("SoS notification", "Internal error occured", response.Message)))
+                    );
+                    SetErrorMessage(response.Message, response.Errors);
                 }
             }
             catch(Exception ex)
             {
-                IsSuccessMessage = false;
-                Message = "Unexpected error occured!";
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
+                );
+                SetErrorMessage("Unexpected error occured!");
             }
             finally
             {
@@ -152,37 +144,78 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         public void OnAppearing()
         {
+            IsSuccessMessage = false;
             Task.Run(async () => { await GetTokenAsync(); });
         }
 
         public async Task GetTokenAsync()
         {
-            token = await LocalDBService.GetToken();
-            if (token != null)
+            try
             {
-                await GetProfileAsync();
-                await GetUserPatrol();
+                Token = await LocalDBService.GetToken();
+                if (Token != null)
+                {
+                    await GetProfileAsync();
+                    await GetUserPatrol();
+                }
+            }
+            catch(Exception ex)
+            {
+                SetErrorMessage("Unexpected error occured!");
             }
         }
 
         private async Task GetProfileAsync()
         {
-            string url = "accounts/me";
-            ObjectResponse<ApplicationUser> response = await _genericUserService.GetDetailsAsync(url, token);
-            User = response.Data;
+            try
+            {
+                string url = "accounts/me";
+                ObjectResponse<ApplicationUser> response = await _genericUserService.GetDetailsAsync(url, Token);
+                if (response.IsSuccess && response.Data != null)
+                {
+                    User = response.Data;
+                }
+                else
+                {
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Error", "Internal error occured", response.Message)))
+                    );
+                    SetErrorMessage(response.Message, response.Errors);
+                }
+            }
+            catch(Exception ex)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
+                );
+                SetErrorMessage("Unexpected error occured!");
+            }
         }
         private async Task GetUserPatrol()
         {
             try
             {
                 string url = "patrols/status";
-                ObjectResponse<Patrol> response = await _genericPatrolService.PostAsync(url, null, token);
-                Patrol = response.Data;
-                HasPatrol = response.Data != null && response.Data.Status == "Started";
+                ObjectResponse<Patrol> response = await _genericPatrolService.PostAsync(url, null, Token);
+                if (response.IsSuccess && response.Data != null)
+                {
+                    Patrol = response.Data;
+                    HasPatrol = response.Data != null && response.Data.Status == "Started";
+                }
+                else
+                {
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Error", "Internal error occured", response.Message)))
+                    );
+                    SetErrorMessage(response.Message, response.Errors);
+                }
             }
             catch(Exception ex)
             {
-
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
+                );
+                SetErrorMessage("Unexpected error occured!");
             }
         }
     }

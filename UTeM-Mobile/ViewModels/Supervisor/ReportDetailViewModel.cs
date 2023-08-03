@@ -5,6 +5,7 @@ using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Data.StaticCredentials;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.PopupViews;
+using UTeM_Mobile.Models;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
@@ -52,20 +53,23 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             {
                 string url = "reports/" + Id;
                 ObjectResponse<Report> response = await _genericService.GetDetailsAsync(url, Token);
-                Report = response.Data;
-                Report.FilePath = ServerCredential.BaseUrl + "reports/files/" + Report.File;
+                if (response.IsSuccess && response.Data != null)
+                {
+                    Report = response.Data;
+                    Report.FilePath = ServerCredential.BaseUrl + "reports/files/" + Report.File;
+                }
+                else
+                {
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                      Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetNavigationMessage("SoS", "SoS Error", "ReportListPage", "Failed to get SoS Data")))
+                  );
+                }
             }
             catch (Exception ex)
             {
-                Dictionary<string, string> popupContent = new Dictionary<string, string>
-                {
-                    { "Heading", "Error" },
-                    { "Title", "Server error occured" },
-                    { "Message", "" },
-                    { "NavigateTo", "" },
-                    { "HasNavigate", "" },
-                };
-                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                await MainThread.InvokeOnMainThreadAsync(() => 
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
+                );
             }
         }
     }

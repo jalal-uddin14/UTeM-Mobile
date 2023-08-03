@@ -4,6 +4,7 @@
              x:Class="UTeM_Mobile.Views.Guard.ReportSendPage"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Guard"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
+             xmlns:models="clr-namespace:UTeM_Mobile.Core.Models;assembly=UTeM-Mobile.Core"
              BackgroundColor="White"
              Shell.NavBarIsVisible="False">
 
@@ -41,8 +42,8 @@
             </Frame>
         </Grid>
         <Grid IsVisible="{Binding HasPatrol}" Grid.Row="3" Margin="5">
-            <Frame Padding="5">
-                <Editor Text="{Binding Report.Description}" MinimumWidthRequest="350" WidthRequest="350" HorizontalOptions="StartAndExpand" HorizontalTextAlignment="Start" Completed="Editor_Completed"/>
+            <Frame Padding="15, 5">
+                <Editor Placeholder="Description" Text="{Binding Report.Description}" TextColor="Black" MinimumWidthRequest="350" WidthRequest="350" HorizontalOptions="StartAndExpand" HorizontalTextAlignment="Start" Completed="Editor_Completed"/>
             </Frame>
         </Grid>
         <Grid IsVisible="{Binding HasPatrol}" Grid.Row="5">
@@ -57,7 +58,19 @@
         </Grid>
         <Grid IsVisible="{Binding HasPatrol}" Grid.Row="4">
             <StackLayout IsVisible="{Binding IsErrorMessage}" VerticalOptions="CenterAndExpand">
-                <Label Text="{Binding Message}" TextColor="Red" HorizontalOptions="CenterAndExpand"/>
+                <ListView BackgroundColor="Transparent" SeparatorVisibility="None" VerticalScrollBarVisibility="Never" Margin="0" HasUnevenRows="True" ItemsSource="{Binding Message_list}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="models:ErrorView">
+                            <ViewCell>
+                                <Grid>
+                                    <Frame Padding="5" Margin="0" BackgroundColor="Transparent" HasShadow="True" BorderColor="Transparent">
+                                        <Label Text="{Binding Message}" Style="{StaticResource ErrorLabel}"/>
+                                    </Frame>
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </StackLayout>
             <StackLayout IsVisible="{Binding IsSuccessMessage}" VerticalOptions="CenterAndExpand">
                 <Label Text="{Binding Message}" TextColor="Green" HorizontalOptions="CenterAndExpand" />

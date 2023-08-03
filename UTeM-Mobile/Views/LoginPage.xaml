@@ -69,7 +69,7 @@
                             <ViewCell>
                                 <Grid>
                                     <Frame Padding="5" Margin="0" BackgroundColor="Transparent" HasShadow="True" BorderColor="Transparent">
-                                        <Label TextColor="Red" Text="{Binding Message}" />
+                                        <Label Text="{Binding Message}" Style="{StaticResource ErrorLabel}"/>
                                     </Frame>
                                 </Grid>
                             </ViewCell>

@@ -7,13 +7,11 @@ using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Views.Guard;
-using UTeM_Mobile.PopupViews;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
-    public class PatrolListViewModel : BaseViewModel, IOnAppearing
+    public class PatrolListViewModel : MainViewModel, IOnAppearing
     {
-        private AuthToken token;
         private IGenericService<Patrol> _genericService;
         private IGenericService<ApplicationUser> _genericUserService;
         private ApplicationUser user;
@@ -36,16 +34,24 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         public void OnAppearing()
         {
+            IsErrorMessage = false;
             Task.Run(async () => { await GetTokenAsync(); });
         }
 
         public async Task GetTokenAsync()
         {
-            token = await LocalDBService.GetToken();
-            if (token != null)
+            try
             {
-                await GetPatrolList();
-                await GetUserDetailAsync();
+                Token = await LocalDBService.GetToken();
+                if (Token != null)
+                {
+                    await GetPatrolList();
+                    await GetUserDetailAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                SetErrorMessage("Internal error occured.");
             }
         }
 
@@ -54,35 +60,19 @@ namespace UTeM_Mobile.ViewModels.Guard
             try
             {
                 string url = "accounts/me";
-                ObjectResponse<ApplicationUser> response = await _genericUserService.GetDetailsAsync(url, token);
+                ObjectResponse<ApplicationUser> response = await _genericUserService.GetDetailsAsync(url, Token);
                 if (response.IsSuccess && response.Data != null)
                 {
                     User = response.Data;
                 }
                 else
                 {
-                    Dictionary<string, string> popupContent = new Dictionary<string, string>
-                    {
-                        { "Heading", "Error" },
-                        { "Title", "Internal error occured" },
-                        { "Message", response.Message },
-                        { "NavigateTo", "" },
-                        { "HasNavigate", "" },
-                    };
-                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                    SetErrorMessage(response.Message, response.Errors);
                 }
             }
             catch (Exception ex)
             {
-                Dictionary<string, string> popupContent = new Dictionary<string, string>
-                {
-                    { "Heading", "Error" },
-                    { "Title", "Server error occured" },
-                    { "Message", "" },
-                    { "NavigateTo", "" },
-                    { "HasNavigate", "" },
-                };
-                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                SetErrorMessage("Internal error occured.");
             }
         }
 
@@ -93,36 +83,20 @@ namespace UTeM_Mobile.ViewModels.Guard
                 PatrolList.Clear();
                 IsBusy = true;
                 string url = "patrols";
-                PaginatedResponse<Patrol> response = await _genericService.GetPagedListAsync(url, token);
+                PaginatedResponse<Patrol> response = await _genericService.GetPagedListAsync(url, Token);
                 if (response.IsSuccess && response.Data != null && response.Data.Data != null)
                 {
                     PatrolList.AddRange(response.Data.Data);
                 }
                 else
                 {
-                    Dictionary<string, string> popupContent = new Dictionary<string, string>
-                    {
-                        { "Heading", "Error" },
-                        { "Title", "Internal error occured" },
-                        { "Message", response.Message },
-                        { "NavigateTo", "" },
-                        { "HasNavigate", "" },
-                    };
-                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                    SetErrorMessage(response.Message, response.Errors);
                 }
             }
             catch(Exception ex)
             {
                 PatrolList.Clear();
-                Dictionary<string, string> popupContent = new Dictionary<string, string>
-                {
-                    { "Heading", "Error" },
-                    { "Title", "Server error occured" },
-                    { "Message", "" },
-                    { "NavigateTo", "" },
-                    { "HasNavigate", "" },
-                };
-                await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popupContent)));
+                SetErrorMessage("Internal error occured.");
             }
             finally
             {
