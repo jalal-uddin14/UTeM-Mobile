@@ -10,6 +10,9 @@ using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.PopupViews;
 using UTeM_Mobile.Models;
 using UTeM_Mobile.Services;
+using Plugin.LocalNotification;
+using MvvmHelpers;
+using Microsoft.Maui.Controls.Maps;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
@@ -19,13 +22,18 @@ namespace UTeM_Mobile.ViewModels.Guard
         private IGenericService<Checkpoint> _genericCheckpointService;
         private IGenericService<ApplicationUser> _genericUserService;
         private IGenericService<PatrolCheckpoint> _genericPatrolCheckpointService;
+        private bool showMap;
+        private bool showLogo;
         private bool hasNoPatrol;
         private bool hasPatrol;
         private bool isStarted;
         private bool isNotStarted;
+        private bool hasNextCheckpoint;
         private Patrol patrol;
         private ApplicationUser user;
+        private PatrolCheckpoint patrolCheckpoint;
         private string noPatrolMessage;
+        private Polyline polyline;
 
         public ICommand LogoutCommand { get; }
         public ICommand ScanCommand { get; }
@@ -34,6 +42,19 @@ namespace UTeM_Mobile.ViewModels.Guard
         public ICommand NavigateToSendSoSCommand { get; }
         public ICommand StartCommand { get; }
         public ICommand EndCommand { get; }
+
+        public ObservableRangeCollection<Pin> PinCollection { get; }
+
+        public bool ShowMap
+        {
+            get => showMap;
+            set
+            {
+                SetProperty(ref showMap, value);
+                ShowLogo = !value;
+            }
+        }
+        public bool ShowLogo { get => showLogo; set => SetProperty(ref showLogo, value); }
         public bool HasNoPatrol
         {
             get => hasNoPatrol;
@@ -54,12 +75,16 @@ namespace UTeM_Mobile.ViewModels.Guard
             }
         }
         public bool IsNotStarted { get => isNotStarted; set => SetProperty(ref isNotStarted, value); }
+        public bool HasNextCheckpoint { get => hasNextCheckpoint; set => SetProperty(ref hasNextCheckpoint, value); }
         public Patrol Patrol { get => patrol; set => SetProperty(ref patrol, value); }
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
+        public PatrolCheckpoint PatrolCheckpoint { get => patrolCheckpoint; set => SetProperty(ref patrolCheckpoint, value); }
         public string NoPatrolMessage { get => noPatrolMessage; set => SetProperty(ref noPatrolMessage, value); }
+        public Polyline Polyline { get => polyline; set => SetProperty(ref polyline, value); }
 
         public DashboardViewModel()
         {
+            ShowMap = true;
             User = new ApplicationUser();
             Patrol = new Patrol();
             IsStarted = false;
@@ -68,6 +93,7 @@ namespace UTeM_Mobile.ViewModels.Guard
             _genericCheckpointService = new GenericService<Checkpoint>();
             _genericUserService = new GenericService<ApplicationUser>();
             _genericPatrolCheckpointService = new GenericService<PatrolCheckpoint>();
+            PinCollection = new ObservableRangeCollection<Pin>();
             ScanCommand = new AsyncCommand(ExecuteScanAsync);
             NavigateToProfileCommand = new AsyncCommand(ExecuteNavigateToProfile);
             NavigateToPatrolListCommand = new AsyncCommand(ExecuteNavigateToPatrolListAsync);
@@ -97,58 +123,13 @@ namespace UTeM_Mobile.ViewModels.Guard
                 string patrolCheckpointUrl = "patrolCheckpoints/mark";
                 ObjectResponse<Patrol> response = await _genericPatrolService.GetDetailsAsync(url, Token);
                 ObjectResponse<PatrolCheckpoint> objectResponse = null;
-                if (response.Data.PatrolCheckpoints.Count <= 0)
+                if (response.Data.Route == null)
                 {
-                    var content = new
-                    {
-                        patrolId = Patrol.Id,
-                        checkpointId = response.Data.Route.RouteCheckpoints.FirstOrDefault().CheckpointId,
-                        checkedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                    };
-                    objectResponse = await _genericPatrolCheckpointService.PostAsync(patrolCheckpointUrl, content, Token);
-                    if (objectResponse.IsSuccess)
-                    {
-                        await App.Current.MainPage.DisplayAlert("Success", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint successfully scaned.", "OK");
-                    }
-                    else
-                    {
-                        await App.Current.MainPage.DisplayAlert("Failed", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint scan failed.", "OK");
-                    }
+                    return;
                 }
-                else if (response.Data.PatrolCheckpoints.Count < response.Data.Route.RouteCheckpoints.Count)
-                {
-                    int index = 0;
-                    var checkpoints = response.Data.Route.RouteCheckpoints;
-                    for (int i = 0; i < checkpoints.Count; i++)
-                    {
-                        var isFound = response.Data.PatrolCheckpoints.Where(p => p.CheckpointId == checkpoints[i].CheckpointId).FirstOrDefault();
-                        if (isFound == null)
-                        {
-                            index = i;
-                            break;
-                        }
-                    }
-                    var content = new
-                    {
-                        patrolId = Patrol.Id,
-                        checkpointId = response.Data.Route.RouteCheckpoints[index].CheckpointId,
-                        checkedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                    };
-                    objectResponse = await _genericPatrolCheckpointService.PostAsync(patrolCheckpointUrl, content, Token);
-                    if (objectResponse.IsSuccess)
-                    {
-                        await App.Current.MainPage.DisplayAlert("Success", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint successfully scaned.", "OK");
-                    }
-                    else
-                    {
-                        await App.Current.MainPage.DisplayAlert("Failed", response.Data.Route.RouteCheckpoints.FirstOrDefault().Checkpoint.Name + " checkpoint scan failed.", "OK");
-                    }
-                    if (index == checkpoints.Count - 1)
-                    {
-                        await ExecuteEnd();
-                    }
-                }
-                else
+                Checkpoint checkpoint = response.Data.PatrolCheckpoints.FirstOrDefault(p => p.Status == "Scheduled").Checkpoint;
+                await NFCService.ExecuteScanAsync(checkpoint.Latitude, checkpoint.Longitude);
+                if (!response.IsSuccess)
                 {
                     await App.Current.MainPage.DisplayAlert("Success", "All checkpoint scanned.", "OK", FlowDirection.RightToLeft);
                 }
@@ -182,8 +163,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 var content = new
                 {
                     Id = Patrol.Id,
-                    Status = "Started",
-                    StartedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    Status = "Started"
                 };
                 ObjectResponse<Patrol> response = await _genericPatrolService.PutAsync(url, content, Token);
                 IsStarted = response.IsSuccess;
@@ -219,8 +199,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 var content = new
                 {
                     Id = Patrol.Id,
-                    Status = "Completed",
-                    CompletedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    Status = "Completed"
                 };
                 ObjectResponse<Patrol> response = await _genericPatrolService.PutAsync(url, content, Token);
                 IsStarted = !response.IsSuccess;
@@ -300,23 +279,29 @@ namespace UTeM_Mobile.ViewModels.Guard
                 ObjectResponse<Patrol> response = await _genericPatrolService.PostAsync(url, null, Token);
                 if (response.IsSuccess && response.Data != null)
                 {
+                    Patrol = response.Data;
+                    GeneratePinCollection();
                     if (response.Data.Status == "Scheduled" || response.Data.Status == "Started")
                     {
                         HasNoPatrol = false;
-                        Patrol = response.Data;
                         IsStarted = Patrol.Status == "Started";
+                        await CheckNextPointAsync(response.Data);
                     }
                     else if (response.Data.Status == "Completed" || response.Data.Status == "Missed")
                     {
+                        ShowMap = false;
+                        HasNoPatrol = true;
                         NoPatrolMessage = "Patrol complete for today.";
                     }
                 }
                 else if (response.IsSuccess)
                 {
+                    ShowMap = false;
                     NoPatrolMessage = "No patrol for today.";
                 }
                 else
                 {
+                    ShowMap = false;
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
@@ -324,6 +309,85 @@ namespace UTeM_Mobile.ViewModels.Guard
             {
                 HasNoPatrol = true;
                 SetErrorMessage("Internal error occured.");
+            }
+        }
+
+        private void GeneratePinCollection()
+        {
+            if (Patrol.Route.RouteCheckpoints != null)
+            {
+                List<Pin> pins = new List<Pin>();
+                Polyline = new Polyline
+                {
+                    StrokeColor = Colors.Red,
+                    StrokeWidth = 5f
+                };
+                Polyline.Geopath.Clear();
+                foreach (var routeCheckpoint in Patrol.Route.RouteCheckpoints)
+                {
+                    var Checkpoint = routeCheckpoint.Checkpoint;
+                    var pin = new Pin
+                    {
+                        Label = Checkpoint.Name,
+                        Location = new Location(Checkpoint.Latitude, Checkpoint.Longitude)
+                    };
+                    Polyline.Geopath.Add(new Location(Checkpoint.Latitude, Checkpoint.Longitude));
+                    pins.Add(pin);
+                }
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    PinCollection.Clear();
+                    PinCollection.AddRange(pins);
+                });
+            }
+        }
+
+        private async Task CheckNextPointAsync(Patrol patrol)
+        {
+            if (patrol.PatrolCheckpoints != null && patrol.PatrolCheckpoints.Count > 0)
+            {
+                PatrolCheckpoint = patrol.PatrolCheckpoints.FirstOrDefault(p => p.Status == "Scheduled");
+                if (PatrolCheckpoint != null)
+                {
+                    PatrolCheckpoint = patrol.PatrolCheckpoints.FirstOrDefault(p => p.Status != "Completed");
+                }
+                if (PatrolCheckpoint != null)
+                {
+                    if (PatrolCheckpoint.ExpectedCheckedTime != null)
+                    {
+                        var notification = new NotificationRequest
+                        {
+                            NotificationId = 100,
+                            Title = "Patrol Notification",
+                            Description = $"You have a checkpoint at {PatrolCheckpoint.ExpectedCheckedTime.Value.ToString("hh:mm tt")}",
+                            Schedule = new NotificationRequestSchedule
+                            {
+                                NotifyTime = PatrolCheckpoint.ExpectedCheckedTime.Value.AddHours(-2)
+                            },
+                            Android = new Plugin.LocalNotification.AndroidOption.AndroidOptions
+                            {
+                                VisibilityType = Plugin.LocalNotification.AndroidOption.AndroidVisibilityType.Public,
+                            }
+                        };
+                        var notification2 = new NotificationRequest
+                        {
+                            NotificationId = 100,
+                            Title = "Patrol Notification 2",
+                            Description = $"You have a checkpoint at {PatrolCheckpoint.ExpectedCheckedTime.Value.ToString("hh:mm tt")}, Do you need more time?",
+                            Schedule = new NotificationRequestSchedule
+                            {
+                                NotifyTime = PatrolCheckpoint.ExpectedCheckedTime.Value.AddHours(-2)
+                            },
+                            Android = new Plugin.LocalNotification.AndroidOption.AndroidOptions
+                            {
+                                VisibilityType = Plugin.LocalNotification.AndroidOption.AndroidVisibilityType.Public,
+                            }
+                        };
+                        await LocalNotificationCenter.Current.Show(notification);
+                    }
+                }
+                HasNextCheckpoint = PatrolCheckpoint != null;
             }
         }
 

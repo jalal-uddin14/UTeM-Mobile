@@ -1,5 +1,4 @@
 ﻿using SQLite;
-using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Data.StaticCredentials;
 using UTeM_Mobile.Core.Models;
 using Xamarin.Essentials;
@@ -85,7 +84,7 @@ namespace UTeM_Mobile.Core.Services
             }
         }
 
-        private async static Task CheckPermission()
+        public async static Task CheckPermission()
         {
             PermissionStatus status = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
             if (status == PermissionStatus.Denied)

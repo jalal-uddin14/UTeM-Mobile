@@ -65,15 +65,8 @@ namespace UTeM_Mobile.Services
                     Description = response["description"],
                     Android = new Plugin.LocalNotification.AndroidOption.AndroidOptions
                     {
-                        VisibilityType = Plugin.LocalNotification.AndroidOption.AndroidVisibilityType.Public
+                        VisibilityType = Plugin.LocalNotification.AndroidOption.AndroidVisibilityType.Public,
                     }
-                };
-                Dictionary<string, string> popupContent = new Dictionary<string, string>
-                {
-                    { "Type", response["type"] },
-                    { "Heading", response["title"] },
-                    { "Title", response["message"] },
-                    { "Message", response["description"] }
                 };
                 PopMessage popMessage = new PopMessage
                 {

@@ -91,56 +91,22 @@ namespace UTeM_Mobile.Services
                     {
                         string patrolCheckpointUrl = "patrolCheckpoints/mark";
                         Patrol patrol = patrolResponse.Data;
-                        var hasCheckpoint = patrol.Route.RouteCheckpoints.Where(p => p.CheckpointId == checkpoint.Id).FirstOrDefault() != null;
-                        if (hasCheckpoint)
+                        var content = new
                         {
-                            var content = new
-                            {
-                                patrolId = patrol.Id,
-                                checkpointId = checkpoint.Id,
-                                checkedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                            };
-                            ObjectResponse<PatrolCheckpoint> patrolCheckpointResponse = await _genericPatrolCheckpointService.PostAsync(patrolCheckpointUrl, content, token);
-                            if (patrolCheckpointResponse.IsSuccess)
-                            {
-                                PatrolCheckpoint patrolCheckpoint = patrolCheckpointResponse.Data;
-                                bool isComplete = true;
-                                patrolResponse = await _genericPatrolService.PostAsync(patrolStatusUrl, null, token);
-                                patrol = patrolResponse.Data;
-                                foreach (var item in patrol.Route.RouteCheckpoints)
-                                {
-                                    if (patrol.PatrolCheckpoints.Where(p => p.CheckpointId == item.CheckpointId).FirstOrDefault() == null)
-                                    {
-                                        isComplete = false;
-                                        break;
-                                    }
-                                }
-                                if (isComplete)
-                                {
-                                    string updateStatusUrl = "patrols/update-status";
-                                    var updateStatusContent = new
-                                    {
-                                        Id = patrol.Id,
-                                        Status = "Completed",
-                                        CompletedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                                    };
-                                    ObjectResponse<Patrol> response = await _genericPatrolService.PutAsync(updateStatusUrl, updateStatusContent, token);
-                                }
-                                await MainThread.InvokeOnMainThreadAsync(() =>
-                                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessfull", "Checkpoint reached", checkpoint.Name + " checkpoint successfully scaned.")))
-                                );
-                            }
-                            else
-                            {
-                                await MainThread.InvokeOnMainThreadAsync(() =>
-                                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessfull", "Checkpoint write error", checkpoint.Name + " checkpoint failed to mark as scanned.")))
-                                );
-                            }
+                            patrolId = patrol.Id,
+                            checkpointId = checkpoint.Id
+                        };
+                        ObjectResponse<PatrolCheckpoint> patrolCheckpointResponse = await _genericPatrolCheckpointService.PostAsync(patrolCheckpointUrl, content, token);
+                        if (patrolCheckpointResponse.IsSuccess)
+                        {
+                            await MainThread.InvokeOnMainThreadAsync(() =>
+                                Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessfull", "Checkpoint reached", patrolCheckpointResponse.Message)))
+                            );
                         }
                         else
                         {
                             await MainThread.InvokeOnMainThreadAsync(() =>
-                                Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessfull", "Checkpoint not found", checkpoint.Name + " checkpoint not in this patrol.")))
+                                Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan Error", patrolCheckpointResponse.Message)))
                             );
                         }
                     }
