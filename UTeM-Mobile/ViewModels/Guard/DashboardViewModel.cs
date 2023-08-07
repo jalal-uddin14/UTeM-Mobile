@@ -385,14 +385,14 @@ namespace UTeM_Mobile.ViewModels.Guard
                             Description = $"You have a checkpoint at {PatrolCheckpoint.ExpectedCheckedTime.Value.ToString("hh:mm tt")}",
                             Schedule = new NotificationRequestSchedule
                             {
-                                NotifyTime = PatrolCheckpoint.ExpectedCheckedTime.Value.AddHours(-2)
+                                NotifyTime = PatrolCheckpoint.ExpectedCheckedTime.Value
                             },
                             Android = new Plugin.LocalNotification.AndroidOption.AndroidOptions
                             {
                                 VisibilityType = Plugin.LocalNotification.AndroidOption.AndroidVisibilityType.Public,
                             }
                         };
-                        PatrolCheckpoint.ExpectedCheckedTime = PatrolCheckpoint.ExpectedCheckedTime.Value.AddHours(-2);
+                        PatrolCheckpoint.ExpectedCheckedTime = PatrolCheckpoint.ExpectedCheckedTime.Value;
                         await LocalNotificationCenter.Current.Show(notification);
                     }
                 }

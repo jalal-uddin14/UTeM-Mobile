@@ -14,7 +14,7 @@ namespace UTeM_Mobile.Services
             timer.Tick += async (s, e) =>
             {
                 CheckpointTimer checkpointTimer = await TimerDBService.Get();
-                if (checkpointTimer != null && checkpointTimer.ExpectedCheckedTime != null && checkpointTimer.ExpectedCheckedTime.Value.AddHours(-2) <= DateTime.Now)
+                if (checkpointTimer != null && checkpointTimer.ExpectedCheckedTime != null && checkpointTimer.ExpectedCheckedTime.Value <= DateTime.UtcNow.AddHours(8))
                 {
                     await MainThread.InvokeOnMainThreadAsync(() =>
                     {
@@ -68,7 +68,7 @@ namespace UTeM_Mobile.Services
                                 PatrolId = patrol.Id,
                                 CheckpointId = nextCheckpoint.CheckpointId,
                                 CheckpointName = nextCheckpoint.Checkpoint.Name,
-                                ExpectedCheckedTime = DateTime.Now.AddHours(-2).AddMinutes(nextCheckpoint.ExpectedTime)
+                                ExpectedCheckedTime = DateTime.UtcNow.AddHours(8).AddMinutes(nextCheckpoint.ExpectedTime)
                             };
                             await TimerDBService.Delete();
                             await TimerDBService.Insert(checkpointTimer);
