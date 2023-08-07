@@ -1,6 +1,7 @@
 ﻿using MvvmHelpers.Commands;
 using System.Windows.Input;
 using UTeM_Mobile.Models;
+using UTeM_Mobile.Services;
 using UTeM_Mobile.ViewModels;
 
 namespace UTeM_Mobile.PopupViewModels
@@ -41,7 +42,7 @@ namespace UTeM_Mobile.PopupViewModels
 
         private async Task ExecuteClosePopViewAsync()
         {
-            await Application.Current.MainPage.Navigation.PopModalAsync(true);
+            await ModalService.PopAllModals();
         }
     }
 }

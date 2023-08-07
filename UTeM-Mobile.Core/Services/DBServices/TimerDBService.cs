@@ -1,26 +1,26 @@
 ﻿using SQLite;
-using UTeM_Mobile.Data.StaticCredentials;
 using UTeM_Mobile.Core.Models;
+using UTeM_Mobile.Data.StaticCredentials;
 using Xamarin.Essentials;
 
-namespace UTeM_Mobile.Core.Services
+namespace UTeM_Mobile.Core.Services.DBServices
 {
-    public class LocalDBService
+    public class TimerDBService
     {
-        static AuthToken token;
-        static SQLiteAsyncConnection db;
+        static CheckpointTimer checkpointTimer;
+        static SQLiteAsyncConnection checkpointTimerDB;
         public async static Task InitDB()
         {
-            if (db != null)
+            if (checkpointTimerDB != null)
             {
                 return;
             }
             string databasePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + LocalCredential.LocalDBName;
-            db = new SQLiteAsyncConnection(databasePath);
+            checkpointTimerDB = new SQLiteAsyncConnection(databasePath);
             try
             {
                 await CheckPermission();
-                await db.CreateTableAsync<AuthToken>();
+                await checkpointTimerDB.CreateTableAsync<CheckpointTimer>();
             }
             catch (Exception ex)
             {
@@ -29,37 +29,37 @@ namespace UTeM_Mobile.Core.Services
         }
 
 
-        public async static Task InsertToken(AuthToken t)
+        public async static Task Insert(CheckpointTimer p)
         {
             try
             {
-                token = t;
+                checkpointTimer = p;
                 await InitDB();
-                var table = await db.GetTableInfoAsync("AuthToken");
+                var table = await checkpointTimerDB.GetTableInfoAsync("CheckpointTimerDB");
                 if (table.Count <= 0)
                 {
-                    await db.CreateTableAsync<AuthToken>();
+                    await checkpointTimerDB.CreateTableAsync<CheckpointTimer>();
                 }
-                await db.InsertOrReplaceAsync(t);
+                await checkpointTimerDB.InsertOrReplaceAsync(p);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
         }
 
-        public async static Task<AuthToken> GetToken()
+        public async static Task<CheckpointTimer> Get()
         {
             await InitDB();
             try
             {
-                var query = db.Table<AuthToken>();
+                var query = checkpointTimerDB.Table<CheckpointTimer>();
 
                 var result = await query.ToListAsync();
 
                 foreach (var s in result)
                 {
-                    token = s;
+                    checkpointTimer = s;
                 }
             }
             catch (Exception e)
@@ -67,16 +67,16 @@ namespace UTeM_Mobile.Core.Services
 
             }
 
-            return token;
+            return checkpointTimer;
         }
 
-        public async static Task RemoveToken()
+        public async static Task Delete()
         {
             try
             {
                 await InitDB();
-                await db.DeleteAllAsync<AuthToken>();
-                token = null;
+                await checkpointTimerDB.DeleteAllAsync<CheckpointTimer>();
+                checkpointTimer = null;
             }
             catch (Exception e)
             {

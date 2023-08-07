@@ -1,4 +1,4 @@
-﻿using UTeM_Mobile.Core.Services;
+﻿using UTeM_Mobile.Core.Services.DBServices;
 
 namespace UTeM_Mobile.Services
 {

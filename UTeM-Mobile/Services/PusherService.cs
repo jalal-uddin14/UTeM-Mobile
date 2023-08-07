@@ -3,12 +3,12 @@ using UTeM_Mobile.Data.StaticCredentials;
 using Newtonsoft.Json;
 using healholmes_xamarin.Services;
 using UTeM_Mobile.Core.Models;
-using UTeM_Mobile.Core.Services;
 using Nito.AsyncEx;
 using Plugin.LocalNotification;
 using Plugin.LocalNotification.EventArgs;
 using UTeM_Mobile.PopupViews;
 using UTeM_Mobile.Models;
+using UTeM_Mobile.Core.Services.DBServices;
 
 namespace UTeM_Mobile.Services
 {

@@ -4,6 +4,7 @@ using System.Windows.Input;
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Core.Services;
+using UTeM_Mobile.Core.Services.DBServices;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Services;
@@ -80,6 +81,7 @@ namespace UTeM_Mobile.ViewModels
                         {
                             NFCService.SubscribeNFC();
                         }
+                        await TimeOutService.CheckTimerToken();
                         await MainThread.InvokeOnMainThreadAsync(() =>
                         {
                             Application.Current.MainPage = new GuardShell();

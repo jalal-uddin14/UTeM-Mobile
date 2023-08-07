@@ -3,7 +3,7 @@
     public class RouteCheckpoint
     {
         public int Id { get; set; }
-        public int TimeSuggested { get; set; }
+        public int ExpectedTime { get; set; }
         public int RouteId { get; set; }
         public virtual Route Route { get; set; }
         public int CheckpointId { get; set; }

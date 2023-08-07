@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="UTeM_Mobile.PopupViews.MessagePopupPage"
+             x:Class="UTeM_Mobile.PopupViews.TimeoutPopupPage"
              xmlns:viewmodel="clr-namespace:UTeM_Mobile.PopupViewModels">
 
     <ContentPage.BindingContext>
-        <viewmodel:MessagePopupViewModel />
+        <viewmodel:TimeoutPopupViewModel />
     </ContentPage.BindingContext>
 
     <Frame VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" Margin="20, 10" Padding="10">
         <StackLayout>
             <StackLayout BackgroundColor="{StaticResource DashboardHeadColor}" Padding="10">
-                <Label Text="{Binding PopMessage.Heading}" TextColor="White" HorizontalOptions="CenterAndExpand"/>
+                <Label Text="Timeout warning" TextColor="White" HorizontalOptions="CenterAndExpand"/>
             </StackLayout>
             <StackLayout BackgroundColor="Transparent" Margin="10">
-                <Label Text="{Binding PopMessage.Title}" TextColor="Black" FontSize="16" FontAttributes="Bold" />
+                <Label Text="Do you need more time?" TextColor="Black" FontSize="16" FontAttributes="Bold" HorizontalOptions="StartAndExpand" />
             </StackLayout>
             <StackLayout BackgroundColor="Transparent" Padding="10">
-                <Label Text="{Binding PopMessage.Message}" TextColor="Black"/>
+                <Label Text="{Binding PatrolCheckpoint.Checkpoint.Name, StringFormat='You are out of time to reach {0}.'}" TextColor="Black" HorizontalOptions="StartAndExpand"/>
             </StackLayout>
             <StackLayout BackgroundColor="Transparent" Padding="10" Orientation="Horizontal" Margin="5, 10">
-                <Button IsVisible="{Binding PopMessage.HasNavigate}" Text="{Binding ButtonText}" Style="{StaticResource ModalButton}" BackgroundColor="Green" HorizontalOptions="StartAndExpand" Command="{Binding NavigationCommand}"/>
-                <Button Text="Close" Style="{StaticResource ModalButton}" BackgroundColor="Red" HorizontalOptions="EndAndExpand" Command="{Binding ClosePopViewCommand}"/>
+                <Button Text="Yes" Style="{StaticResource ModalButton}" BackgroundColor="Green" HorizontalOptions="StartAndExpand" Command="{Binding NavigationCommand}"/>
+                <Button Text="No" Style="{StaticResource ModalButton}" BackgroundColor="Red" HorizontalOptions="EndAndExpand" Command="{Binding ClosePopViewCommand}"/>
             </StackLayout>
         </StackLayout>
     </Frame>

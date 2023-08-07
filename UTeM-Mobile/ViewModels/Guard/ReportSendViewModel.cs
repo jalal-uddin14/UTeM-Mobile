@@ -10,6 +10,8 @@ using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.PopupViews;
 using UTeM_Mobile.Models;
+using UTeM_Mobile.Core.Services.DBServices;
+using UTeM_Mobile.Services;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
@@ -195,20 +197,27 @@ namespace UTeM_Mobile.ViewModels.Guard
         {
             try
             {
-                string url = "patrols/status";
-                ObjectResponse<Patrol> response = await _genericPatrolService.PostAsync(url, null, Token);
-                if (response.IsSuccess && response.Data != null)
+                Patrol = await PatrolDBService.Get();
+                if (Patrol == null)
                 {
-                    Patrol = response.Data;
-                    HasPatrol = response.Data != null && response.Data.Status == "Started";
+                    ObjectResponse<Patrol> patrolResponse = await PatrolService.GetPatrolStatus();
+                    if (patrolResponse.IsSuccess && patrolResponse.Data != null)
+                    {
+                        Patrol = patrolResponse.Data;
+                    }
+                    else
+                    {
+                        await MainThread.InvokeOnMainThreadAsync(() =>
+                            Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Error", "Internal error occured", patrolResponse.Message)))
+                        );
+                        SetErrorMessage(patrolResponse.Message, patrolResponse.Errors);
+                    }
                 }
-                else
+                if (Patrol != null)
                 {
-                    await MainThread.InvokeOnMainThreadAsync(() =>
-                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Error", "Internal error occured", response.Message)))
-                    );
-                    SetErrorMessage(response.Message, response.Errors);
+                    HasPatrol = Patrol.Status == "Started";
                 }
+                
             }
             catch(Exception ex)
             {

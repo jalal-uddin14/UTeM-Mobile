@@ -1,10 +1,10 @@
 ﻿using MvvmHelpers;
 using Plugin.NFC;
-using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Services;
 using UTeM_Mobile.StaticProperties;
+using UTeM_Mobile.Core.Services.DBServices;
 
 namespace UTeM_Mobile.ViewModels
 {
@@ -56,6 +56,7 @@ namespace UTeM_Mobile.ViewModels
                         {
                             NFCService.SubscribeNFC();
                         }
+                        await TimeOutService.CheckTimerToken();
                         await MainThread.InvokeOnMainThreadAsync(() =>
                         {
                             Application.Current.MainPage = new GuardShell();

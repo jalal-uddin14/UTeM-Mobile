@@ -412,6 +412,7 @@
         <Setter Property="HeightRequest" Value="65" />
         <Setter Property="WidthRequest" Value="65" />
         <Setter Property="CornerRadius" Value="35" />
+        <Setter Property="VerticalOptions" Value="FillAndExpand" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="TextColor" Value="White" />
     </Style>

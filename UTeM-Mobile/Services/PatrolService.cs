@@ -1,17 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UTeM_Mobile.Core.IServices;
+﻿using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Core.Services;
+using UTeM_Mobile.Core.Services.DBServices;
 using UTeM_Mobile.Data.Models;
 
 namespace UTeM_Mobile.Services
 {
     public class PatrolService
     {
+        public static async Task<ObjectResponse<Patrol>> GetPatrolStatus()
+        {
+            var token = await LocalDBService.GetToken();
+            IGenericService<Patrol> _genericPatrolService = new GenericService<Patrol>();
+            string patrolStatusUrl = "patrols/status";
+            return await _genericPatrolService.PostAsync(patrolStatusUrl, null, token);
+        }
+
         public static async Task<RouteCheckpoint> CheckNextCheckpoint(int patrolId)
         {
             RouteCheckpoint routeCheckpoint = null;
