@@ -20,9 +20,9 @@
                HeightRequest="30"/>
     </Shell.TitleView>
     
-    <Grid RowDefinitions="0.1*, 0.7*, Auto, 0.2*">
+    <Grid RowDefinitions="0.1*, 0.6*, Auto, 0.2*">
         <Grid Grid.Row="0" RowDefinitions="65, Auto">
-            <Grid Grid.Row="0" ColumnDefinitions="0.8*, 0.2*">
+            <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
                 <StackLayout Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" BackgroundColor="{StaticResource DashboardHeadColor}" Padding="20">
                     <StackLayout.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NavigateToProfileCommand}"/>
@@ -65,25 +65,20 @@
                 </ListView>
             </Grid>
         </Grid>
-        <StackLayout Grid.Row="1" VerticalOptions="CenterAndExpand">
-            
-                <maps:Map x:Name="map" IsVisible="{Binding ShowMap}" IsShowingUser="True" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" ItemsSource="{Binding PinCollection}">
-                    <maps:Map.ItemTemplate>
-                        <DataTemplate>
-                            <maps:Pin Location="{Binding Location}"
-                                  Label="{Binding Label}"/>
-                        </DataTemplate>
-                    </maps:Map.ItemTemplate>
-                    <maps:Map.MapElements>
-                        <maps:Polyline BindingContext="{Binding Polyline}" StrokeColor="Red" StrokeWidth="5" />
-                    </maps:Map.MapElements>
-                </maps:Map>
-            
+        <StackLayout Grid.Row="1" VerticalOptions="CenterAndExpand" IsVisible="{Binding IsNotBusy}">
+            <maps:Map x:Name="map" IsVisible="{Binding ShowMap}" Style="{StaticResource MapStyle}" ItemsSource="{Binding PinCollection}" Loaded="map_Loaded">
+                <maps:Map.ItemTemplate>
+                    <DataTemplate>
+                        <maps:Pin Location="{Binding Location}"
+                                Label="{Binding Label}"/>
+                    </DataTemplate>
+                </maps:Map.ItemTemplate>
+            </maps:Map>
             <StackLayout IsVisible="{Binding ShowLogo}">
                 <Image Source="logo.jpg" />
             </StackLayout>
         </StackLayout>
-        <Grid Grid.Row="2" Margin="10, 10">
+        <Grid Grid.Row="2" Margin="10, 10" IsVisible="{Binding HasNextCheckpoint}">
             <VerticalStackLayout>
                 <Label Text="{Binding PatrolCheckpoint.Checkpoint.Name, StringFormat='Next Checkpoint: {0}'}" TextColor="Black" FontSize="14" FontAttributes="Bold"/>
                 <Label Text="{Binding PatrolCheckpoint.ExpectedCheckedTime, StringFormat='Exected reach at: {0:t}'}" TextColor="Black" FontAttributes="Bold"/>
@@ -103,16 +98,16 @@
                     <ColumnDefinition Width="0.1*" />
                     <ColumnDefinition Width="0.4*" />
                 </Grid.ColumnDefinitions>
-                <StackLayout Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Margin="10, 0">
+                <StackLayout Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Grid.ColumnSpan="2" Margin="5, 0">
                     <Button Text="Send SoS" Style="{StaticResource DashboardButton}" BackgroundColor="{StaticResource RedButtonColor}" Command="{Binding NavigateToSendSoSCommand}"/>
                 </StackLayout>
-                <StackLayout Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="10, 0" VerticalOptions="Fill">
+                <StackLayout Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5, 0">
                     <Button Text="Torch" Style="{StaticResource DashboardButton}" BackgroundColor="{StaticResource MatGreenButtonColor}" FontSize="30" Clicked="Button_Clicked"/>
                 </StackLayout>
-                <StackLayout Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="10, 0">
+                <StackLayout Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5, 0">
                     <Button Text="Scan" Style="{StaticResource DashboardButton}" BackgroundColor="{StaticResource MatGreenButtonColor}" FontSize="30" Command="{Binding ScanCommand}"/>
                 </StackLayout>
-                <StackLayout Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Margin="10, 0">
+                <StackLayout Grid.Row="2" Grid.RowSpan="2" Grid.Column="2" Grid.ColumnSpan="2" Margin="5, 0">
                     <Button Text="Patrols" Style="{StaticResource DashboardButton}" BackgroundColor="{StaticResource GreenButtonColor}" Command="{Binding NavigateToPatrolListCommand}"/>
                 </StackLayout>
                 <Frame Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource DashboardButtonFrame}">

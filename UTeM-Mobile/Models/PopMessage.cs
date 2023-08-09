@@ -43,5 +43,16 @@
                 HasNavigate = false
             };
         }
+        public static PopMessage GetInternetMessage(string heading = "Error", string message = "")
+        {
+            return new PopMessage
+            {
+                Heading = heading,
+                Title = "Check you internet connection!.",
+                Message = message,
+                NavigateTo = "",
+                HasNavigate = false
+            };
+        }
     }
 }

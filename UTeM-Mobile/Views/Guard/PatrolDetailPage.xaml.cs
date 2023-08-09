@@ -17,4 +17,10 @@ public partial class PatrolDetailPage : ContentPage
 		Console.WriteLine("Reached here");
 		viewModel.OnAppearing();
     }
+
+    private void ListView_ItemTapped(object sender, ItemTappedEventArgs e)
+    {
+        ((ListView)sender).SelectedItem = null;
+        ((ListView)sender).BackgroundColor = Colors.Transparent;
+    }
 }

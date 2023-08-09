@@ -19,7 +19,6 @@ namespace UTeM_Mobile.ViewModels.Guard
     {
         private IGenericService<Report> _genericService;
         private IGenericService<ApplicationUser> _genericUserService;
-        private IGenericService<Patrol> _genericPatrolService;
         private bool hasPatrol;
         private bool hasNoPatrol;
         private Report report;
@@ -50,7 +49,6 @@ namespace UTeM_Mobile.ViewModels.Guard
             Report = new Report();
             _genericService = new GenericService<Report>();
             _genericUserService = new GenericService<ApplicationUser>();
-            _genericPatrolService = new GenericService<Patrol>();
             TakePhotoCommand = new AsyncCommand(TakePhotoAsync);
             SendReportCommand = new AsyncCommand(ExecuteSendReport);
         }
@@ -96,7 +94,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 IsSuccessMessage = false;
                 if (string.IsNullOrWhiteSpace(Report.Description))
                 {
-                    IsSuccessMessage = false;
+                    IsErrorMessage = true;
                     Message = "SoS Message required";
                     return;
                 }
@@ -113,7 +111,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 requestContent.Add(new StringContent(Patrol.Id.ToString()), "patrolId");
                 requestContent.Add(new StringContent(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")), "date");
                 ObjectResponse<Report> response = await _genericService.PostFile(url, requestContent, Token);
-                IsSuccessMessage = response.IsSuccess;
+                IsErrorMessage = !response.IsSuccess;
                 Message = response.Message;
                 if (IsSuccessMessage)
                 {
@@ -146,7 +144,7 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         public void OnAppearing()
         {
-            IsSuccessMessage = false;
+            IsErrorMessage = false;
             Task.Run(async () => { await GetTokenAsync(); });
         }
 

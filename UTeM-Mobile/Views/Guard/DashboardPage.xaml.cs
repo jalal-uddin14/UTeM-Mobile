@@ -1,13 +1,11 @@
 using Microsoft.Maui.Maps;
-using UTeM_Mobile.StaticProperties;
+using UTeM_Mobile.Services;
 using UTeM_Mobile.ViewModels.Guard;
 
 namespace UTeM_Mobile.Views.Guard;
 
 public partial class DashboardPage : ContentPage
 {
-    private CancellationTokenSource _cancelTokenSource;
-
     private DashboardViewModel viewModel;
     private bool isFlashOn;
 	public DashboardPage()
@@ -21,17 +19,13 @@ public partial class DashboardPage : ContentPage
         base.OnAppearing();
         viewModel = BindingContext as DashboardViewModel;
         viewModel.OnAppearing();
-        await GetCurrentLocation();
     }
 
     public async Task GetCurrentLocation()
     {
         try
         {
-            GeolocationRequest request = new GeolocationRequest(GeolocationAccuracy.Best, TimeSpan.FromSeconds(5));
-            _cancelTokenSource = new CancellationTokenSource();
-            Location location = await Geolocation.Default.GetLocationAsync(request, _cancelTokenSource.Token);
-
+            var location = await LocationService.GetCurrentLocationAsync();
             if (location != null)
             {
                 map.MoveToRegion(mapSpan: MapSpan.FromCenterAndRadius(new Location(location.Latitude, location.Longitude), Distance.FromMeters(500)));
@@ -46,7 +40,6 @@ public partial class DashboardPage : ContentPage
             
         }
     }
-
 
     private async void Button_Clicked(object sender, EventArgs e)
     {
@@ -67,5 +60,10 @@ public partial class DashboardPage : ContentPage
         {
             await DisplayAlert("Error", ex.Message, "Ok");
         }
+    }
+
+    private async void map_Loaded(object sender, EventArgs e)
+    {
+        await GetCurrentLocation();
     }
 }

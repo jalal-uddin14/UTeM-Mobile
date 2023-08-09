@@ -6,6 +6,7 @@ using UTeM_Mobile.Core.Services.DBServices;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Models;
 using UTeM_Mobile.PopupViews;
+using UTeM_Mobile.StaticProperties;
 
 namespace UTeM_Mobile.Services
 {
@@ -72,6 +73,10 @@ namespace UTeM_Mobile.Services
         {
             try
             {
+                if (!await StaticMessage.ShowInternetMessage())
+                {
+                    return;
+                }
                 IGenericService<Checkpoint> _genericCheckpointService = new GenericService<Checkpoint>();
                 IGenericService<PatrolCheckpoint> _genericPatrolCheckpointService = new GenericService<PatrolCheckpoint>();
                 ObjectResponse<Patrol> patrolResponse = null;
@@ -151,9 +156,15 @@ namespace UTeM_Mobile.Services
             }
             catch(Exception ex)
             {
-                await MainThread.InvokeOnMainThreadAsync(() => 
-                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage("Scan error", "Unexpected error occured in server.")))
-                );
+                if (!await StaticMessage.ShowInternetMessage())
+                {
+                    return;
+                }
+                else
+                {
+                    await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage("Scan error", "Unexpected error occured in server.")))
+                    );
+                }
             }
         }
     }

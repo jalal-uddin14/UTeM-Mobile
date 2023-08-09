@@ -50,7 +50,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             {
                 string url = "accounts/update";
                 ObjectResponse<ApplicationUser> response = await _genericService.PutAsync(url, User, token);
-                IsSuccessMessage = response.IsSuccess;
+                IsErrorMessage = !response.IsSuccess;
                 if (IsSuccessMessage)
                 {
                     Message = response.Message;
@@ -64,7 +64,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             }
             catch (Exception ex)
             {
-                IsSuccessMessage = false;
+                IsErrorMessage = true;
                 await MainThread.InvokeOnMainThreadAsync(() => 
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
                 );

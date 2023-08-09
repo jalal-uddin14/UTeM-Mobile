@@ -1,30 +1,34 @@
 ﻿using MvvmHelpers;
 using System.Collections.ObjectModel;
 using UTeM_Mobile.Core.Models;
+using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Services;
+using UTeM_Mobile.StaticProperties;
 
 namespace UTeM_Mobile.ViewModels
 {
-    public class MainViewModel : BaseViewModel
+    public class MainViewModel : BaseViewModel, IInternetConnection
     {
         private AuthToken token;
         private bool isSuccessMessage;
         private bool isErrorMessage;
         private string message;
         private int errorHeight;
-        public bool IsSuccessMessage
+        private bool isNotConnected;
+        public bool IsSuccessMessage { get => isSuccessMessage; set => SetProperty(ref isSuccessMessage, value); }
+        public bool IsErrorMessage
         {
-            get => isSuccessMessage;
+            get => isErrorMessage;
             set
             {
-                SetProperty(ref isSuccessMessage, value);
-                IsErrorMessage = !value;
+                SetProperty(ref isErrorMessage, value);
+                IsSuccessMessage = !value;
             }
         }
-        public bool IsErrorMessage { get => isErrorMessage; set => SetProperty(ref isErrorMessage, value); }
         public string Message { get => message; set => SetProperty(ref message, value); }
         public ObservableCollection<ErrorView> Message_list { get; }
         public int ErrorHeight { get => errorHeight; set => SetProperty(ref errorHeight, value); }
+        public bool IsNotConnected { get => isNotConnected; set => SetProperty(ref isNotConnected, value); }
         protected AuthToken Token
         {
             get => token;
@@ -46,6 +50,39 @@ namespace UTeM_Mobile.ViewModels
             Message_list = new ObservableCollection<ErrorView>();
             ErrorHeight = 0;
             IsErrorMessage = false;
+            CheckConnectivity();
+        }
+
+
+
+        public void CheckConnectivity()
+        {
+            IsErrorMessage = false;
+            Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
+            IsNotConnected = Connectivity.NetworkAccess != NetworkAccess.Internet;
+            StaticMessage.InternetNotConnected = IsNotConnected;
+            if (IsNotConnected)
+            {
+                Shell.Current.GoToAsync("NoInternetPage");
+                SetErrorMessage("Check your internet connection!");
+            }
+        }
+
+
+        public void Connectivity_ConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
+        {
+            IsErrorMessage = false;
+            IsNotConnected = e.NetworkAccess != NetworkAccess.Internet;
+            StaticMessage.InternetNotConnected = IsNotConnected;
+            if (IsNotConnected)
+            {
+                Shell.Current.GoToAsync("NoInternetPage");
+                SetErrorMessage("Check your internet connection!");
+            }
+            else
+            {
+                Shell.Current.Navigation.PopToRootAsync();
+            }
         }
 
         protected void SetErrorMessage(string message, Dictionary<string, List<string>> errors = null)

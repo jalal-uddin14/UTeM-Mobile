@@ -2,15 +2,17 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="UTeM_Mobile.Views.Supervisor.PatrolDetailPage"
-             BackgroundColor="White"
+             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
+             xmlns:sensors="clr-namespace:Microsoft.Maui.Devices.Sensors;assembly=Microsoft.Maui.Essentials"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
              xmlns:models="clr-namespace:UTeM_Mobile.Core.Models;assembly=UTeM-Mobile.Core"
+             BackgroundColor="White"
              Shell.NavBarIsVisible="False">
     <ContentPage.BindingContext>
         <viewModel:PatrolDetailViewModel />
     </ContentPage.BindingContext>
-    <Grid RowDefinitions="50, 80, Auto, Auto, *">
+    <Grid RowDefinitions="50, Auto, 80, Auto, *">
         <StackLayout Grid.Row="0" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
             <Label Text="Patrol Details" Style="{StaticResource HeaderLabel}"/>
         </StackLayout>
@@ -63,18 +65,24 @@
                     <Label Text="{Binding Patrol.End, StringFormat=' {0:t}'}" FontAttributes="Bold" TextColor="Black"/>
                 </HorizontalStackLayout>
             </StackLayout>
-            <StackLayout Grid.Row="3">
-                <Label Text="Status" FontSize="12" TextColor="Black"/>
-                <Label IsVisible="{Binding Patrol.IsStarted}" Text="{Binding Patrol.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
-                <Label IsVisible="{Binding Patrol.IsScheduled}" Text="{Binding Patrol.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
-                <Label IsVisible="{Binding Patrol.IsCompleted}" Text="{Binding Patrol.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
-                <Label IsVisible="{Binding Patrol.IsMissed}" Text="{Binding Patrol.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
-            </StackLayout>
+            <Grid Grid.Row="3" ColumnDefinitions="*, Auto">
+                <StackLayout Grid.Column="0">
+                    <Label Text="Status" FontSize="12" TextColor="Black"/>
+                    <Label IsVisible="{Binding Patrol.IsStarted}" Text="{Binding Patrol.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
+                    <Label IsVisible="{Binding Patrol.IsScheduled}" Text="{Binding Patrol.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
+                    <Label IsVisible="{Binding Patrol.IsCompleted}" Text="{Binding Patrol.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
+                    <Label IsVisible="{Binding Patrol.IsMissed}" Text="{Binding Patrol.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
+                </StackLayout>
+                <StackLayout Grid.Column="1" IsVisible="{Binding PatrolRunning}">
+                    <Button IsVisible="{Binding ShowGPS}" Text="{StaticResource IconMapRoute}" FontFamily="FAsolid" BackgroundColor="Transparent" TextColor="Black" FontSize="22" Clicked="Button_Clicked"/>
+                    <Button IsVisible="{Binding ShowMapRoute}" Text="{StaticResource IconGps}" FontFamily="FAsolid" BackgroundColor="Transparent" TextColor="Black" FontSize="22" Clicked="Button_Clicked"/>
+                </StackLayout>
+            </Grid>
             <StackLayout Grid.Row="4">
                 <BoxView HeightRequest="1" Color="Grey"/>
             </StackLayout>
         </Grid>
-        <Grid Grid.Row="4" RowDefinitions="Auto, *" Margin="20, 0">
+        <Grid IsVisible="{Binding ShowMapRoute}" Grid.Row="4" RowDefinitions="Auto, *" Margin="20, 0">
             <StackLayout Grid.Row="0">
                 <Label Text="Check Point" HorizontalOptions="CenterAndExpand" FontAttributes="Bold" FontSize="16"/>
             </StackLayout>
@@ -115,6 +123,10 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </StackLayout>
+        </Grid>
+        <Grid IsVisible="{Binding ShowGPS}" Grid.Row="4" Margin="10">
+            <maps:Map x:Name="map" Style="{StaticResource MapStyle}"/>
+
         </Grid>
     </Grid>
 </ContentPage>

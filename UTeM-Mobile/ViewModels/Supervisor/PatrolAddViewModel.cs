@@ -81,6 +81,14 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         {
             try
             {
+                if (SelectedGuard == null || SelectedGuard.Id == null)
+                {
+                    SetErrorMessage("Guard is required"); return;
+                }
+                if (SelectedRoute == null || SelectedRoute.Id == 0)
+                {
+                    SetErrorMessage("Route is required"); return;
+                }
                 IsErrorMessage = false;
                 string createPatrollUrl = "patrols";
                 string start = StartDate.ToString("yyyy-MM-dd ") + new DateTime(StartTime.Ticks).ToString("HH:mm:ss");

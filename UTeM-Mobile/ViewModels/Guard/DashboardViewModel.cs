@@ -63,6 +63,7 @@ namespace UTeM_Mobile.ViewModels.Guard
             {
                 SetProperty(ref hasNoPatrol, value);
                 HasPatrol = !value;
+                HasNextCheckpoint = !value;
             }
         }
         public bool HasPatrol { get => hasPatrol; set => SetProperty(ref hasPatrol, value); }
@@ -216,12 +217,13 @@ namespace UTeM_Mobile.ViewModels.Guard
                     Status = "Completed"
                 };
                 ObjectResponse<Patrol> response = await _genericPatrolService.PutAsync(url, content, Token);
-                IsStarted = !response.IsSuccess;
+                HasNoPatrol = !response.IsSuccess;
                 if (response.IsSuccess)
                 {
                     await TimeOutService.CheckTimerToken();
+                    HasNoPatrol = true;
                     await MainThread.InvokeOnMainThreadAsync(() => 
-                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Patrol Notification")))
+                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Patrol Notification", "Patrol ended")))
                     );
                 }
                 else
@@ -243,7 +245,7 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         public void OnAppearing()
         {
-            IsErrorMessage = false;
+            IsErrorMessage = IsNotConnected;
             Task.Run(async () => { await GetTokenAsync(); });
         }
 
@@ -251,6 +253,11 @@ namespace UTeM_Mobile.ViewModels.Guard
         {
             try
             {
+                if (IsNotConnected)
+                {
+                    return;
+                }
+                IsBusy = true;
                 Token = await LocalDBService.GetToken();
                 if (Token != null)
                 {
@@ -262,6 +269,10 @@ namespace UTeM_Mobile.ViewModels.Guard
             catch(Exception ex)
             {
                 SetErrorMessage("Internal error occured, please try again.");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
@@ -310,19 +321,20 @@ namespace UTeM_Mobile.ViewModels.Guard
                     GeneratePinCollection();
                     if (Patrol.Status == "Scheduled" || Patrol.Status == "Started")
                     {
+                        await TimeOutService.RunLocationBroadcastAsync(Token);
                         HasNoPatrol = false;
                         IsStarted = Patrol.Status == "Started";
+                        await CheckNextPointAsync(Patrol);
                     }
                     else if (Patrol.Status == "Completed" || Patrol.Status == "Missed")
                     {
                         await PatrolDBService.Delete();
                         await TimerDBService.Delete();
-                        TimeOutService.StopTimer();
                         ShowMap = false;
                         HasNoPatrol = true;
+                        HasNextCheckpoint = false;
                         NoPatrolMessage = "Patrol complete for today.";
                     }
-                    await CheckNextPointAsync(Patrol);
                 }
                 else
                 {

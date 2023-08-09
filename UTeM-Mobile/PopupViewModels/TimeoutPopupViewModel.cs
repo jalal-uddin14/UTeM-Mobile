@@ -42,7 +42,8 @@ namespace UTeM_Mobile.PopupViewModels
         private async Task ExecuteClosePopViewAsync()
         {
             await TimerDBService.Delete();
-            await Application.Current.MainPage.Navigation.PopModalAsync(true);
+            //await Application.Current.MainPage.Navigation.PopModalAsync(true);
+            await ModalService.PopAllModals();
         }
     }
 }

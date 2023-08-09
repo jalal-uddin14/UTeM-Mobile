@@ -14,5 +14,7 @@
     <x:String x:Key="IconLogout">&#xf2f5;</x:String>
     <x:String x:Key="IconCamera">&#xf030;</x:String>
     <x:String x:Key="IconBell">&#xf0f3;</x:String>
+    <x:String x:Key="IconGps">&#xf601;</x:String>
+    <x:String x:Key="IconMapRoute">&#xf5a0;</x:String>
     
 </ResourceDictionary>

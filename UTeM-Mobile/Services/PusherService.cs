@@ -9,6 +9,7 @@ using Plugin.LocalNotification.EventArgs;
 using UTeM_Mobile.PopupViews;
 using UTeM_Mobile.Models;
 using UTeM_Mobile.Core.Services.DBServices;
+using UTeM_Mobile.StaticProperties;
 
 namespace UTeM_Mobile.Services
 {
@@ -17,7 +18,6 @@ namespace UTeM_Mobile.Services
         public static AuthToken token = AsyncContext.Run(LocalDBService.GetToken);
         public static Pusher pusher = new Pusher(PusherCredential.key, new PusherOptions
         {
-            Authorizer = new PusherAuthoriser(token),
             Cluster = PusherCredential.cluster,
             Encrypted = true
         });
@@ -29,7 +29,6 @@ namespace UTeM_Mobile.Services
             {
                 pusher = new Pusher(PusherCredential.key, new PusherOptions
                 {
-                    Authorizer = new PusherAuthoriser(token),
                     Cluster = PusherCredential.cluster,
                     Encrypted = true
                 });
@@ -40,6 +39,10 @@ namespace UTeM_Mobile.Services
         {
             try
             {
+                if (!await StaticMessage.ShowInternetMessage())
+                {
+                    return;
+                }
                 GetPusher();
                 await pusher.ConnectAsync().ConfigureAwait(false);
                 PrivateChannel = await pusher.SubscribeAsync("UTeM-Guard").ConfigureAwait(false);
@@ -47,7 +50,10 @@ namespace UTeM_Mobile.Services
             }
             catch (Exception ex)
             {
-
+                if (!await StaticMessage.ShowInternetMessage())
+                {
+                    return;
+                }
             }
 
         }

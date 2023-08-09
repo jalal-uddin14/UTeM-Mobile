@@ -35,7 +35,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 IsErrorMessage = false;
                 string url = "accounts/update";
                 ObjectResponse<ApplicationUser> response = await _genericUserService.PutAsync(url, User, Token);
-                IsSuccessMessage = response.IsSuccess;
+                IsErrorMessage = !response.IsSuccess;
                 if (IsSuccessMessage)
                 {
                     Message = response.Message;

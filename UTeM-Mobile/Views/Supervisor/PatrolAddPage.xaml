@@ -16,22 +16,7 @@
         <StackLayout Grid.Row="0" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
             <Label Text="Assign Route" Style="{StaticResource HeaderLabel}"/>
         </StackLayout>
-        <Grid Grid.Row="1" IsVisible="{Binding IsErrorMessage}" VerticalOptions="CenterAndExpand">
-            <ListView BackgroundColor="Transparent" SeparatorVisibility="None" VerticalScrollBarVisibility="Never" Margin="0" HasUnevenRows="True" ItemsSource="{Binding Message_list}">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:ErrorView">
-                        <ViewCell>
-                            <Grid>
-                                <Frame Padding="5" Margin="0" BackgroundColor="Transparent" HasShadow="True" BorderColor="Transparent">
-                                    <Label Text="{Binding Message}" Style="{StaticResource ErrorLabel}"/>
-                                </Frame>
-                            </Grid>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </Grid>
-        <Grid Grid.Row="2" Margin="20, 10" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
+        <Grid Grid.Row="1" Margin="20, 10" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
             <StackLayout Grid.Row="0">
                 <Label Text="Guard"  Style="{StaticResource AddFormTitleLabel}"/>
                 <Frame Style="{StaticResource AddFormFrame}" IsVisible="{Binding IsGuardNotVisible}">
@@ -85,8 +70,24 @@
                 </HorizontalStackLayout>
             </StackLayout>
         </Grid>
-        <Grid Grid.Row="3" Margin="10" >
+        <Grid Grid.Row="2" Margin="10" >
             <Button Text="Assign" Style="{StaticResource SubmitButton}" Command="{Binding CreatePatrolCommand}"/>
+        </Grid>
+
+        <Grid Grid.Row="3" IsVisible="{Binding IsErrorMessage}" VerticalOptions="CenterAndExpand">
+            <ListView BackgroundColor="Transparent" SeparatorVisibility="None" VerticalScrollBarVisibility="Never" Margin="0" HasUnevenRows="True" ItemsSource="{Binding Message_list}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:ErrorView">
+                        <ViewCell>
+                            <Grid>
+                                <Frame Padding="5" Margin="0" BackgroundColor="Transparent" HasShadow="True" BorderColor="Transparent">
+                                    <Label Text="{Binding Message}" Style="{StaticResource ErrorLabel}"/>
+                                </Frame>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Grid>
     </Grid>
     

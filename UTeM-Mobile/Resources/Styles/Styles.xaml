@@ -452,10 +452,9 @@
         <Setter Property="Padding" Value="5" />
     </Style>
     <Style TargetType="Frame" x:Key="DashboardButtonFrame">
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="CornerRadius" Value="40" />
-        <Setter Property="HeightRequest" Value="80" />
-        <Setter Property="WidthRequest" Value="80" />
+        <Setter Property="CornerRadius" Value="35" />
+        <Setter Property="HeightRequest" Value="70" />
+        <Setter Property="WidthRequest" Value="70" />
         <Setter Property="BackgroundColor" Value="White" />
         <Setter Property="BorderColor" Value="Transparent" />
         <Setter Property="HorizontalOptions" Value="CenterAndExpand" />
@@ -468,4 +467,10 @@
         <Setter Property="CornerRadius" Value="0" />
     </Style>
 
+    <Style TargetType="Map" x:Key="MapStyle">
+        <Setter Property="IsShowingUser" Value="True" />
+        <Setter Property="MapType" Value="Street" />
+        <Setter Property="VerticalOptions" Value="FillAndExpand" />
+        <Setter Property="HorizontalOptions" Value="FillAndExpand" />
+    </Style>
 </ResourceDictionary>
