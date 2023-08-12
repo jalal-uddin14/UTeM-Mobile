@@ -9,20 +9,20 @@ namespace UTeM_Mobile.Data.Models
         public string Description { get; set; }
         public string File { get; set; }
         public string FilePath { get; set; }
-        public int PatrolId { get; set; }
-        public virtual Patrol Patrol { get; set; }
+        public int PatrolCheckpointId { get; set; }
+        public virtual PatrolCheckpoint PatrolCheckpoint { get; set; }
         public string GuardName
         {
             get
             {
-                return Patrol != null && Patrol.Guard != null ? Patrol.Guard.Name : "";
+                return PatrolCheckpoint != null && PatrolCheckpoint.Patrol != null && PatrolCheckpoint.Patrol.Guard != null ? PatrolCheckpoint.Patrol.Guard.Name : "";
             }
         }
-        public string RouteName
+        public string? RouteName
         {
             get
             {
-                return Patrol != null && Patrol.Route != null ? Patrol.Route.Name : "";
+                return PatrolCheckpoint != null && PatrolCheckpoint.Patrol != null && PatrolCheckpoint.Patrol.Route != null ? PatrolCheckpoint.Patrol.Route.Name : "";
             }
         }
         public virtual string Difference

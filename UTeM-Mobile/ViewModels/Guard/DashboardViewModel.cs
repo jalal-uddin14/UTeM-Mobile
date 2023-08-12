@@ -225,6 +225,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     await MainThread.InvokeOnMainThreadAsync(() => 
                         Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Patrol Notification", "Patrol ended")))
                     );
+                    await PatrolDBService.Delete();
                 }
                 else
                 {

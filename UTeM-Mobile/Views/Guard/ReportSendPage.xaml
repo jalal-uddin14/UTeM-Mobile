@@ -21,8 +21,8 @@
         <Grid Grid.Row="2" IsVisible="{Binding HasPatrol}" ColumnDefinitions="0.3*, 0.7*" RowDefinitions="Auto, Auto, *" Margin="10">
             <Frame Grid.Row="0" Grid.Column="0" Margin="5, 10" Padding="5, 10" HorizontalOptions="FillAndExpand" BorderColor="Gray">
                 <StackLayout HorizontalOptions="CenterAndExpand">
-                    <Label Text="Route Name:" FontSize="12" HorizontalOptions="CenterAndExpand"/>
-                    <Label Text="{Binding Patrol.Route.Name}"  HorizontalOptions="CenterAndExpand" FontSize="16" FontAttributes="Bold"/>
+                    <Label Text="Checkpoint:" FontSize="12" HorizontalOptions="CenterAndExpand"/>
+                    <Label Text="{Binding Checkpoint.Name}"  HorizontalOptions="CenterAndExpand" FontSize="16" FontAttributes="Bold"/>
                 </StackLayout>
             </Frame>
             <Frame Grid.Row="1" Grid.Column="0" Margin="5, 0" Padding="5" HorizontalOptions="FillAndExpand" BorderColor="Gray">
@@ -56,25 +56,23 @@
                 <Label Text="Patrol not started." />
             </StackLayout>
         </Grid>
-        <Grid IsVisible="{Binding HasPatrol}" Grid.Row="4">
-            <StackLayout IsVisible="{Binding IsErrorMessage}" VerticalOptions="CenterAndExpand">
-                <ListView BackgroundColor="Transparent" SeparatorVisibility="None" VerticalScrollBarVisibility="Never" Margin="0" HasUnevenRows="True" ItemsSource="{Binding Message_list}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models:ErrorView">
-                            <ViewCell>
-                                <Grid>
-                                    <Frame Padding="5" Margin="0" BackgroundColor="Transparent" HasShadow="True" BorderColor="Transparent">
-                                        <Label Text="{Binding Message}" Style="{StaticResource ErrorLabel}"/>
-                                    </Frame>
-                                </Grid>
-                            </ViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </StackLayout>
-            <StackLayout IsVisible="{Binding IsSuccessMessage}" VerticalOptions="CenterAndExpand">
-                <Label Text="{Binding Message}" TextColor="Green" HorizontalOptions="CenterAndExpand" />
-            </StackLayout>
-        </Grid>
+        <StackLayout IsVisible="{Binding IsErrorMessage}" VerticalOptions="CenterAndExpand" Grid.Row="4">
+            <ListView BackgroundColor="Transparent" SeparatorVisibility="None" VerticalScrollBarVisibility="Never" Margin="0" HasUnevenRows="True" ItemsSource="{Binding Message_list}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:ErrorView">
+                        <ViewCell>
+                            <Grid>
+                                <Frame Padding="5" Margin="0" BackgroundColor="Transparent" HasShadow="True" BorderColor="Transparent">
+                                    <Label Text="{Binding Message}" Style="{StaticResource ErrorLabel}"/>
+                                </Frame>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+        <StackLayout IsVisible="{Binding IsSuccessMessage}" VerticalOptions="CenterAndExpand">
+            <Label Text="{Binding Message}" TextColor="Green" HorizontalOptions="CenterAndExpand" />
+        </StackLayout>
     </Grid>
 </ContentPage>

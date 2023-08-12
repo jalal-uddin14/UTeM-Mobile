@@ -25,13 +25,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         public ReportDetailViewModel()
         {
             _genericService = new GenericService<Report>();
-            Report = new Report
-            {
-                Patrol = new Patrol
-                {
-                    Route = new Route()
-                }
-            };
+            Report = new Report();
         }
 
         public void OnAppearing()

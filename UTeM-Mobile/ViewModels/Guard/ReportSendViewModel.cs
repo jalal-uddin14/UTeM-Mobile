@@ -25,6 +25,7 @@ namespace UTeM_Mobile.ViewModels.Guard
         private FileResult photoResult;
         private ApplicationUser user;
         private Patrol patrol;
+        private Checkpoint checkpoint;
 
         public ICommand TakePhotoCommand { get; }
         public ICommand SendReportCommand { get; }
@@ -43,6 +44,7 @@ namespace UTeM_Mobile.ViewModels.Guard
         public FileResult PhotoResult { get => photoResult; set => SetProperty(ref photoResult, value); }
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
         public Patrol Patrol { get => patrol; set => SetProperty(ref patrol, value); }
+        public Checkpoint Checkpoint { get => checkpoint; set => SetProperty(ref checkpoint, value); }
 
         public ReportSendViewModel()
         {
@@ -124,7 +126,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 else
                 {
                     await MainThread.InvokeOnMainThreadAsync(() =>
-                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("SoS notification", "Internal error occured", response.Message)))
+                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("SoS notification", "Error occured", response.Message)))
                     );
                     SetErrorMessage(response.Message, response.Errors);
                 }
@@ -145,6 +147,7 @@ namespace UTeM_Mobile.ViewModels.Guard
         public void OnAppearing()
         {
             IsErrorMessage = false;
+            Report = new Report();
             Task.Run(async () => { await GetTokenAsync(); });
         }
 
@@ -152,6 +155,8 @@ namespace UTeM_Mobile.ViewModels.Guard
         {
             try
             {
+                HasPatrol = false;
+                Checkpoint = null;
                 Token = await LocalDBService.GetToken();
                 if (Token != null)
                 {
@@ -177,17 +182,11 @@ namespace UTeM_Mobile.ViewModels.Guard
                 }
                 else
                 {
-                    await MainThread.InvokeOnMainThreadAsync(() =>
-                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Error", "Internal error occured", response.Message)))
-                    );
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
             catch(Exception ex)
             {
-                await MainThread.InvokeOnMainThreadAsync(() =>
-                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
-                );
                 SetErrorMessage("Unexpected error occured!");
             }
         }
@@ -195,33 +194,26 @@ namespace UTeM_Mobile.ViewModels.Guard
         {
             try
             {
-                Patrol = await PatrolDBService.Get();
-                if (Patrol == null)
+                IsErrorMessage = false;
+                ObjectResponse<Patrol> patrolResponse = await PatrolService.GetPatrolStatus();
+                if (patrolResponse.IsSuccess)
                 {
-                    ObjectResponse<Patrol> patrolResponse = await PatrolService.GetPatrolStatus();
-                    if (patrolResponse.IsSuccess && patrolResponse.Data != null)
+                    if (patrolResponse.Data != null && patrolResponse.Data.Status == "Started" && patrolResponse.Data.PatrolCheckpoints.Count > 0 && patrolResponse.Data.PatrolCheckpoints.FirstOrDefault(q => q.Status == "Scheduled") != null && patrolResponse.Data.PatrolCheckpoints.FirstOrDefault(q => q.Status == "Scheduled").Checkpoint != null)
                     {
-                        Patrol = patrolResponse.Data;
-                    }
-                    else
-                    {
-                        await MainThread.InvokeOnMainThreadAsync(() =>
-                            Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Error", "Internal error occured", patrolResponse.Message)))
-                        );
-                        SetErrorMessage(patrolResponse.Message, patrolResponse.Errors);
+                        Checkpoint = patrolResponse.Data.PatrolCheckpoints.FirstOrDefault(p => p.Status == "Scheduled").Checkpoint;
                     }
                 }
-                if (Patrol != null)
+                else
                 {
-                    HasPatrol = Patrol.Status == "Started";
+                    IsErrorMessage = true;
+                    SetErrorMessage(patrolResponse.Message, patrolResponse.Errors);
                 }
+                HasPatrol = Checkpoint != null;
                 
             }
             catch(Exception ex)
             {
-                await MainThread.InvokeOnMainThreadAsync(() =>
-                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
-                );
+                IsErrorMessage = true;
                 SetErrorMessage("Unexpected error occured!");
             }
         }
