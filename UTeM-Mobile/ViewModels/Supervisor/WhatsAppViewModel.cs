@@ -69,7 +69,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         {
             try
             {
-                string url = "patrols?date=" + DateTime.Now.Date;
+                string url = "patrols?date=" + DateTime.UtcNow.AddHours(8).ToString("yyyy-MM-dd");
                 PaginatedResponse<Patrol> response = await _genericPatrolService.GetPagedListAsync(url, Token);
                 if (response.IsSuccess && response.Data != null && response.Data.Count > 0)
                 {

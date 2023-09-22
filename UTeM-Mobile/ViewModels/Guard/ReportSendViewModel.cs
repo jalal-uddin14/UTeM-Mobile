@@ -111,7 +111,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 requestContent.Add(new StringContent(Report.Description), "Description");
                 requestContent.Add(new StringContent(Token.UserId), "guardId");
                 requestContent.Add(new StringContent(Patrol.Id.ToString()), "patrolId");
-                requestContent.Add(new StringContent(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")), "date");
+                requestContent.Add(new StringContent(DateTime.UtcNow.AddHours(8).ToString("yyyy-MM-dd HH:mm:ss")), "date");
                 ObjectResponse<Report> response = await _genericService.PostFile(url, requestContent, Token);
                 IsErrorMessage = !response.IsSuccess;
                 Message = response.Message;

@@ -154,7 +154,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             {
                 IsGuardNotVisible = true;
                 GuardList.Clear();
-                string guardUrl = "guards";
+                string guardUrl = string.Format("guards?PageSize={0}", 100);
                 PaginatedResponse<ApplicationUser> response = await _userService.GetPagedListAsync(guardUrl, Token);
                 if (response.IsSuccess && response.Data != null && response.Data.Data != null)
                 {
@@ -165,7 +165,6 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                 {
                     SetErrorMessage(response.Message, response.Errors);
                 }
-
             }
             catch(Exception ex)
             {
@@ -180,7 +179,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             {
                 IsRouteNotVisible = true;
                 RouteList.Clear();
-                string guardUrl = "routes";
+                string guardUrl = "routes?PageSize=100";
                 PaginatedResponse<Route> response = await _routeService.GetPagedListAsync(guardUrl, Token);
                 if (response.IsSuccess && response.Data != null && response.Data.Data != null)
                 {
@@ -192,7 +191,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 SetErrorMessage("Internal error occured.");
             }

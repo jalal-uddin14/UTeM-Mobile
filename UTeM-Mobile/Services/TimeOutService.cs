@@ -77,7 +77,7 @@ namespace UTeM_Mobile.Services
             try
             {
                 AuthToken token = await LocalDBService.GetToken();
-                if (token != null && token.IsRemember && token.ValidTo > DateTime.Now)
+                if (token != null && token.IsRemember && token.ValidTo > DateTime.UtcNow.AddHours(8))
                 {
                     ObjectResponse<Patrol> response = await PatrolService.GetPatrolStatus();
                     if (response.IsSuccess && response.Data != null)

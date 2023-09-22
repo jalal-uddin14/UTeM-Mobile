@@ -121,7 +121,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             try
             {
                 PatrolList.Clear();
-                string url = "patrols?date=" + DateTime.Now.Date;
+                string url = "patrols?date=" + DateTime.UtcNow.AddHours(8).ToString("yyyy-MM-dd");
                 PaginatedResponse<Patrol> response = await _genericService.GetPagedListAsync(url, token);
                 if (response.IsSuccess && response.Data != null && response.Data.Data != null)
                 {

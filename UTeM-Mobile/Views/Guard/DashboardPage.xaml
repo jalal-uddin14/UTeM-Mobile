@@ -81,7 +81,7 @@
         <Grid Grid.Row="2" Margin="10, 10" IsVisible="{Binding HasNextCheckpoint}">
             <VerticalStackLayout>
                 <Label Text="{Binding PatrolCheckpoint.Checkpoint.Name, StringFormat='Next Checkpoint: {0}'}" TextColor="Black" FontSize="14" FontAttributes="Bold"/>
-                <Label Text="{Binding PatrolCheckpoint.ExpectedCheckedTime, StringFormat='Exected reach at: {0:t}'}" TextColor="Black" FontAttributes="Bold"/>
+                <Label Text="{Binding PatrolCheckpoint.ExpectedCheckedTime, StringFormat='Expected reach at: {0:t}'}" TextColor="Black" FontAttributes="Bold"/>
             </VerticalStackLayout>
         </Grid>
         <Grid Grid.Row="3" RowDefinitions="*" IsVisible="{Binding HasPatrol}">

@@ -89,7 +89,7 @@ namespace UTeM_Mobile.Services
                     longitude = _longitute
                 };
                 ObjectResponse<Checkpoint> checkpointResponse = await _genericCheckpointService.PostAsync(url, body, token);
-                if (checkpointResponse.IsSuccess)
+                if (checkpointResponse.IsSuccess && checkpointResponse.Data != null)
                 {
                     Checkpoint checkpoint = checkpointResponse.Data;
                     Patrol patrol = await PatrolDBService.Get();
@@ -130,7 +130,7 @@ namespace UTeM_Mobile.Services
                                 }
                             }
                             await MainThread.InvokeOnMainThreadAsync(() =>
-                                Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessfull", "Checkpoint reached", patrolCheckpointResponse.Message)))
+                                Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessful", "Checkpoint reached", patrolCheckpointResponse.Message)))
                             );
                         }
                         else
@@ -143,7 +143,7 @@ namespace UTeM_Mobile.Services
                     else
                     {
                         await MainThread.InvokeOnMainThreadAsync(() =>
-                            Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessfull", "Checkpoint not found", "Patrol not started.")))
+                            Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessful", "Checkpoint not found", "Patrol not started.")))
                         );
                     }
                 }
