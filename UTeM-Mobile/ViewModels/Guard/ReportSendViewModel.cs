@@ -26,6 +26,7 @@ namespace UTeM_Mobile.ViewModels.Guard
         private ApplicationUser user;
         private Patrol patrol;
         private Checkpoint checkpoint;
+        private PatrolCheckpoint patrolCheckpoint;
 
         public ICommand TakePhotoCommand { get; }
         public ICommand SendReportCommand { get; }
@@ -45,6 +46,7 @@ namespace UTeM_Mobile.ViewModels.Guard
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
         public Patrol Patrol { get => patrol; set => SetProperty(ref patrol, value); }
         public Checkpoint Checkpoint { get => checkpoint; set => SetProperty(ref checkpoint, value); }
+        public PatrolCheckpoint PatrolCheckpoint { get => patrolCheckpoint; set => SetProperty(ref patrolCheckpoint, value); }
 
         public ReportSendViewModel()
         {
@@ -110,7 +112,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 }
                 requestContent.Add(new StringContent(Report.Description), "Description");
                 requestContent.Add(new StringContent(Token.UserId), "guardId");
-                requestContent.Add(new StringContent(Patrol.Id.ToString()), "patrolId");
+                requestContent.Add(new StringContent(PatrolCheckpoint.Id.ToString()), "patrolCheckpointId");
                 requestContent.Add(new StringContent(DateTime.UtcNow.AddHours(8).ToString("yyyy-MM-dd HH:mm:ss")), "date");
                 ObjectResponse<Report> response = await _genericService.PostFile(url, requestContent, Token);
                 IsErrorMessage = !response.IsSuccess;
@@ -200,7 +202,9 @@ namespace UTeM_Mobile.ViewModels.Guard
                 {
                     if (patrolResponse.Data != null && patrolResponse.Data.Status == "Started" && patrolResponse.Data.PatrolCheckpoints.Count > 0 && patrolResponse.Data.PatrolCheckpoints.FirstOrDefault(q => q.Status == "Scheduled") != null && patrolResponse.Data.PatrolCheckpoints.FirstOrDefault(q => q.Status == "Scheduled").Checkpoint != null)
                     {
-                        Checkpoint = patrolResponse.Data.PatrolCheckpoints.FirstOrDefault(p => p.Status == "Scheduled").Checkpoint;
+                        //Patrol = patrolResponse.Data;
+                        PatrolCheckpoint = patrolResponse.Data.PatrolCheckpoints.FirstOrDefault(p => p.Status == "Scheduled");
+                        //Checkpoint = patrolResponse.Data.PatrolCheckpoints.FirstOrDefault(p => p.Status == "Scheduled").Checkpoint;
                     }
                 }
                 else
@@ -208,7 +212,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     IsErrorMessage = true;
                     SetErrorMessage(patrolResponse.Message, patrolResponse.Errors);
                 }
-                HasPatrol = Checkpoint != null;
+                HasPatrol = PatrolCheckpoint != null;
                 
             }
             catch(Exception ex)

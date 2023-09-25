@@ -28,7 +28,6 @@ namespace UTeM_Mobile.ViewModels
         {
             try
             {
-                await LocalDBService.InitDB();
                 AuthToken token = await LocalDBService.GetToken();
                 if (token != null && token.IsRemember && token.ValidTo > DateTime.Now)
                 {

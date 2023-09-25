@@ -19,7 +19,6 @@ namespace UTeM_Mobile.Core.Services.DBServices
             patrolDb = new SQLiteAsyncConnection(databasePath);
             try
             {
-                await CheckPermission();
                 await patrolDb.CreateTableAsync<Patrol>();
             }
             catch (Exception ex)
@@ -35,9 +34,10 @@ namespace UTeM_Mobile.Core.Services.DBServices
             {
                 patrol = p;
                 await InitDB();
-                var table = await patrolDb.GetTableInfoAsync("PatrolDB");
+                var table = await patrolDb.GetTableInfoAsync(nameof(Patrol));
                 if (table.Count <= 0)
                 {
+                    await CheckPermission();
                     await patrolDb.CreateTableAsync<Patrol>();
                 }
                 await patrolDb.InsertOrReplaceAsync(p);
@@ -74,7 +74,6 @@ namespace UTeM_Mobile.Core.Services.DBServices
         {
             try
             {
-                await InitDB();
                 await patrolDb.DeleteAllAsync<Patrol>();
                 patrol = null;
             }
@@ -87,7 +86,7 @@ namespace UTeM_Mobile.Core.Services.DBServices
         public async static Task CheckPermission()
         {
             PermissionStatus status = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
-            if (status == PermissionStatus.Denied)
+            if (status != PermissionStatus.Granted)
             {
                 status = await MainThread.InvokeOnMainThreadAsync(() => Permissions.RequestAsync<Permissions.StorageWrite>()); ;
             }

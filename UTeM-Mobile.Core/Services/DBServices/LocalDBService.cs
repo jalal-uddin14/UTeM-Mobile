@@ -19,7 +19,6 @@ namespace UTeM_Mobile.Core.Services.DBServices
             db = new SQLiteAsyncConnection(databasePath);
             try
             {
-                await CheckPermission();
                 await db.CreateTableAsync<AuthToken>();
             }
             catch (Exception ex)
@@ -35,9 +34,10 @@ namespace UTeM_Mobile.Core.Services.DBServices
             {
                 token = t;
                 await InitDB();
-                var table = await db.GetTableInfoAsync("AuthTokenDB");
+                var table = await db.GetTableInfoAsync(nameof(AuthToken));
                 if (table.Count <= 0)
                 {
+                    await CheckPermission();
                     await db.CreateTableAsync<AuthToken>();
                 }
                 await db.InsertOrReplaceAsync(t);
@@ -74,7 +74,6 @@ namespace UTeM_Mobile.Core.Services.DBServices
         {
             try
             {
-                await InitDB();
                 await db.DeleteAllAsync<AuthToken>();
                 token = null;
             }

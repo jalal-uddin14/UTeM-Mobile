@@ -14,7 +14,7 @@
 		<ApplicationTitle>UTeM-Mobile</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.utem_mobile</ApplicationId>
+		<ApplicationId>com.companyname.utem</ApplicationId>
 		<ApplicationIdGuid>51665bf0-1b65-4bf7-9846-463fb117ef15</ApplicationIdGuid>
 
 		<!-- Versions -->
