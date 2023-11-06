@@ -78,21 +78,21 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <Grid Grid.Row="0">
-                                    <Label Text="{Binding Route.Name}" TextColor="Green" FontSize="16" FontAttributes="Bold" />
+                                    <Label Text="{Binding Route.Name}" TextColor="Green" FontSize="14" FontAttributes="Bold" />
                                 </Grid>
                                 <Grid Grid.Row="1">
                                     <HorizontalStackLayout>
-                                        <Label Text="Guard: " TextColor="Grey" FontSize="14" />
-                                        <Label Text="{Binding Guard.Name}" TextColor="Black" FontSize="14" FontAttributes="Bold" />
+                                        <Label Text="Guard: " TextColor="Grey" FontSize="12" />
+                                        <Label Text="{Binding Guard.Name}" TextColor="Black" FontSize="12" FontAttributes="Bold" />
                                     </HorizontalStackLayout>
                                 </Grid>
                                 <Grid Grid.Row="2">
                                     <HorizontalStackLayout>
-                                        <Label Text="Date: " TextColor="Grey" FontSize="14" />
+                                        <Label Text="Start: " TextColor="Grey" FontSize="12" />
                                         <Label>
                                             <Label.FormattedText>
                                                 <FormattedString>
-                                                    <Span Text="{Binding Start, StringFormat='{}{0:D}'}" />
+                                                    <Span Text="{Binding Start, StringFormat='{}{0:dd-MMM-yyyy hh:mm tt}'}" />
                                                 </FormattedString>
                                             </Label.FormattedText>
                                         </Label>
@@ -100,13 +100,11 @@
                                 </Grid>
                                 <Grid Grid.Row="3">
                                     <HorizontalStackLayout>
-                                        <Label Text="Schedule: " TextColor="Grey" FontSize="14" />
+                                        <Label Text="End: " TextColor="Grey" FontSize="12" />
                                         <Label>
                                             <Label.FormattedText>
                                                 <FormattedString>
-                                                    <Span Text="{Binding Start, StringFormat='{}{0:t}'}" />
-                                                    <Span Text=" - " />
-                                                    <Span Text="{Binding End, StringFormat='{} {0:t}'}" />
+                                                    <Span Text="{Binding End, StringFormat='{}{0:dd-MMM-yyyy hh:mm tt}'}" />
                                                 </FormattedString>
                                             </Label.FormattedText>
                                         </Label>
@@ -114,11 +112,11 @@
                                 </Grid>
                                 <Grid Grid.Row="4">
                                     <HorizontalStackLayout>
-                                        <Label Text="Status: " TextColor="Grey" FontSize="14" />
-                                        <Label IsVisible="{Binding IsScheduled}" Text="{Binding Status}" TextColor="Black" FontSize="14" FontAttributes="Bold" />
-                                        <Label IsVisible="{Binding IsStarted}" Text="{Binding Status}" TextColor="{StaticResource StartedStatusLabelColor}" FontSize="14" FontAttributes="Bold" />
-                                        <Label IsVisible="{Binding IsCompleted}" Text="{Binding Status}" TextColor="{StaticResource CompletedStatusLabelColor}" FontSize="14" FontAttributes="Bold" />
-                                        <Label IsVisible="{Binding IsMissed}" Text="{Binding Status}" TextColor="{StaticResource MissedStatusLabelColor}" FontSize="14" FontAttributes="Bold" />
+                                        <Label Text="Status: " TextColor="Grey" FontSize="12" />
+                                        <Label IsVisible="{Binding IsScheduled}" Text="{Binding Status}" TextColor="Black" FontSize="12" FontAttributes="Bold" />
+                                        <Label IsVisible="{Binding IsStarted}" Text="{Binding Status}" TextColor="{StaticResource StartedStatusLabelColor}" FontSize="12" FontAttributes="Bold" />
+                                        <Label IsVisible="{Binding IsCompleted}" Text="{Binding Status}" TextColor="{StaticResource CompletedStatusLabelColor}" FontSize="12" FontAttributes="Bold" />
+                                        <Label IsVisible="{Binding IsMissed}" Text="{Binding Status}" TextColor="{StaticResource MissedStatusLabelColor}" FontSize="12" FontAttributes="Bold" />
                                     </HorizontalStackLayout>
                                 </Grid>
                             </Grid>

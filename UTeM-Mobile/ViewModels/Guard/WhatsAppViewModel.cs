@@ -67,10 +67,10 @@ namespace UTeM_Mobile.ViewModels.Guard
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
                 );
             }
-            finally
-            {
-                await OpenWhatsApp();
-            }
+            //finally
+            //{
+            //    await OpenWhatsApp();
+            //}
         }
         private async Task OpenWhatsApp()
         {

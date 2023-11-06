@@ -51,7 +51,7 @@
                 <Label Text="Start"  Style="{StaticResource AddFormTitleLabel}"/>
                 <HorizontalStackLayout>
                     <Frame Style="{StaticResource AddFormFrame}">
-                        <DatePicker Date="{Binding StartDate}" FontSize="16"/>
+                        <DatePicker Date="{Binding StartDate}" Format="dd/MM/yyyy" FontSize="16"/>
                     </Frame>
                     <Frame Style="{StaticResource AddFormFrame}" Margin="5, 7">
                         <TimePicker Time="{Binding StartTime}" FontSize="16"/>
@@ -62,7 +62,7 @@
                 <Label Text="End"  Style="{StaticResource AddFormTitleLabel}"/>
                 <HorizontalStackLayout>
                     <Frame Style="{StaticResource AddFormFrame}">
-                        <DatePicker Date="{Binding EndDate}" FontSize="16"/>
+                        <DatePicker Date="{Binding EndDate}" Format="dd/MM/yyyy" FontSize="16"/>
                     </Frame>
                     <Frame Style="{StaticResource AddFormFrame}" Margin="5, 7">
                         <TimePicker Time="{Binding EndTime}" FontSize="16"/>

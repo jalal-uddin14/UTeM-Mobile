@@ -16,5 +16,6 @@
     <x:String x:Key="IconBell">&#xf0f3;</x:String>
     <x:String x:Key="IconGps">&#xf601;</x:String>
     <x:String x:Key="IconMapRoute">&#xf5a0;</x:String>
+    <x:String x:Key="IconMicrophone">&#xf130;</x:String>
     
 </ResourceDictionary>

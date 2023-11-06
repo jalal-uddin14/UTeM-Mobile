@@ -25,10 +25,10 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         public async Task GetTokenAsync()
         {
             Token = await LocalDBService.GetToken();
-            if (Token != null)
-            {
-                await GetProfileAsync();
-            }
+            //if (Token != null)
+            //{
+            //    await GetProfileAsync();
+            //}
         }
 
         public void OnAppearing()
@@ -91,7 +91,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             }
             finally
             {
-                await OpenWhatsApp();
+                //await OpenWhatsApp();
             }
         }
         private async Task OpenWhatsApp()

@@ -12,9 +12,9 @@
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate views:PatrolListPage}" Route="PatrolListPage" />
         </Tab>
-        <Tab Title="WhatsApp">
+        <Tab Title="Push2Talk">
             <Tab.Icon>
-                <FontImageSource FontFamily="FAbrands" Glyph="{StaticResource IconWhatsapp}" Color="Grey" />
+                <FontImageSource FontFamily="FAsolid" Glyph="{StaticResource IconMicrophone}" Color="Grey" />
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate views:WhatsAppPage}" Route="WhatsAppPage">
                 <Button Clicked="Button_Clicked" />

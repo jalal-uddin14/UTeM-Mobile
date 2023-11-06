@@ -15,6 +15,7 @@ public class MainApplication : MauiApplication
 		: base(handle, ownership)
 	{
         DependencyService.Register<DroidKeyboardHelper>();
+        DependencyService.Register<ZelloHelper>();
     }
 
 	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
