@@ -46,7 +46,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     RouteList.AddRange(routlist.Data.Data);
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }

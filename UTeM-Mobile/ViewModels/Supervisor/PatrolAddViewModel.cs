@@ -115,7 +115,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() => 
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
@@ -142,7 +142,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     await GetRouteListAsync();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 SetErrorMessage("Internal error occured.");
             }
@@ -166,7 +166,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 GuardList.Clear();
                 SetErrorMessage("Internal error occured.");
@@ -191,7 +191,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 SetErrorMessage("Internal error occured.");
             }

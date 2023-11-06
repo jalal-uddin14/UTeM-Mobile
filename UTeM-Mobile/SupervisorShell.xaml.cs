@@ -25,7 +25,7 @@ public partial class SupervisorShell : Shell
         {
             await Launcher.Default.OpenAsync($"whatsapp://send?phone=+88{phoneNumber}");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
 
         }

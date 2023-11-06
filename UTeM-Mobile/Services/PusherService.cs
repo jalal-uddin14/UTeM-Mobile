@@ -48,7 +48,7 @@ namespace UTeM_Mobile.Services
                 PrivateChannel = await pusher.SubscribeAsync("UTeM-Guard").ConfigureAwait(false);
                 PrivateChannel.Bind("guard.activities." + token.UserId, GuardActivityListener);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 if (!await StaticMessage.ShowInternetMessage())
                 {
@@ -99,7 +99,7 @@ namespace UTeM_Mobile.Services
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(popMessage))
                 );
             }
-            catch(Exception ex)
+            catch(Exception)
             {
 
             }

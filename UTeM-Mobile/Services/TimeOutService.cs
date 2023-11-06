@@ -126,7 +126,7 @@ namespace UTeM_Mobile.Services
                     }
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
 
             }

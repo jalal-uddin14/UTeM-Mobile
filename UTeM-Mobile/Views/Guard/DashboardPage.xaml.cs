@@ -14,7 +14,7 @@ public partial class DashboardPage : ContentPage
         isFlashOn = false;
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
         viewModel = BindingContext as DashboardViewModel;
@@ -31,7 +31,7 @@ public partial class DashboardPage : ContentPage
                 map.MoveToRegion(mapSpan: MapSpan.FromCenterAndRadius(new Location(location.Latitude, location.Longitude), Distance.FromMeters(500)));
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Unable to get location
         }

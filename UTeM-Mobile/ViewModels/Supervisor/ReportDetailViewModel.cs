@@ -60,7 +60,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                   );
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() => 
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))

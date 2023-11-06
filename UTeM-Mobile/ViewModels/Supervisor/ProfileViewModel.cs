@@ -15,12 +15,10 @@ namespace UTeM_Mobile.ViewModels.Supervisor
     {
         private IGenericService<ApplicationUser> _genericService;
         private ApplicationUser user;
-        private AuthToken token;
 
         public ICommand UpdateProfileCommand { get; }
         public ICommand LogoutCommand { get; }
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
-        public AuthToken Token { get => token; set => SetProperty(ref token, value); }
 
         public ProfileViewModel()
         {
@@ -39,7 +37,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     Application.Current.MainPage = new AppShell();
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -49,7 +47,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             try
             {
                 string url = "accounts/update";
-                ObjectResponse<ApplicationUser> response = await _genericService.PutAsync(url, User, token);
+                ObjectResponse<ApplicationUser> response = await _genericService.PutAsync(url, User, Token);
                 IsErrorMessage = !response.IsSuccess;
                 if (IsSuccessMessage)
                 {
@@ -62,7 +60,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     );
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 IsErrorMessage = true;
                 await MainThread.InvokeOnMainThreadAsync(() => 
@@ -107,7 +105,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     );
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() => 
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))

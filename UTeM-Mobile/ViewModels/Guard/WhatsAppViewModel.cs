@@ -34,7 +34,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     await GetProfileAsync();
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
 
             }
@@ -61,7 +61,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 }
                 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() =>
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
@@ -78,7 +78,7 @@ namespace UTeM_Mobile.ViewModels.Guard
             {
                 await Launcher.Default.OpenAsync($"whatsapp://send?phone=+60{phoneNumber}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() =>
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage("Error openning whatsapp")))

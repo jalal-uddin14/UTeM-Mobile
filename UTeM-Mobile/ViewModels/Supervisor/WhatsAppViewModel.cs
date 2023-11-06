@@ -53,7 +53,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                 }
                 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() =>
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
@@ -83,7 +83,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     );
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() =>
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
@@ -100,7 +100,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             {
                 await Launcher.Default.OpenAsync($"whatsapp://send?phone=+60{phoneNumber}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }

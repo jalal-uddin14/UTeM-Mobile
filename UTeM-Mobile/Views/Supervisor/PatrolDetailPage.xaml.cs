@@ -42,7 +42,7 @@ public partial class PatrolDetailPage : ContentPage
                 map.MoveToRegion(mapSpan: MapSpan.FromCenterAndRadius(location, Distance.FromMeters(500)));
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Unable to get location
         }
@@ -72,7 +72,7 @@ public partial class PatrolDetailPage : ContentPage
             PrivateChannel = await pusher.SubscribeAsync("UTeM-Guard").ConfigureAwait(false);
             PrivateChannel.Bind("guard.activities." + viewModel.Id, GuardLocationListener);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
 
         }
@@ -116,7 +116,7 @@ public partial class PatrolDetailPage : ContentPage
             }
             
         }
-        catch (Exception ex)
+        catch (Exception)
         {
 
         }

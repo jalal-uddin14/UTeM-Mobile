@@ -24,7 +24,7 @@ public partial class ReportSendPage : ContentPage
         {
             DependencyService.Get<IKeyboardHelper>().HideKeyboard();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
 
         }

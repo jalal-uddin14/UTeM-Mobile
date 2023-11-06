@@ -22,7 +22,7 @@ namespace UTeM_Mobile.Services
                     CrossNFC.Current.StartListening();
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -61,7 +61,7 @@ namespace UTeM_Mobile.Services
                     );
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() =>
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan Error", "NFC Failed", "Unexpected error occured.")))
@@ -154,7 +154,7 @@ namespace UTeM_Mobile.Services
                     );
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 if (!await StaticMessage.ShowInternetMessage())
                 {

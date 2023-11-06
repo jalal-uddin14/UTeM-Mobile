@@ -41,7 +41,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     await GetPatrolDetailAsync();
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 SetErrorMessage("Internal error occured.");
             }
@@ -72,7 +72,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     SetErrorMessage("Server error occured.");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 SetErrorMessage("Internal error occured.");
 
@@ -102,7 +102,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     }
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 SetErrorMessage("Internal error occured.");
             }

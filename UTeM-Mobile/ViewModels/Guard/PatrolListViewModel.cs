@@ -50,7 +50,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     await GetUserDetailAsync();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 SetErrorMessage("Internal error occured.");
             }
@@ -71,7 +71,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 SetErrorMessage("Internal error occured.");
             }
@@ -94,7 +94,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 PatrolList.Clear();
                 SetErrorMessage("Internal error occured.");

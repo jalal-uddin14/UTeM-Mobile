@@ -62,7 +62,7 @@ namespace UTeM_Mobile.Core.Services.DBServices
                     token = s;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }
@@ -74,10 +74,11 @@ namespace UTeM_Mobile.Core.Services.DBServices
         {
             try
             {
+                await InitDB();
                 await db.DeleteAllAsync<AuthToken>();
                 token = null;
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }

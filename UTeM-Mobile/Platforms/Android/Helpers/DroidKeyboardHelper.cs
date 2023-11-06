@@ -22,7 +22,7 @@ namespace UTeM_Mobile.Platforms.Android.Helpers
                     activity.Window.DecorView.ClearFocus();
                 }
             }
-            catch (Exception ex) { }
+            catch (Exception) { }
         }
     }
 }

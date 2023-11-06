@@ -18,7 +18,6 @@ namespace UTeM_Mobile.ViewModels.Supervisor
     {
         private IGenericService<Patrol> _genericService;
         private IGenericService<ApplicationUser> _genericUserService;
-        private AuthToken token;
         private ApplicationUser user;
 
         public ICommand LogoutCommand { get; }
@@ -26,7 +25,6 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         public ICommand NavigateToPatrolAddCommand { get; }
         public ICommand NavigateToProfileCommand { get; }
         public ObservableRangeCollection<Patrol> PatrolList { get; set; }
-        public AuthToken Token { get => token; set => SetProperty(ref token, value); }
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
 
         public PatrolListViewModel()
@@ -48,7 +46,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                 IsErrorMessage = false;
                 await LogoutService.LogoutAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() =>
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
@@ -89,7 +87,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     await GetPatrolList();
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 SetErrorMessage("Internal error occured.");
             }
@@ -110,7 +108,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 SetErrorMessage("Internal error occured.");
             }
@@ -122,7 +120,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             {
                 PatrolList.Clear();
                 string url = "patrols?startDate=" + DateTime.UtcNow.AddHours(8).ToString("yyyy-MM-dd");
-                PaginatedResponse<Patrol> response = await _genericService.GetPagedListAsync(url, token);
+                PaginatedResponse<Patrol> response = await _genericService.GetPagedListAsync(url, Token);
                 if (response.IsSuccess && response.Data != null && response.Data.Data != null)
                 {
                     PatrolList.AddRange(response.Data.Data);
@@ -132,7 +130,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 PatrolList.Clear();
                 SetErrorMessage("Internal error occured.");

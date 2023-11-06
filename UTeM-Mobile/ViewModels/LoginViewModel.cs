@@ -96,7 +96,7 @@ namespace UTeM_Mobile.ViewModels
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }

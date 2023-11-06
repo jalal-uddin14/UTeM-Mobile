@@ -28,7 +28,7 @@ public partial class LoginPage : ContentPage
         {
             DependencyService.Get<IKeyboardHelper>().HideKeyboard();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
 
         }

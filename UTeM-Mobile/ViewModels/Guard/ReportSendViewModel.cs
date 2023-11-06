@@ -82,7 +82,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     SetErrorMessage("Camera not supported");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() =>
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
@@ -133,7 +133,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() =>
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
@@ -166,7 +166,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     await GetUserPatrol();
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 SetErrorMessage("Unexpected error occured!");
             }
@@ -187,7 +187,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 SetErrorMessage("Unexpected error occured!");
             }
@@ -215,7 +215,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 HasPatrol = PatrolCheckpoint != null;
                 
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 IsErrorMessage = true;
                 SetErrorMessage("Unexpected error occured!");

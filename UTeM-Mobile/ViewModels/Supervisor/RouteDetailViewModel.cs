@@ -57,7 +57,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     RouteCheckpointList.AddRange(Route.RouteCheckpoints);
                 });
             }
-            catch(Exception ex)
+            catch(Exception)
             {
 
             }

@@ -39,7 +39,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     await GetGuardList();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 SetErrorMessage("Internal error occured");
             }
@@ -61,7 +61,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 SetErrorMessage("Internal error occured");
             }

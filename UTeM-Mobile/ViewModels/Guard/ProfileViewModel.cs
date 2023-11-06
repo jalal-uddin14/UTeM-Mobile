@@ -48,7 +48,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     SetErrorMessage("Internal error occured.");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() => 
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
@@ -68,7 +68,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 IsErrorMessage = false;
                 await LogoutService.LogoutAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() =>
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
@@ -93,7 +93,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     await GetUserDetailAsync();
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() =>
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
@@ -118,7 +118,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 SetErrorMessage("Internal error occured.");
             }

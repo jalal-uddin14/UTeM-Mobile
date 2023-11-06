@@ -69,7 +69,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     await GetPatrolDetailAsync();
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 SetErrorMessage("Internal error occured.");
             }
@@ -115,7 +115,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     SetErrorMessage("Patrol not found.");
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 SetErrorMessage("Internal error occured.");
             }
@@ -148,7 +148,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                     }
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 SetErrorMessage("Internal error occured.");
             }

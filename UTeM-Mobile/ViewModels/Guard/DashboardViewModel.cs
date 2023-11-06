@@ -111,7 +111,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 IsErrorMessage = false;
                 await LogoutService.LogoutAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 SetErrorMessage("Internal error occured.");
             }
@@ -143,7 +143,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     await App.Current.MainPage.DisplayAlert("Success", "All checkpoint scanned.", "OK", FlowDirection.RightToLeft);
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
 
             }
@@ -196,7 +196,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch(Exception ex )
+            catch(Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() => 
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
@@ -235,7 +235,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 await MainThread.InvokeOnMainThreadAsync(() => 
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
@@ -267,7 +267,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     await ShowMessageAsync();
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 SetErrorMessage("Internal error occured, please try again.");
             }
@@ -292,7 +292,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 SetErrorMessage("Internal error occured, please try again.");
             }
@@ -343,7 +343,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     NoPatrolMessage = "No patrol for today.";
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 HasNoPatrol = true;
                 SetErrorMessage("Internal error occured.");
@@ -374,7 +374,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                         PinCollection.AddRange(pins);
                     });
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     SetErrorMessage("Failed to generate pins on map.");
                 }
