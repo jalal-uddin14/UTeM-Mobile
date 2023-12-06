@@ -197,14 +197,12 @@ namespace UTeM_Mobile.ViewModels.Guard
             try
             {
                 IsErrorMessage = false;
-                ObjectResponse<Patrol> patrolResponse = await PatrolService.GetPatrolStatus();
+                ObjectResponse<PatrolDetail> patrolResponse = await PatrolService.GetPatrolStatus();
                 if (patrolResponse.IsSuccess)
                 {
                     if (patrolResponse.Data != null && patrolResponse.Data.Status == "Started" && patrolResponse.Data.PatrolCheckpoints.Count > 0 && patrolResponse.Data.PatrolCheckpoints.FirstOrDefault(q => q.Status == "Scheduled") != null && patrolResponse.Data.PatrolCheckpoints.FirstOrDefault(q => q.Status == "Scheduled").Checkpoint != null)
                     {
-                        //Patrol = patrolResponse.Data;
                         PatrolCheckpoint = patrolResponse.Data.PatrolCheckpoints.FirstOrDefault(p => p.Status == "Scheduled");
-                        //Checkpoint = patrolResponse.Data.PatrolCheckpoints.FirstOrDefault(p => p.Status == "Scheduled").Checkpoint;
                     }
                 }
                 else

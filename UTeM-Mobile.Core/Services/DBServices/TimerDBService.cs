@@ -8,19 +8,18 @@ namespace UTeM_Mobile.Core.Services.DBServices
     public class TimerDBService
     {
         static CheckpointTimer checkpointTimer;
-        static SQLiteAsyncConnection checkpointTimerDB;
+        static SQLiteAsyncConnection db;
         public async static Task InitDB()
         {
-            if (checkpointTimerDB != null)
+            if (db != null)
             {
                 return;
             }
             string databasePath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + LocalCredential.LocalDBName;
-            checkpointTimerDB = new SQLiteAsyncConnection(databasePath);
+            db = new SQLiteAsyncConnection(databasePath);
             try
             {
-                await CheckPermission();
-                await checkpointTimerDB.CreateTableAsync<CheckpointTimer>();
+                await db.CreateTableAsync<CheckpointTimer>();
             }
             catch (Exception ex)
             {
@@ -35,12 +34,13 @@ namespace UTeM_Mobile.Core.Services.DBServices
             {
                 checkpointTimer = p;
                 await InitDB();
-                var table = await checkpointTimerDB.GetTableInfoAsync("CheckpointTimerDB");
+                var table = await db.GetTableInfoAsync(nameof(CheckpointTimer));
                 if (table.Count <= 0)
                 {
-                    await checkpointTimerDB.CreateTableAsync<CheckpointTimer>();
+                    await CheckPermission();
+                    await db.CreateTableAsync<CheckpointTimer>();
                 }
-                await checkpointTimerDB.InsertOrReplaceAsync(p);
+                await db.InsertOrReplaceAsync(p);
             }
             catch (Exception ex)
             {
@@ -53,7 +53,7 @@ namespace UTeM_Mobile.Core.Services.DBServices
             await InitDB();
             try
             {
-                var query = checkpointTimerDB.Table<CheckpointTimer>();
+                var query = db.Table<CheckpointTimer>();
 
                 var result = await query.ToListAsync();
 
@@ -75,7 +75,7 @@ namespace UTeM_Mobile.Core.Services.DBServices
             try
             {
                 await InitDB();
-                await checkpointTimerDB.DeleteAllAsync<CheckpointTimer>();
+                await db.DeleteAllAsync<CheckpointTimer>();
                 checkpointTimer = null;
             }
             catch (Exception e)
@@ -87,7 +87,7 @@ namespace UTeM_Mobile.Core.Services.DBServices
         public async static Task CheckPermission()
         {
             PermissionStatus status = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
-            if (status == PermissionStatus.Denied)
+            if (status != PermissionStatus.Granted)
             {
                 status = await MainThread.InvokeOnMainThreadAsync(() => Permissions.RequestAsync<Permissions.StorageWrite>()); ;
             }

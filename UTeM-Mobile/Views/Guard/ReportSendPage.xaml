@@ -22,7 +22,7 @@
             <Frame Grid.Row="0" Grid.Column="0" Margin="5, 10" Padding="5, 10" HorizontalOptions="FillAndExpand" BorderColor="Gray">
                 <StackLayout HorizontalOptions="CenterAndExpand">
                     <Label Text="Checkpoint:" FontSize="12" HorizontalOptions="CenterAndExpand"/>
-                    <Label Text="{Binding Checkpoint.Name}"  HorizontalOptions="CenterAndExpand" FontSize="16" FontAttributes="Bold"/>
+                    <Label Text="{Binding PatrolCheckpoint.Checkpoint.Name}"  HorizontalOptions="CenterAndExpand" FontSize="16" FontAttributes="Bold"/>
                 </StackLayout>
             </Frame>
             <Frame Grid.Row="1" Grid.Column="0" Margin="5, 0" Padding="5" HorizontalOptions="FillAndExpand" BorderColor="Gray">

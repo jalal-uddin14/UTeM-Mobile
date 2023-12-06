@@ -11,10 +11,13 @@ namespace UTeM_Mobile.Services
     {
         static IDispatcherTimer timer = Application.Current.Dispatcher.CreateTimer();
         static Patrol patrol = null;
+        static PatrolDetail patrolDetail = null;
         static Location location = null;
+
+
         public static void RunTimer()
         {
-            timer.Interval = TimeSpan.FromSeconds(10);
+            timer.Interval = TimeSpan.FromSeconds(60);
             timer.Tick += async (s, e) =>
             {
                 try
@@ -22,9 +25,9 @@ namespace UTeM_Mobile.Services
                     CheckpointTimer checkpointTimer = await TimerDBService.Get();
                     if (!StaticMessage.InternetNotConnected && checkpointTimer != null && checkpointTimer.ExpectedCheckedTime != null && checkpointTimer.ExpectedCheckedTime.Value <= DateTime.UtcNow.AddHours(8))
                     {
+                        await ModalService.PopAllModals();
                         await MainThread.InvokeOnMainThreadAsync(() =>
                         {
-                            Application.Current.MainPage.Navigation.PopModalAsync();
                             Application.Current.MainPage.Navigation.PushModalAsync(new TimeoutPopupPage(checkpointTimer));
                         });
                     }
@@ -44,13 +47,14 @@ namespace UTeM_Mobile.Services
             {
                 if (!StaticMessage.InternetNotConnected)
                 {
-                    patrol = await PatrolDBService.Get();
-                    if (patrol == null)
+                    var p = await PatrolDetailDBService.Get();
+                    patrolDetail = ConvertModelService.DBPatrolDetailToPatrolDetail(p);
+                    if (patrolDetail == null)
                     {
                         var response = await PatrolService.GetPatrolStatus();
                         if (response.IsSuccess && response.Data != null)
                         {
-                            patrol = response.Data;
+                            patrolDetail = response.Data;
                         }
                     }
                     location = await LocationService.GetCurrentLocationAsync();
@@ -77,22 +81,23 @@ namespace UTeM_Mobile.Services
             try
             {
                 AuthToken token = await LocalDBService.GetToken();
-                if (token != null && token.IsRemember && token.ValidTo > DateTime.UtcNow.AddHours(8))
+                if (token != null && token.ValidTo > DateTime.UtcNow.AddHours(8))
                 {
-                    ObjectResponse<Patrol> response = await PatrolService.GetPatrolStatus();
+                    ObjectResponse<PatrolDetail> response = await PatrolService.GetPatrolStatus();
                     if (response.IsSuccess && response.Data != null)
                     {
-                        Patrol patrol = response.Data;
-                        await PatrolDBService.Delete();
-                        await PatrolDBService.Insert(patrol);
+                        PatrolDetail patrolDetail = response.Data;
+                        patrol = patrolDetail.Patrol;
+                        await PatrolDetailDBService.Delete();
+                        await PatrolDetailDBService.Insert(ConvertModelService.PatrolDetailToDbPatrolDetail(patrolDetail));
                         await TimerDBService.Delete();
-                        if (patrol.Status == "Completed" || patrol.Status == "Missed")
+                        if (patrolDetail.Status == "Completed" || patrolDetail.Status == "Missed")
                         {
                             return;
                         }
-                        if (patrol.PatrolCheckpoints != null && patrol.PatrolCheckpoints.Count > 0)
+                        if (patrolDetail.PatrolCheckpoints != null && patrolDetail.PatrolCheckpoints.Count > 0)
                         {
-                            PatrolCheckpoint patrolCheckpoint = patrol.PatrolCheckpoints.FirstOrDefault(p => p.Status == "Scheduled");
+                            PatrolCheckpoint patrolCheckpoint = patrolDetail.PatrolCheckpoints.FirstOrDefault(p => p.Status == "Scheduled");
                             if (patrolCheckpoint != null)
                             {
                                 CheckpointTimer checkpointTimer = new CheckpointTimer
@@ -106,7 +111,7 @@ namespace UTeM_Mobile.Services
                                 await TimerDBService.Insert(checkpointTimer);
                             }
                         }
-                        else if (patrol.Route != null)
+                        else if (patrolDetail.Patrol.Route != null)
                         {
                             RouteCheckpoint nextCheckpoint = patrol.Route.RouteCheckpoints
                                 .FirstOrDefault(routeCheckpoints => !patrol.PatrolCheckpoints.Any(patrolCheckpoints => patrolCheckpoints.CheckpointId == routeCheckpoints.CheckpointId));
@@ -126,7 +131,7 @@ namespace UTeM_Mobile.Services
                     }
                 }
             }
-            catch(Exception)
+            catch(Exception ex)
             {
 
             }

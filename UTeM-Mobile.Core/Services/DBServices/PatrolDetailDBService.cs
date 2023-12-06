@@ -1,14 +1,13 @@
 ﻿using SQLite;
 using UTeM_Mobile.Core.Models;
-using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Data.StaticCredentials;
 using Xamarin.Essentials;
 
 namespace UTeM_Mobile.Core.Services.DBServices
 {
-    public class PatrolDBService
+    public class PatrolDetailDBService
     {
-        static DBPatrol patrol;
+        static DBPatrolDetail patrolDetail;
         static SQLiteAsyncConnection db;
         public async static Task InitDB()
         {
@@ -20,7 +19,7 @@ namespace UTeM_Mobile.Core.Services.DBServices
             db = new SQLiteAsyncConnection(databasePath);
             try
             {
-                await db.CreateTableAsync<DBPatrol>();
+                await db.CreateTableAsync<DBPatrolDetail>();
             }
             catch (Exception ex)
             {
@@ -29,17 +28,17 @@ namespace UTeM_Mobile.Core.Services.DBServices
         }
 
 
-        public async static Task Insert(DBPatrol p)
+        public async static Task Insert(DBPatrolDetail p)
         {
             try
             {
-                patrol = p;
+                patrolDetail = p;
                 await InitDB();
-                var table = await db.GetTableInfoAsync(nameof(DBPatrol));
+                var table = await db.GetTableInfoAsync(nameof(DBPatrolDetail));
                 if (table.Count <= 0)
                 {
                     await CheckPermission();
-                    await db.CreateTableAsync<DBPatrol>();
+                    await db.CreateTableAsync<DBPatrolDetail>();
                 }
                 await db.InsertOrReplaceAsync(p);
             }
@@ -49,18 +48,18 @@ namespace UTeM_Mobile.Core.Services.DBServices
             }
         }
 
-        public async static Task<DBPatrol> Get()
+        public async static Task<DBPatrolDetail> Get()
         {
             await InitDB();
             try
             {
-                var query = db.Table<DBPatrol>();
+                var query = db.Table<DBPatrolDetail>();
 
                 var result = await query.ToListAsync();
 
                 foreach (var s in result)
                 {
-                    patrol = s;
+                    patrolDetail = s;
                 }
             }
             catch (Exception e)
@@ -68,15 +67,16 @@ namespace UTeM_Mobile.Core.Services.DBServices
 
             }
 
-            return patrol;
+            return patrolDetail;
         }
 
         public async static Task Delete()
         {
             try
             {
-                await db.DeleteAllAsync<DBPatrol>();
-                patrol = null;
+                await InitDB();
+                await db.DeleteAllAsync<DBPatrolDetail>();
+                patrolDetail = null;
             }
             catch (Exception e)
             {

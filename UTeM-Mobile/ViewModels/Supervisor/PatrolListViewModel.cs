@@ -16,23 +16,85 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 {
     public class PatrolListViewModel : MainViewModel, IOnAppearing
     {
-        private IGenericService<Patrol> _genericService;
+        private IGenericService<Patrol> _genericPatrolService;
+        private IGenericService<PatrolDetail> _genericPatrolDetailService;
         private IGenericService<ApplicationUser> _genericUserService;
         private ApplicationUser user;
+        private ApplicationUser selectedGuard;
+        private DateTime? selectedStartDate;
+        private DateTime? selectedEndDate;
+
+        private bool isGuardNotVisible;
+        private bool isGuardVisible;
 
         public ICommand LogoutCommand { get; }
         public ICommand NavigateToGuardListCommand { get; set; }
         public ICommand NavigateToPatrolAddCommand { get; }
         public ICommand NavigateToProfileCommand { get; }
         public ObservableRangeCollection<Patrol> PatrolList { get; set; }
+        public ObservableRangeCollection<PatrolDetail> PatrolDetaillList { get; set; }
+        public ObservableRangeCollection<ApplicationUser> GuardList { get; set; }
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
+        public ApplicationUser SelectedGuard
+        {
+            get => selectedGuard;
+            set
+            {
+                SetProperty(ref selectedGuard, value);
+                if (Token != null && SelectedGuard != null && PatrolList != null)
+                {
+                    Task.Run(async () => await GetPatrolListAsync());
+                }
+            }
+        }
+
+        public bool IsGuardNotVisible
+        {
+            get => isGuardNotVisible;
+            set
+            {
+                SetProperty(ref isGuardNotVisible, value);
+                IsGuardVisible = !value;
+            }
+        }
+        public bool IsGuardVisible { get => isGuardVisible; set => SetProperty(ref isGuardVisible, value); }
+        public DateTime? SelectedStartDate
+        {
+            get => selectedStartDate;
+            set
+            {
+                SetProperty(ref selectedStartDate, value);
+                if (Token != null)
+                {
+                    Task.Run(async() => await GetPatrolListAsync());
+                }
+            }
+        }
+        public DateTime? SelectedEndDate 
+        { 
+            get => selectedEndDate;
+            set
+            {
+                SetProperty(ref selectedEndDate, value);
+                if (Token != null)
+                {
+                    Task.Run(async () => await GetPatrolListAsync());
+                }
+            }
+        }
 
         public PatrolListViewModel()
         {
+            SelectedStartDate = null;
+            SelectedEndDate = null;
             User = new ApplicationUser();
-            _genericService = new GenericService<Patrol>();
+            SelectedGuard = new ApplicationUser();
+            _genericPatrolService = new GenericService<Patrol>();
+            _genericPatrolDetailService = new GenericService<PatrolDetail>();
             _genericUserService = new GenericService<ApplicationUser>();
             PatrolList = new ObservableRangeCollection<Patrol>();
+            PatrolDetaillList = new ObservableRangeCollection<PatrolDetail>();
+            GuardList = new ObservableRangeCollection<ApplicationUser>();
             NavigateToGuardListCommand = new AsyncCommand(ExecuteNavigateToGuardList);
             NavigateToPatrolAddCommand = new AsyncCommand(ExecuteNavigateToPatrolAdd);
             NavigateToProfileCommand = new AsyncCommand(ExecuteNavigateToProfile);
@@ -71,6 +133,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         public void OnAppearing()
         {
+            IsGuardNotVisible = true;
             IsErrorMessage = false;
             Task.Run(async () => { await GetTokenAsync(); });
         }
@@ -84,7 +147,8 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                 if (Token != null)
                 {
                     await GetProfileAsync();
-                    await GetPatrolList();
+                    await GetGuardListAsync();
+                    await GetPatrolListAsync();
                 }
             }
             catch(Exception)
@@ -114,25 +178,51 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             }
         }
 
-        private async Task GetPatrolList()
+        private async Task GetGuardListAsync()
         {
             try
             {
-                PatrolList.Clear();
-                string url = "patrols?startDate=" + DateTime.UtcNow.AddHours(8).ToString("yyyy-MM-dd");
-                PaginatedResponse<Patrol> response = await _genericService.GetPagedListAsync(url, Token);
+                IsGuardNotVisible = true;
+                GuardList.Clear();
+                string guardUrl = string.Format("guards?PageSize={0}", 100);
+                PaginatedResponse<ApplicationUser> response = await _genericUserService.GetPagedListAsync(guardUrl, Token);
                 if (response.IsSuccess && response.Data != null && response.Data.Data != null)
                 {
-                    PatrolList.AddRange(response.Data.Data);
+                    GuardList.AddRange(response.Data.Data);
+                    IsGuardNotVisible = false;
                 }
                 else
                 {
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch(Exception)
+            catch (Exception)
+            {
+                GuardList.Clear();
+                SetErrorMessage("Internal error occured.");
+            }
+        }
+
+        private async Task GetPatrolListAsync()
+        {
+            try
             {
                 PatrolList.Clear();
+                string guardId = SelectedGuard != null && SelectedGuard.Id != null ? SelectedGuard.Id : "";
+                string url = string.Format("patrols?guardId={0}&&startDate={1}&&endDate={2}", guardId, SelectedStartDate, SelectedEndDate);
+                PaginatedResponse<Patrol> paginatedResponse = await _genericPatrolService.GetPagedListAsync(url, Token);
+                if (paginatedResponse.IsSuccess && paginatedResponse.Data != null && paginatedResponse.Data.Data != null)
+                {
+                    PatrolList.AddRange(paginatedResponse.Data.Data);
+                }
+                else
+                {
+                    SetErrorMessage(paginatedResponse.Message, paginatedResponse.Errors);
+                }
+            }
+            catch(Exception ex)
+            {
+                PatrolDetaillList.Clear();
                 SetErrorMessage("Internal error occured.");
             }
             finally

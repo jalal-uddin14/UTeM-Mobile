@@ -16,7 +16,7 @@
         <StackLayout Grid.Row="0" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
             <Label Text="Assign Route" Style="{StaticResource HeaderLabel}"/>
         </StackLayout>
-        <Grid Grid.Row="1" Margin="20, 10" RowDefinitions="Auto, Auto, Auto, Auto, Auto">
+        <Grid Grid.Row="1" Margin="20, 10" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
             <StackLayout Grid.Row="0">
                 <Label Text="Guard"  Style="{StaticResource AddFormTitleLabel}"/>
                 <Frame Style="{StaticResource AddFormFrame}" IsVisible="{Binding IsGuardNotVisible}">
@@ -48,27 +48,55 @@
                 </Frame>
             </StackLayout>
             <StackLayout Grid.Row="2">
+                <Label Text="Shift" Style="{StaticResource AddFormTitleLabel}"/>
+                <Frame Style="{StaticResource AddFormFrame}" IsVisible="{Binding IsShiftNotVisible}">
+                    <Label Text="Shift list loading.." TextColor="Black" />
+                </Frame>
+                <Frame Style="{StaticResource AddFormFrame}" IsVisible="{Binding IsShiftVisible}">
+                    <Picker x:Name="shiftPicker"
+                TextColor="{StaticResource Black}"
+                FontSize="16"
+                Title="Select Shift"
+                ItemsSource="{Binding ShiftList}"
+                ItemDisplayBinding="{Binding Name}"
+                SelectedItem="{Binding SelectedShift}"/>
+                </Frame>
+            </StackLayout>
+            <StackLayout Grid.Row="3">
+                <Label Text="Time" Style="{StaticResource AddFormTitleLabel}"/>
+                <Frame Style="{StaticResource AddFormFrame}" IsVisible="{Binding IsTimeNotVisible}">
+                    <Label Text="Time list loading.." TextColor="Black" />
+                </Frame>
+                <Frame Style="{StaticResource AddFormFrame}" IsVisible="{Binding IsTimeVisible}">
+                    <Picker x:Name="timePicker"
+                TextColor="{StaticResource Black}"
+                FontSize="16"
+                Title="Select Time"
+                ItemsSource="{Binding TimeScheduleList}"
+                ItemDisplayBinding="{Binding Name}"
+                SelectedItem="{Binding SelectedTime}"/>
+                </Frame>
+            </StackLayout>
+            <StackLayout Grid.Row="4">
                 <Label Text="Start"  Style="{StaticResource AddFormTitleLabel}"/>
                 <HorizontalStackLayout>
                     <Frame Style="{StaticResource AddFormFrame}">
                         <DatePicker Date="{Binding StartDate}" Format="dd/MM/yyyy" FontSize="16"/>
                     </Frame>
-                    <Frame Style="{StaticResource AddFormFrame}" Margin="5, 7">
-                        <TimePicker Time="{Binding StartTime}" FontSize="16"/>
-                    </Frame>
                 </HorizontalStackLayout>
             </StackLayout>
-            <StackLayout Grid.Row="4">
+            <StackLayout Grid.Row="5">
                 <Label Text="End"  Style="{StaticResource AddFormTitleLabel}"/>
                 <HorizontalStackLayout>
                     <Frame Style="{StaticResource AddFormFrame}">
                         <DatePicker Date="{Binding EndDate}" Format="dd/MM/yyyy" FontSize="16"/>
                     </Frame>
-                    <Frame Style="{StaticResource AddFormFrame}" Margin="5, 7">
-                        <TimePicker Time="{Binding EndTime}" FontSize="16"/>
-                    </Frame>
                 </HorizontalStackLayout>
             </StackLayout>
+            <HorizontalStackLayout Grid.Row="6" VerticalOptions="CenterAndExpand">
+                <CheckBox IsChecked="{Binding IsTimerEnable}" Color="{StaticResource LoginButtonColor}"/>
+                <Label Text="Timer enable"  Style="{StaticResource AddFormTitleLabel}" VerticalTextAlignment="Center"/>
+            </HorizontalStackLayout>
         </Grid>
         <Grid Grid.Row="2" Margin="10" >
             <Button Text="Assign" Style="{StaticResource SubmitButton}" Command="{Binding CreatePatrolCommand}"/>

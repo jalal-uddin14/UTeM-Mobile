@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UTeM_Mobile.Views.Supervisor.PatrolDetailListPage"
+             BackgroundColor="White"
+             xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
+             xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
+             xmlns:models="clr-namespace:UTeM_Mobile.Core.Models;assembly=UTeM-Mobile.Core"
+             Shell.BackgroundColor="{StaticResource NavbarColor}"
+             Shell.NavBarIsVisible="False">
+
+
+    <Shell.TitleView>
+        <Image Source="e_smartguardheader.png"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               HeightRequest="30"/>
+    </Shell.TitleView>
+
+    <ContentPage.BindingContext>
+        <viewModel:PatrolDetailListViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid RowDefinitions="50, Auto, 80, Auto, *">
+        <StackLayout Grid.Row="0" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
+            <Label Text="Patrol Details" Style="{StaticResource HeaderLabel}"/>
+        </StackLayout>
+        <Grid Grid.Row="1" IsVisible="{Binding IsErrorMessage}" VerticalOptions="CenterAndExpand">
+            <ListView BackgroundColor="Transparent" SeparatorVisibility="None" VerticalScrollBarVisibility="Never" Margin="0" HasUnevenRows="True" ItemsSource="{Binding Message_list}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:ErrorView">
+                        <ViewCell>
+                            <Grid>
+                                <Frame Padding="5" Margin="0" BackgroundColor="Transparent" HasShadow="True" BorderColor="Transparent">
+                                    <Label Text="{Binding Message}" Style="{StaticResource ErrorLabel}"/>
+                                </Frame>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+        <Grid Grid.Row="2" ColumnDefinitions="Auto, *" RowDefinitions="Auto, Auto, 10" ColumnSpacing="10" Margin="20, 5">
+            <Grid Grid.Column="0" Grid.RowSpan="2" VerticalOptions="CenterAndExpand">
+                <Frame Padding="0" Margin="0" BorderColor="Transparent" CornerRadius="25">
+                    <Image Source="guard.jpg" HeightRequest="50" VerticalOptions="CenterAndExpand"/>
+                </Frame>
+            </Grid>
+            <Grid Grid.Column="1" Grid.Row="0">
+                <Label Text="{Binding Patrol.Guard.Name}" TextColor="Black" VerticalTextAlignment="End"/>
+            </Grid>
+            <Grid Grid.Column="1" Grid.Row="1">
+                <Label Text="Guard" TextColor="Black" VerticalTextAlignment="Start"/>
+            </Grid>
+            <Grid Grid.ColumnSpan="2" Grid.Row="2">
+                <BoxView HeightRequest="1" Color="Grey"/>
+            </Grid>
+        </Grid>
+        <Grid Grid.Row="3" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, *" Margin="20, 0" RowSpacing="5">
+            <StackLayout Grid.Row="0" Orientation="Horizontal">
+                <Label Text="Campus: " FontSize="12" TextColor="Black"/>
+                <Label Text="{Binding Patrol.Route.Campus.Name}" FontSize="12" FontAttributes="Bold" TextColor="Black"/>
+            </StackLayout>
+
+            <StackLayout Grid.Row="1" Orientation="Horizontal">
+                <Label Text="Route name: " FontSize="12" TextColor="Black"/>
+                <Label Text="{Binding Patrol.Route.Name}" FontSize="12" FontAttributes="Bold" TextColor="Black"/>
+            </StackLayout>
+            <StackLayout Grid.Row="2" Orientation="Horizontal">
+                <Label Text="Shift name: " FontSize="12" TextColor="Black"/>
+                <Label Text="{Binding Patrol.Shift.Name}" FontSize="12" FontAttributes="Bold" TextColor="Black"/>
+            </StackLayout>
+            <StackLayout Grid.Row="3" Orientation="Horizontal">
+                <Label Text="Time name: " FontSize="12" TextColor="Black"/>
+                <Label Text="{Binding Patrol.TimeSchedule.Name}" FontSize="12" FontAttributes="Bold" TextColor="Black"/>
+            </StackLayout>
+            <StackLayout Grid.Row="4" Orientation="Horizontal">
+                <Label Text="Patrol start: " FontSize="12" TextColor="Black"/>
+                <Label Text="{Binding Patrol.Start, StringFormat='{0:dd-MMM-yyyy hh:mm tt}'}" FontSize="12" FontAttributes="Bold" TextColor="Black"/>
+            </StackLayout>
+            <!--<StackLayout Grid.Row="5" Orientation="Horizontal">
+            <Label Text="Patrol end: " FontSize="12" TextColor="Black"/>
+            <Label Text="{Binding Patrol.End, StringFormat='{0:dd-MMM-yyyy}'}" FontSize="12" FontAttributes="Bold" TextColor="Black"/>
+        </StackLayout>-->
+            <Grid Grid.Row="5" ColumnDefinitions="*, Auto">
+                <StackLayout Grid.Column="0" Orientation="Horizontal">
+                    <Label Text="Status: " FontSize="12" TextColor="Black"/>
+                    <Label IsVisible="{Binding Patrol.IsStarted}" Text="{Binding Patrol.Status}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
+                    <Label IsVisible="{Binding Patrol.IsScheduled}" Text="{Binding Patrol.Status}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
+                    <Label IsVisible="{Binding Patrol.IsCompleted}" Text="{Binding Patrol.Status}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource CompletedStatusLabelColor}"/>
+                    <Label IsVisible="{Binding Patrol.IsMissed}" Text="{Binding Patrol.Status}" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource MissedStatusLabelColor}"/>
+                </StackLayout>
+            </Grid>
+            <StackLayout Grid.Row="7">
+                <BoxView HeightRequest="1" Color="Grey"/>
+            </StackLayout>
+        </Grid>
+        <StackLayout Grid.Row="4" IsVisible="{Binding IsBusy}" Margin="0, 20">
+            <ActivityIndicator IsRunning="{Binding IsBusy}" />
+        </StackLayout>
+        <StackLayout Grid.Row="4" IsVisible="{Binding IsNotBusy}">
+            <ListView ItemsSource="{Binding Patrol.PatrolDetails}" ItemTapped="ListView_ItemTapped" Margin="10" SeparatorVisibility="Default" SeparatorColor="Grey">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="model:PatrolDetail">
+                        <ViewCell>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0">
+                                    <HorizontalStackLayout>
+                                        <Label Text="Start: " TextColor="Grey" FontSize="12" />
+                                        <Label>
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Start, StringFormat='{}{0:dd-MMM-yyyy hh:mm tt}'}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                    </HorizontalStackLayout>
+                                </Grid>
+                                <Grid Grid.Row="1">
+                                    <HorizontalStackLayout>
+                                        <Label Text="Status: " TextColor="Grey" FontSize="12" />
+                                        <Label IsVisible="{Binding IsScheduled}" Text="{Binding Status}" TextColor="Black" FontSize="12" FontAttributes="Bold" />
+                                        <Label IsVisible="{Binding IsStarted}" Text="{Binding Status}" TextColor="{StaticResource StartedStatusLabelColor}" FontSize="12" FontAttributes="Bold" />
+                                        <Label IsVisible="{Binding IsCompleted}" Text="{Binding Status}" TextColor="{StaticResource CompletedStatusLabelColor}" FontSize="12" FontAttributes="Bold" />
+                                        <Label IsVisible="{Binding IsMissed}" Text="{Binding Status}" TextColor="{StaticResource MissedStatusLabelColor}" FontSize="12" FontAttributes="Bold" />
+                                    </HorizontalStackLayout>
+                                </Grid>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </Grid>
+</ContentPage>

@@ -45,12 +45,14 @@
             <ActivityIndicator IsRunning="{Binding IsBusy}" />
         </StackLayout>
         <StackLayout Grid.Row="3" IsVisible="{Binding IsNotBusy}">
-            <ListView ItemsSource="{Binding PatrolList}" ItemTapped="ListView_ItemTapped" Margin="10" RowHeight="110">
+            <ListView ItemsSource="{Binding PatrolList}" ItemTapped="ListView_ItemTapped" Margin="10" RowHeight="145">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="model:Patrol">
                         <ViewCell>
                             <Grid>
                                 <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
@@ -62,37 +64,35 @@
                                 </Grid>
                                 <Grid Grid.Row="1">
                                     <HorizontalStackLayout>
-                                        <Label Text="Guard: " TextColor="Grey" FontSize="14" />
-                                        <Label Text="{Binding Guard.Name}" TextColor="Black" FontSize="14" FontAttributes="Bold" />
+                                        <Label Text="Campus: " TextColor="Grey" FontSize="14" />
+                                        <Label Text="{Binding Route.Campus.Name}" TextColor="Black" FontSize="14" FontAttributes="Bold" />
                                     </HorizontalStackLayout>
                                 </Grid>
                                 <Grid Grid.Row="2">
                                     <HorizontalStackLayout>
-                                        <Label Text="Date: " TextColor="Grey" FontSize="14" />
-                                        <Label>
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="{Binding Start, StringFormat='{}{0:D}'}" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
+                                        <Label Text="Shift: " TextColor="Grey" FontSize="14" />
+                                        <Label Text="{Binding Shift.Name}" TextColor="Black" FontSize="14" FontAttributes="Bold" />
                                     </HorizontalStackLayout>
                                 </Grid>
                                 <Grid Grid.Row="3">
                                     <HorizontalStackLayout>
-                                        <Label Text="Schedule: " TextColor="Grey" FontSize="14" />
-                                        <Label>
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="{Binding Start, StringFormat='{}{0:t}'}" />
-                                                    <Span Text=" - " />
-                                                    <Span Text="{Binding End, StringFormat='{} {0:t}'}" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
+                                        <Label Text="Time: " TextColor="Grey" FontSize="14" />
+                                        <Label Text="{Binding TimeSchedule.Name}" TextColor="Black" FontSize="14" FontAttributes="Bold" />
                                     </HorizontalStackLayout>
                                 </Grid>
                                 <Grid Grid.Row="4">
+                                    <HorizontalStackLayout>
+                                        <Label Text="Start: " TextColor="Grey" FontSize="14" />
+                                        <Label Text="{Binding Start, StringFormat='{0:dd-MMM-yyyy hh:mm tt}'}" FontAttributes="Bold" TextColor="Black"/>
+                                    </HorizontalStackLayout>
+                                </Grid>
+                                <Grid Grid.Row="5">
+                                    <HorizontalStackLayout>
+                                        <Label Text="End: " TextColor="Grey" FontSize="14" />
+                                        <Label Text="{Binding End, StringFormat='{0:dd-MMM-yyyy hh:mm tt}'}" FontAttributes="Bold" TextColor="Black"/>
+                                    </HorizontalStackLayout>
+                                </Grid>
+                                <Grid Grid.Row="6">
                                     <HorizontalStackLayout>
                                         <Label Text="Status: " TextColor="Grey" FontSize="14" />
                                         <Label IsVisible="{Binding IsScheduled}" Text="{Binding Status}" TextColor="Black" FontSize="14" FontAttributes="Bold" />

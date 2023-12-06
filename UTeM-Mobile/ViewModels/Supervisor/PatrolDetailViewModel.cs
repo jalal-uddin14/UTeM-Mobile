@@ -12,9 +12,11 @@ namespace UTeM_Mobile.ViewModels.Supervisor
     public class PatrolDetailViewModel : MainViewModel, IOnAppearing
     {
         private IGenericService<Patrol> _genericService;
+        private IGenericService<PatrolDetail> _genericPatrolDetailService;
         private IGenericService<PatrolCheckpoint> _patrolCheckpointService;
         private string id;
         private Patrol patrol;
+        private PatrolDetail patrolDetail;
         private Location location;
         private bool showMapRoute;
         private bool showGPS;
@@ -24,6 +26,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         public string Id { get => id; set => id = value; }
         public Patrol Patrol { get => patrol; set => SetProperty(ref patrol, value); }
+        public PatrolDetail PatrolDetail { get => patrolDetail; set => SetProperty(ref patrolDetail, value); }
         public Location Location { get => location; set => SetProperty(ref location, value); }
         public bool ShowMapRoute
         {
@@ -40,7 +43,9 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         public PatrolDetailViewModel()
         {
             Patrol = new Patrol { Guard = new ApplicationUser(), Route = new Route() };
+            PatrolDetail = new PatrolDetail { Patrol = Patrol };
             _genericService = new GenericService<Patrol>();
+            _genericPatrolDetailService = new GenericService<PatrolDetail>();
             _patrolCheckpointService = new GenericService<PatrolCheckpoint>();
             ToggleMapCommand = new Command(ExecuteToggleMap);
         }
@@ -87,14 +92,14 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                 IsBusy = true;
                 if (Id != null)
                 {
-                    string url = "patrols/" + Id;
-                    ObjectResponse<Patrol> response = await _genericService.GetDetailsAsync(url, Token);
+                    string url = "patrolDetails/" + Id;
+                    ObjectResponse<PatrolDetail> response = await _genericPatrolDetailService.GetDetailsAsync(url, Token);
                     if (response.IsSuccess && response.Data != null)
                     {
-                        Patrol = response.Data;
-                        if (Patrol.Route != null && Patrol.Route.RouteCheckpoints != null)
+                        PatrolDetail = response.Data;
+                        if (PatrolDetail.Patrol != null && PatrolDetail.Patrol.Route != null && PatrolDetail.Patrol.Route.RouteCheckpoints != null)
                         {
-                            var checkpoint = Patrol.Route.RouteCheckpoints.FirstOrDefault();
+                            var checkpoint = PatrolDetail.Patrol.Route.RouteCheckpoints.FirstOrDefault();
                             Location = new Location
                             {
                                 Latitude = checkpoint.Checkpoint.Latitude,
@@ -130,21 +135,21 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             try
             {
                 string url = "";
-                for (int i = 0; i < Patrol.Route.RouteCheckpoints.Count; i++)
+                for (int i = 0; i < PatrolDetail.Patrol.Route.RouteCheckpoints.Count; i++)
                 {
-                    Patrol.Route.RouteCheckpoints[i].IsNotLast = i < Patrol.Route.RouteCheckpoints.Count - 1;
+                    PatrolDetail.Patrol.Route.RouteCheckpoints[i].IsNotLast = i < PatrolDetail.Patrol.Route.RouteCheckpoints.Count - 1;
                     url = "patrolCheckpoints/check";
-                    var content = new { patrolId = Id, checkpointId = Patrol.Route.RouteCheckpoints[i].CheckpointId };
+                    var content = new { patrolDetailId = PatrolDetail.Id, checkpointId = PatrolDetail.Patrol.Route.RouteCheckpoints[i].CheckpointId };
                     ObjectResponse<PatrolCheckpoint> response = await _patrolCheckpointService.PostAsync(url, content, Token);
                     if (response.IsSuccess && response.Data != null)
                     {
-                        Patrol.Route.RouteCheckpoints[i].IsChecked = response.Data.Status == "Completed";
-                        Patrol.Route.RouteCheckpoints[i].IsScheduled = response.Data.Status == "Scheduled";
+                        PatrolDetail.Patrol.Route.RouteCheckpoints[i].IsChecked = response.Data.Status == "Completed";
+                        PatrolDetail.Patrol.Route.RouteCheckpoints[i].IsScheduled = response.Data.Status == "Scheduled";
                         if (response.Data.Status == "Scheduled")
                         {
-                            Location = new Location { Latitude = Patrol.Route.RouteCheckpoints[i].Checkpoint.Latitude, Longitude = Patrol.Route.RouteCheckpoints[i].Checkpoint.Longitude, Speed = 5 };
+                            Location = new Location { Latitude = PatrolDetail.Patrol.Route.RouteCheckpoints[i].Checkpoint.Latitude, Longitude = PatrolDetail.Patrol.Route.RouteCheckpoints[i].Checkpoint.Longitude, Speed = 5 };
                         }
-                        Patrol.Route.RouteCheckpoints[i].NotFound = false;
+                        PatrolDetail.Patrol.Route.RouteCheckpoints[i].NotFound = false;
                     }
                 }
             }

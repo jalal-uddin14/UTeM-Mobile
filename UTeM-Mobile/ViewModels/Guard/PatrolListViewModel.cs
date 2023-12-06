@@ -14,6 +14,7 @@ namespace UTeM_Mobile.ViewModels.Guard
     public class PatrolListViewModel : MainViewModel, IOnAppearing
     {
         private IGenericService<Patrol> _genericService;
+        private IGenericService<PatrolDetail> _genericPatrolDetailService;
         private IGenericService<ApplicationUser> _genericUserService;
         private ApplicationUser user;
 

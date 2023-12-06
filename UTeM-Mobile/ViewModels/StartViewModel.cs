@@ -67,9 +67,10 @@ namespace UTeM_Mobile.ViewModels
                     await MainThread.InvokeOnMainThreadAsync(() => Shell.Current.GoToAsync("LoginPage"));
                 }
             }
-            catch(Exception)
+            catch(Exception ex)
             {
-
+                StaticMessage.HasNFCMessage = true;
+                StaticMessage.NFCMessage = ex.ToString();
             }
         }
     }

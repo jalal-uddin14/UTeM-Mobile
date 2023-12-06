@@ -3,18 +3,18 @@ using UTeM_Mobile.ViewModels.Supervisor;
 
 namespace UTeM_Mobile.Views.Supervisor;
 
-public partial class PatrolListPage : ContentPage
+public partial class PatrolDetailListPage : ContentPage
 {
-	private PatrolListViewModel viewModel;
-	public PatrolListPage()
+	private PatrolDetailListViewModel viewModel;
+	public PatrolDetailListPage()
 	{
 		InitializeComponent();
-	}
+    }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        viewModel = BindingContext as PatrolListViewModel;
+        viewModel = BindingContext as PatrolDetailListViewModel;
         viewModel.OnAppearing();
     }
 
@@ -22,7 +22,7 @@ public partial class PatrolListPage : ContentPage
     {
         ((ListView)sender).SelectedItem = null;
         ((ListView)sender).BackgroundColor = Colors.Transparent;
-        var Item = e.Item as Patrol;
-        await Shell.Current.GoToAsync($"{nameof(PatrolDetailListPage)}?Id={Item.Id}");
+        var Item = e.Item as PatrolDetail;
+        await Shell.Current.GoToAsync($"{nameof(PatrolDetailPage)}?Id={Item.Id}");
     }
 }

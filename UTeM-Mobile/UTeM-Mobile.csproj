@@ -80,8 +80,8 @@
 	  <PackageReference Include="PusherClient" Version="2.2.1" />
 	  <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
-	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.5" />
-	  <PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.5" />
+	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.6" />
+	  <PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.6" />
 	  <PackageReference Include="Xam.Plugin.Media" Version="6.0.2" />
 	</ItemGroup>
 
@@ -143,6 +143,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Supervisor\PatrolAddPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Supervisor\PatrolDetailListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Supervisor\PatrolDetailPage.xaml">

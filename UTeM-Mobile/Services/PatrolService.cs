@@ -8,12 +8,12 @@ namespace UTeM_Mobile.Services
 {
     public class PatrolService
     {
-        public static async Task<ObjectResponse<Patrol>> GetPatrolStatus()
+        public static async Task<ObjectResponse<PatrolDetail>> GetPatrolStatus()
         {
             var token = await LocalDBService.GetToken();
-            IGenericService<Patrol> _genericPatrolService = new GenericService<Patrol>();
-            string patrolStatusUrl = "patrols/status";
-            return await _genericPatrolService.PostAsync(patrolStatusUrl, null, token);
+            IGenericService<PatrolDetail> _genericPatrolDetailService = new GenericService<PatrolDetail>();
+            string patrolDetailStatusUrl = "patrolDetails/status";
+            return await _genericPatrolDetailService.PostAsync(patrolDetailStatusUrl, null, token);
         }
 
         public static async Task<RouteCheckpoint> CheckNextCheckpoint(int patrolId)

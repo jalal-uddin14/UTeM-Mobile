@@ -4,10 +4,15 @@
     {
         public static async Task PopAllModals()
         {
-            while (Application.Current.MainPage.Navigation.ModalStack.Count > 0)
+            try
             {
-                await Application.Current.MainPage.Navigation.PopModalAsync();
+                do
+                {
+                    await Application.Current.MainPage.Navigation.PopModalAsync();
+                }
+                while (Application.Current.MainPage.Navigation.ModalStack.Count > 0);
             }
+            catch (Exception ex) { }
         }
     }
 }
