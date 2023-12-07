@@ -19,14 +19,27 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         private IGenericService<Patrol> _genericPatrolService;
         private IGenericService<PatrolDetail> _genericPatrolDetailService;
         private IGenericService<ApplicationUser> _genericUserService;
+        private IGenericService<Shift> _genericShiftService;
+        private IGenericService<Campus> _genericCampusService;
         private ApplicationUser user;
         private ApplicationUser selectedGuard;
         private DateTime? selectedStartDate;
         private DateTime? selectedEndDate;
+        private Shift selectedShift;
+        private Campus selectedCampus;
+
+        private bool isFilterVisible;
 
         private bool isGuardNotVisible;
         private bool isGuardVisible;
 
+        private bool isShiftNotVisible;
+        private bool isShiftVisible;
+        
+        private bool isCampusNotVisible;
+        private bool isCampusVisible;
+
+        public ICommand ToggleFilterCommand { get; }
         public ICommand LogoutCommand { get; }
         public ICommand NavigateToGuardListCommand { get; set; }
         public ICommand NavigateToPatrolAddCommand { get; }
@@ -34,6 +47,8 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         public ObservableRangeCollection<Patrol> PatrolList { get; set; }
         public ObservableRangeCollection<PatrolDetail> PatrolDetaillList { get; set; }
         public ObservableRangeCollection<ApplicationUser> GuardList { get; set; }
+        public ObservableRangeCollection<Shift> ShiftList { get; set; }
+        public ObservableRangeCollection<Campus> CampusList { get; set; }
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
         public ApplicationUser SelectedGuard
         {
@@ -42,6 +57,30 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             {
                 SetProperty(ref selectedGuard, value);
                 if (Token != null && SelectedGuard != null && PatrolList != null)
+                {
+                    Task.Run(async () => await GetPatrolListAsync());
+                }
+            }
+        }
+        public Shift SelectedShift
+        {
+            get => selectedShift;
+            set
+            {
+                SetProperty(ref selectedShift, value);
+                if (Token != null && selectedShift != null && PatrolList != null)
+                {
+                    Task.Run(async () => await GetPatrolListAsync());
+                }
+            }
+        }
+        public Campus SelectedCampus
+        {
+            get => selectedCampus;
+            set
+            {
+                SetProperty(ref selectedCampus, value);
+                if (Token != null && selectedCampus != null && PatrolList != null)
                 {
                     Task.Run(async () => await GetPatrolListAsync());
                 }
@@ -83,22 +122,56 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             }
         }
 
+        public bool IsShiftNotVisible 
+        { 
+            get => isShiftNotVisible;
+            set
+            {
+                SetProperty(ref isShiftNotVisible, value);
+                IsShiftVisible = !value;
+            }
+        }
+        public bool IsShiftVisible { get => isShiftVisible; set => SetProperty(ref isShiftVisible, value); }
+        public bool IsCampusNotVisible 
+        { 
+            get => isCampusNotVisible;
+            set
+            {
+                SetProperty(ref isCampusNotVisible, value);
+                IsCampusVisible = !value;
+            }
+        }
+        public bool IsCampusVisible { get => isCampusVisible; set => SetProperty(ref isCampusVisible, value); }
+        public bool IsFilterVisible { get => isFilterVisible; set => SetProperty(ref isFilterVisible, value); }
+
         public PatrolListViewModel()
         {
-            SelectedStartDate = null;
-            SelectedEndDate = null;
+            IsFilterVisible = false;
+            SelectedStartDate = DateTime.UtcNow.AddHours(8);
+            SelectedEndDate = DateTime.UtcNow.AddHours(8);
             User = new ApplicationUser();
             SelectedGuard = new ApplicationUser();
             _genericPatrolService = new GenericService<Patrol>();
             _genericPatrolDetailService = new GenericService<PatrolDetail>();
             _genericUserService = new GenericService<ApplicationUser>();
+            _genericShiftService = new GenericService<Shift>();
+            _genericCampusService = new GenericService<Campus>();
             PatrolList = new ObservableRangeCollection<Patrol>();
             PatrolDetaillList = new ObservableRangeCollection<PatrolDetail>();
             GuardList = new ObservableRangeCollection<ApplicationUser>();
+            ShiftList = new ObservableRangeCollection<Shift>();
+            CampusList = new ObservableRangeCollection<Campus>();
+            ToggleFilterCommand = new AsyncCommand(ExecuteToggleFilter);
             NavigateToGuardListCommand = new AsyncCommand(ExecuteNavigateToGuardList);
             NavigateToPatrolAddCommand = new AsyncCommand(ExecuteNavigateToPatrolAdd);
             NavigateToProfileCommand = new AsyncCommand(ExecuteNavigateToProfile);
             LogoutCommand = new AsyncCommand(ExecuteLogout);
+        }
+
+        private async Task ExecuteToggleFilter()
+        {
+            IsFilterVisible = !IsFilterVisible;
+            await GetPatrolListAsync();
         }
 
         private async Task ExecuteLogout()
@@ -148,6 +221,8 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                 {
                     await GetProfileAsync();
                     await GetGuardListAsync();
+                    await GetShiftListAsync();
+                    await GetCampusListAsync();
                     await GetPatrolListAsync();
                 }
             }
@@ -203,13 +278,69 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             }
         }
 
+        private async Task GetShiftListAsync()
+        {
+            try
+            {
+                IsShiftNotVisible = true;
+                ShiftList.Clear();
+                string shiftUrl = string.Format("shifts?PageSize={0}", 100);
+                PaginatedResponse<Shift> response = await _genericShiftService.GetPagedListAsync(shiftUrl, Token);
+                if (response.IsSuccess && response.Data != null && response.Data.Data != null)
+                {
+                    ShiftList.AddRange(response.Data.Data);
+                    IsShiftNotVisible = false;
+                }
+                else
+                {
+                    SetErrorMessage(response.Message, response.Errors);
+                }
+            }
+            catch (Exception)
+            {
+                ShiftList.Clear();
+                SetErrorMessage("Internal error occured.");
+            }
+        }
+
+        private async Task GetCampusListAsync()
+        {
+            try
+            {
+                IsCampusNotVisible = true;
+                CampusList.Clear();
+                string campusUrl = string.Format("campuses?PageSize={0}", 100);
+                PaginatedResponse<Campus> response = await _genericCampusService.GetPagedListAsync(campusUrl, Token);
+                if (response.IsSuccess && response.Data != null && response.Data.Data != null)
+                {
+                    CampusList.AddRange(response.Data.Data);
+                    IsCampusNotVisible = false;
+                }
+                else
+                {
+                    SetErrorMessage(response.Message, response.Errors);
+                }
+            }
+            catch (Exception)
+            {
+                CampusList.Clear();
+                SetErrorMessage("Internal error occured.");
+            }
+        }
+
         private async Task GetPatrolListAsync()
         {
             try
             {
                 PatrolList.Clear();
                 string guardId = SelectedGuard != null && SelectedGuard.Id != null ? SelectedGuard.Id : "";
-                string url = string.Format("patrols?guardId={0}&&startDate={1}&&endDate={2}", guardId, SelectedStartDate, SelectedEndDate);
+                int? campusId = SelectedCampus?.Id;
+                int? shiftId = SelectedShift?.Id;
+                string url = string.Format("patrols");
+                if (IsFilterVisible)
+                {
+                    url = string.Format("patrols?guardId={0}&&shiftId={1}&&campusId={2}&&startDate={3}&&endDate={4}", guardId, shiftId, campusId, SelectedStartDate, SelectedEndDate);
+                }
                 PaginatedResponse<Patrol> paginatedResponse = await _genericPatrolService.GetPagedListAsync(url, Token);
                 if (paginatedResponse.IsSuccess && paginatedResponse.Data != null && paginatedResponse.Data.Data != null)
                 {

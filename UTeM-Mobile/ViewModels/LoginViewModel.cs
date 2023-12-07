@@ -58,6 +58,7 @@ namespace UTeM_Mobile.ViewModels
                     AuthToken = response.Data;
                     AuthToken.ValidTo = DateTime.UtcNow.AddHours(8).AddMinutes(response.Data.LifetimeMinutes);
                     AuthToken.IsRemember = IsRemember;
+                    await TimerDBService.Delete();
                     await LocalDBService.RemoveToken();
                     await LocalDBService.InsertToken(AuthToken);
                     if (response.Data.UserRole == "Supervisor")

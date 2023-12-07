@@ -43,28 +43,63 @@
                 </Image>
             </StackLayout>
         </Grid>
-        <StackLayout Grid.Row="1" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
+        <StackLayout Grid.Row="1" BackgroundColor="{StaticResource HeadingColor}" Padding="5" Orientation="Horizontal">
             <Label Text="Patrol Schedule List" Style="{StaticResource HeaderLabel}"/>
-        </StackLayout>
-        <StackLayout Grid.Row="2" Orientation="Horizontal">
-            <Frame Style="{StaticResource AddFormFrame}" IsVisible="{Binding IsGuardNotVisible}">
-                <Label Text="Guard list loading.." TextColor="Black" />
-            </Frame>
-            <Frame Style="{StaticResource AddFormFrame}" IsVisible="{Binding IsGuardVisible}" HorizontalOptions="StartAndExpand">
-                <Picker x:Name="guardPicker"
-                        HorizontalOptions="StartAndExpand"
-                        TextColor="{StaticResource Black}"
-                        FontSize="16"
-                        Title="Select Guard"
-                        ItemsSource="{Binding GuardList}"
-                        ItemDisplayBinding="{Binding Name}"
-                        SelectedItem="{Binding SelectedGuard}"/>
-            </Frame>
-            <StackLayout HorizontalOptions="CenterAndExpand">
-                <DatePicker Date="{Binding SelectedStartDate}" Format="dd/MM/yyyy" FontSize="16"/>
+            <StackLayout HorizontalOptions="End">
+                <Button Text="{StaticResource IconFilter}" FontFamily="FAsolid" BackgroundColor="Transparent" TextColor="White" FontSize="20" Command="{Binding ToggleFilterCommand}"/>
             </StackLayout>
-            <StackLayout HorizontalOptions="EndAndExpand">
-                <DatePicker Date="{Binding SelectedEndDate}" Format="dd/MM/yyyy" FontSize="16"/>
+        </StackLayout>
+        <StackLayout Grid.Row="2">
+            <StackLayout Orientation="Horizontal" >
+                <StackLayout Orientation="Horizontal" IsVisible="{Binding IsFilterVisible}">
+                    <Frame Style="{StaticResource AddFormFrame}" IsVisible="{Binding IsShiftNotVisible}">
+                        <Label Text="Shift list loading.." TextColor="Black" />
+                    </Frame>
+                    <Frame Style="{StaticResource AddFormFrame}" IsVisible="{Binding IsShiftVisible}" HorizontalOptions="StartAndExpand">
+                        <Picker x:Name="shiftPicker"
+                HorizontalOptions="StartAndExpand"
+                TextColor="{StaticResource Black}"
+                FontSize="16"
+                Title="Select Shift"
+                ItemsSource="{Binding ShiftList}"
+                ItemDisplayBinding="{Binding Name}"
+                SelectedItem="{Binding SelectedShift}"/>
+                    </Frame>
+                    <Frame Style="{StaticResource AddFormFrame}" IsVisible="{Binding IsCampusNotVisible}">
+                        <Label Text="Campus list loading.." TextColor="Black" />
+                    </Frame>
+                    <Frame Style="{StaticResource AddFormFrame}" IsVisible="{Binding IsCampusVisible}" HorizontalOptions="CenterAndExpand">
+                        <Picker x:Name="campusPicker"
+                HorizontalOptions="CenterAndExpand"
+                TextColor="{StaticResource Black}"
+                FontSize="16"
+                Title="Select Campus"
+                ItemsSource="{Binding CampusList}"
+                ItemDisplayBinding="{Binding Name}"
+                SelectedItem="{Binding SelectedCampus}"/>
+                    </Frame>
+                </StackLayout>
+            </StackLayout>
+            <StackLayout Orientation="Horizontal" IsVisible="{Binding IsFilterVisible}">
+                <Frame Style="{StaticResource AddFormFrame}" IsVisible="{Binding IsGuardNotVisible}">
+                    <Label Text="Guard list loading.." TextColor="Black" />
+                </Frame>
+                <Frame Style="{StaticResource AddFormFrame}" IsVisible="{Binding IsGuardVisible}" HorizontalOptions="StartAndExpand">
+                    <Picker x:Name="guardPicker"
+                            HorizontalOptions="StartAndExpand"
+                            TextColor="{StaticResource Black}"
+                            FontSize="16"
+                            Title="Select Guard"
+                            ItemsSource="{Binding GuardList}"
+                            ItemDisplayBinding="{Binding Name}"
+                            SelectedItem="{Binding SelectedGuard}"/>
+                </Frame>
+                <StackLayout HorizontalOptions="CenterAndExpand">
+                    <DatePicker Date="{Binding SelectedStartDate}" Format="dd/MM/yyyy" FontSize="16"/>
+                </StackLayout>
+                <StackLayout HorizontalOptions="EndAndExpand">
+                    <DatePicker Date="{Binding SelectedEndDate}" Format="dd/MM/yyyy" FontSize="16"/>
+                </StackLayout>
             </StackLayout>
         </StackLayout>
         <Grid Grid.Row="3" IsVisible="{Binding IsErrorMessage}" VerticalOptions="CenterAndExpand">

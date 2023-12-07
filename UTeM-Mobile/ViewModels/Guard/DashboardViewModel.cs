@@ -406,7 +406,10 @@ namespace UTeM_Mobile.ViewModels.Guard
                 {
                     if (PatrolCheckpoint.ExpectedCheckedTime != null)
                     {
-                        TimeOutService.RunTimer();
+                        if (Token.UserRole == "Guard")
+                        {
+                            TimeOutService.RunTimer();
+                        }
                         var notification = new NotificationRequest
                         {
                             NotificationId = 100,

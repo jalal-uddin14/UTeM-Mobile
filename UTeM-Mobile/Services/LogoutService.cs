@@ -6,6 +6,7 @@ namespace UTeM_Mobile.Services
     {
         public static async Task LogoutAsync()
         {
+            await TimerDBService.Delete();
             await LocalDBService.RemoveToken();
             await PatrolDBService.Delete();
             await MainThread.InvokeOnMainThreadAsync(() =>
