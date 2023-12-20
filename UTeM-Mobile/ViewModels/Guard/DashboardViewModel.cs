@@ -308,8 +308,7 @@ namespace UTeM_Mobile.ViewModels.Guard
             try
             {
                 var p = await PatrolDetailDBService.Get();
-                PatrolDetail = ConvertModelService.DBPatrolDetailToPatrolDetail(p);
-                if (PatrolDetail == null)
+                if (p == null)
                 {
                     ObjectResponse<PatrolDetail> response = await PatrolService.GetPatrolStatus();
                     if (response.IsSuccess && response.Data != null)
@@ -324,8 +323,9 @@ namespace UTeM_Mobile.ViewModels.Guard
                     }
                 }
                 
-                if (PatrolDetail != null)
+                if (p != null)
                 {
+                    PatrolDetail = ConvertModelService.DBPatrolDetailToPatrolDetail(p);
                     ObjectResponse<Patrol> objectResponse = await _genericPatrolService.GetDetailsAsync(string.Format("patrols/{0}", PatrolDetail.PatrolId), Token);
                     if (objectResponse.IsSuccess && objectResponse.Data != null)
                     {
