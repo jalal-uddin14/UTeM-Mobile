@@ -42,7 +42,7 @@ namespace UTeM_Mobile.PopupViewModels
 
         private async Task ExecuteClosePopViewAsync()
         {
-            await ModalService.PopAllModals();
+            await Application.Current.MainPage.Navigation.PopModalAsync();
         }
     }
 }

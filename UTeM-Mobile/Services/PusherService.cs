@@ -1,7 +1,6 @@
 ﻿using PusherClient;
 using UTeM_Mobile.Data.StaticCredentials;
 using Newtonsoft.Json;
-using healholmes_xamarin.Services;
 using UTeM_Mobile.Core.Models;
 using Nito.AsyncEx;
 using Plugin.LocalNotification;

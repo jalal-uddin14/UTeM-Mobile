@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UTeM_Mobile.PopupViews.NextPatrolPopupPage"
+             xmlns:viewmodel="clr-namespace:UTeM_Mobile.PopupViewModels">
+
+    <ContentPage.BindingContext>
+        <viewmodel:NextPatrolPopupViewModel />
+    </ContentPage.BindingContext>
+
+    <Frame VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" Margin="20, 10" Padding="10">
+        <StackLayout>
+            <StackLayout BackgroundColor="{StaticResource DashboardHeadColor}" Padding="10">
+                <Label Text="Timeout warning" TextColor="White" HorizontalOptions="CenterAndExpand"/>
+            </StackLayout>
+            <StackLayout BackgroundColor="Transparent" Margin="10">
+                <Label Text="You have another patrol" TextColor="Black" FontSize="16" FontAttributes="Bold" HorizontalOptions="StartAndExpand" />
+            </StackLayout>
+            <StackLayout BackgroundColor="Transparent" Padding="10">
+                <Label Text="{Binding PatrolDetail.Start, StringFormat='You have another patrol to start at {0:dd-MMM-yyyy hh:mm tt}.'}" TextColor="Black" HorizontalOptions="StartAndExpand"/>
+            </StackLayout>
+            <StackLayout BackgroundColor="Transparent" Padding="10" Orientation="Horizontal" Margin="5, 10">
+                <Button Text="Ok" Style="{StaticResource ModalButton}" BackgroundColor="Red" HorizontalOptions="EndAndExpand" Command="{Binding ClosePopViewCommand}"/>
+            </StackLayout>
+        </StackLayout>
+    </Frame>
+    
+</ContentPage>

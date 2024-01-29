@@ -6,13 +6,15 @@
         {
             try
             {
-                do
+                while (Application.Current.MainPage.Navigation.ModalStack.Count > 0)
                 {
-                    await Application.Current.MainPage.Navigation.PopModalAsync();
+                    await Application.Current.MainPage.Navigation.PopAsync();
                 }
-                while (Application.Current.MainPage.Navigation.ModalStack.Count > 0);
             }
-            catch (Exception ex) { }
+            catch (Exception ex) 
+            {
+
+            }
         }
     }
 }

@@ -339,7 +339,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
                 string url = string.Format("patrols");
                 if (IsFilterVisible)
                 {
-                    url = string.Format("patrols?guardId={0}&&shiftId={1}&&campusId={2}&&startDate={3}&&endDate={4}", guardId, shiftId, campusId, SelectedStartDate, SelectedEndDate);
+                    url = string.Format("patrols?guardId={0}&&shiftId={1}&&campusId={2}&&startDate={3}&&endDate={4}", guardId, shiftId, campusId, SelectedStartDate?.ToString("yyyy-MM-dd"), SelectedEndDate?.ToString("yyyy-MM-dd"));
                 }
                 PaginatedResponse<Patrol> paginatedResponse = await _genericPatrolService.GetPagedListAsync(url, Token);
                 if (paginatedResponse.IsSuccess && paginatedResponse.Data != null && paginatedResponse.Data.Data != null)

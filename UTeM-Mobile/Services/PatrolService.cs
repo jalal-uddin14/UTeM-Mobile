@@ -10,40 +10,35 @@ namespace UTeM_Mobile.Services
     {
         public static async Task<ObjectResponse<PatrolDetail>> GetPatrolStatus()
         {
-            var token = await LocalDBService.GetToken();
-            IGenericService<PatrolDetail> _genericPatrolDetailService = new GenericService<PatrolDetail>();
-            string patrolDetailStatusUrl = "patrolDetails/status";
-            return await _genericPatrolDetailService.PostAsync(patrolDetailStatusUrl, null, token);
-        }
-
-        public static async Task<RouteCheckpoint> CheckNextCheckpoint(int patrolId)
-        {
-            RouteCheckpoint routeCheckpoint = null;
-            var token = await LocalDBService.GetToken();
-            string url = "patrols/" + patrolId;
-            IGenericService<Patrol> _genericPatrolService = new GenericService<Patrol>();
-            ObjectResponse<Patrol> response = await _genericPatrolService.GetDetailsAsync(url, token);
-            if (response.IsSuccess && response.Data != null)
+            try
             {
-                Patrol patrol = response.Data;
-                if (patrol.Route.RouteCheckpoints.Count == 0)
-                {
-                    return null;
-                }
-                else
-                {
-                    foreach (var item in patrol.Route.RouteCheckpoints)
-                    {
-                        bool isFound = patrol.PatrolCheckpoints.Where(p => p.CheckpointId == item.CheckpointId).FirstOrDefault() != null;
-                        if (!isFound)
-                        {
-                            routeCheckpoint = item;
-                            break;
-                        }
-                    }
-                }
+                var token = await LocalDBService.GetToken();
+                IGenericService<PatrolDetail> _genericPatrolDetailService = new GenericService<PatrolDetail>();
+                string patrolDetailStatusUrl = "patrolDetails/status";
+                return await _genericPatrolDetailService.PostAsync(patrolDetailStatusUrl, null, token);
             }
-            return routeCheckpoint;
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public static async Task<Patrol> GetPatrolDetail(int id)
+        {
+            try
+            {
+                var token = await LocalDBService.GetToken();
+                IGenericService<Patrol> _genericPatrolService = new GenericService<Patrol>();
+                ObjectResponse<Patrol> objectResponse = await _genericPatrolService.GetDetailsAsync("patrols/" + id, token);
+                if (objectResponse.IsSuccess && objectResponse.Data != null)
+                {
+                    return objectResponse.Data;
+                }
+                return null;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
     }
 }

@@ -19,6 +19,8 @@ namespace UTeM_Mobile.ViewModels.Guard
 {
     public class DashboardViewModel : MainViewModel, IOnAppearing
     {
+        private IDispatcherTimer timer = null;
+        private Location currentLocation;
         private IGenericService<Patrol> _genericPatrolService;
         private IGenericService<PatrolDetail> _genericPatrolDetailService;
         private IGenericService<Checkpoint> _genericCheckpointService;
@@ -48,6 +50,8 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         public ObservableRangeCollection<Pin> PinCollection { get; }
 
+
+        public Location CurrentLocation { get => currentLocation; set => SetProperty(ref currentLocation, value); }
         public bool ShowMap
         {
             get => showMap;
@@ -125,27 +129,8 @@ namespace UTeM_Mobile.ViewModels.Guard
         {
             try
             {
-                string url = "patrolDetails/" + PatrolDetail.Id;
-                ObjectResponse<PatrolDetail> response = await _genericPatrolDetailService.GetDetailsAsync(url, Token);
-                Checkpoint checkpoint = null;
-                if (response.Data.Patrol.Route == null)
-                {
-                    return;
-                }
-                var checkpointResponse = response.Data.PatrolCheckpoints.FirstOrDefault(p => p.Status == "Scheduled");
-                if (checkpointResponse != null)
-                {
-                    checkpoint = checkpointResponse.Checkpoint;
-                }
-                else
-                {
-                    checkpoint = response.Data.Patrol.Route.RouteCheckpoints.FirstOrDefault().Checkpoint;
-                }
-                await NFCService.ExecuteScanAsync(checkpoint.Latitude, checkpoint.Longitude);
-                //if (!response.IsSuccess)
-                //{
-                //    await App.Current.MainPage.DisplayAlert("Success", "All checkpoint scanned.", "OK", FlowDirection.RightToLeft);
-                //}
+                Checkpoint checkpoint = PatrolCheckpoint.Checkpoint;
+                await NFCService.ExecuteScanAsync(checkpoint);
             }
             catch(Exception)
             {
@@ -185,7 +170,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     var patrolResponse = await PatrolService.GetPatrolStatus();
                     if (patrolResponse.Data != null)
                     {
-                        await PatrolDetailDBService.Insert(ConvertModelService.PatrolDetailToDbPatrolDetail(patrolResponse.Data));
+                        StaticCredentials.PatrolDetail = patrolDetail;
                         await TimeOutService.CheckTimerToken();
                     }
                     await MainThread.InvokeOnMainThreadAsync(() => 
@@ -214,17 +199,19 @@ namespace UTeM_Mobile.ViewModels.Guard
             try
             {
                 IsErrorMessage = false;
-                string url = "patrols/update-status";
+                string url = "patrolDetails/update-status";
                 var content = new
                 {
-                    Id = Patrol.Id,
+                    Id = PatrolDetail.Id,
                     Status = "Completed"
                 };
-                ObjectResponse<Patrol> response = await _genericPatrolService.PutAsync(url, content, Token);
+                ObjectResponse<PatrolDetail> response = await _genericPatrolDetailService.PutAsync(url, content, Token);
                 HasNoPatrol = !response.IsSuccess;
                 if (response.IsSuccess)
                 {
                     await TimeOutService.CheckTimerToken();
+                    StaticCredentials.PatrolDetail = null;
+                    await PatrolDBService.Delete();
                     HasNoPatrol = true;
                     await MainThread.InvokeOnMainThreadAsync(() => 
                         Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Patrol Notification", "Patrol ended")))
@@ -239,7 +226,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
-            catch(Exception)
+            catch(Exception ex)
             {
                 await MainThread.InvokeOnMainThreadAsync(() => 
                     Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage()))
@@ -250,6 +237,8 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         public void OnAppearing()
         {
+            timer = Application.Current.Dispatcher.CreateTimer();
+            RunTimer();
             IsErrorMessage = IsNotConnected;
             Task.Run(async () => { await GetTokenAsync(); });
         }
@@ -307,8 +296,8 @@ namespace UTeM_Mobile.ViewModels.Guard
         {
             try
             {
-                var p = await PatrolDetailDBService.Get();
-                if (p == null)
+                PatrolDetail = StaticCredentials.PatrolDetail;
+                if (PatrolDetail == null)
                 {
                     ObjectResponse<PatrolDetail> response = await PatrolService.GetPatrolStatus();
                     if (response.IsSuccess && response.Data != null)
@@ -316,37 +305,48 @@ namespace UTeM_Mobile.ViewModels.Guard
                         PatrolDetail = response.Data;
                         Patrol = PatrolDetail?.Patrol;
                     }
-                    else
-                    {
-                        ShowMap = false;
-                        SetErrorMessage(response.Message, response.Errors);
-                    }
                 }
-                
-                if (p != null)
+                if (PatrolDetail != null)
                 {
-                    PatrolDetail = ConvertModelService.DBPatrolDetailToPatrolDetail(p);
+                    HasNoPatrol = false;
+                    ShowMap = true;
                     ObjectResponse<Patrol> objectResponse = await _genericPatrolService.GetDetailsAsync(string.Format("patrols/{0}", PatrolDetail.PatrolId), Token);
                     if (objectResponse.IsSuccess && objectResponse.Data != null)
                     {
                         Patrol = objectResponse.Data;
-                        GeneratePinCollection();
+                        if (Patrol.End < DateTime.UtcNow.AddHours(7) && PatrolDetail.Status == "Started")
+                        {
+                            await ExecuteEnd();
+                        }
                     }
                     if (PatrolDetail.Status == "Scheduled" || PatrolDetail.Status == "Started")
                     {
-                        await TimeOutService.RunLocationBroadcastAsync(Token);
-                        HasNoPatrol = false;
                         IsStarted = PatrolDetail.Status == "Started";
-                        ObjectResponse<PatrolDetail> objectResponse1 = await _genericPatrolDetailService.GetDetailsAsync(string.Format("patrolDetails/{0}", p.Id), Token);
-                        if (objectResponse1.IsSuccess && objectResponse1.Data != null)
+                        if (PatrolDetail.Status == "Scheduled")
                         {
-                            await CheckNextPointAsync(objectResponse1.Data);
+                            HasNextCheckpoint = false;
+                            ShowMap = false;
+                            var a = DateTime.UtcNow.AddHours(8).AddMinutes(30);
+                            if (PatrolDetail.Start > DateTime.UtcNow.AddHours(8).AddMinutes(30))
+                            {
+                                HasNoPatrol = true;
+                                NoPatrolMessage = string.Format("Next patrol on {0}, at {1}", PatrolDetail.Start.ToString("ddd dd-MMM"), PatrolDetail.Start.ToString("hh:mm tt"));
+                            }
+                        }
+                        else
+                        {
+                            GeneratePinCollection();
+                            await TimeOutService.RunLocationBroadcastAsync(Token);
+                            ObjectResponse<PatrolDetail> objectResponse1 = await _genericPatrolDetailService.GetDetailsAsync(string.Format("patrolDetails/{0}", PatrolDetail.Id), Token);
+                            if (objectResponse1.IsSuccess && objectResponse1.Data != null)
+                            {
+                                await CheckNextPointAsync(objectResponse1.Data);
+                            }
                         }
                     }
                     else if (PatrolDetail.Status == "Completed" || PatrolDetail.Status == "Missed")
                     {
-                        await PatrolDBService.Delete();
-                        await TimerDBService.Delete();
+                        StaticCredentials.CheckpointTimer = null;
                         ShowMap = false;
                         HasNoPatrol = true;
                         HasNextCheckpoint = false;
@@ -356,7 +356,8 @@ namespace UTeM_Mobile.ViewModels.Guard
                 else
                 {
                     ShowMap = false;
-                    NoPatrolMessage = "No patrol for today.";
+                    HasNoPatrol = true;
+                    NoPatrolMessage = "You have no immediate patrol.";
                 }
             }
             catch (Exception ex)
@@ -408,7 +409,8 @@ namespace UTeM_Mobile.ViewModels.Guard
                     {
                         if (Token.UserRole == "Guard")
                         {
-                            TimeOutService.RunTimer();
+                            TimeOutService.RunPatrolDetailTimer();
+                            TimeOutService.RunPatrolTimer();
                         }
                         var notification = new NotificationRequest
                         {
@@ -441,6 +443,23 @@ namespace UTeM_Mobile.ViewModels.Guard
                 StaticMessage.NFCMessage = null;
                 StaticMessage.HasNFCMessage = false;
             }
+        }
+
+        private void RunTimer()
+        {
+            timer.Interval = TimeSpan.FromSeconds(5);
+            timer.Tick += async (s, e) =>
+            {
+                try
+                {
+                    CurrentLocation = await LocationService.GetCurrentLocationAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            };
+            timer.Start();
         }
     }
 }

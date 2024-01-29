@@ -15,14 +15,14 @@ namespace UTeM_Mobile.Data.Models
         {
             get
             {
-                return PatrolCheckpoint != null && PatrolCheckpoint.Patrol != null && PatrolCheckpoint.Patrol.Guard != null ? PatrolCheckpoint.Patrol.Guard.Name : "";
+                return PatrolCheckpoint != null && PatrolCheckpoint.PatrolDetail != null && PatrolCheckpoint.PatrolDetail.Patrol != null && PatrolCheckpoint.PatrolDetail.Patrol.Guard != null ? PatrolCheckpoint.PatrolDetail.Patrol.Guard.Name : "";
             }
         }
         public string? RouteName
         {
             get
             {
-                return PatrolCheckpoint != null && PatrolCheckpoint.Patrol != null && PatrolCheckpoint.Patrol.Route != null ? PatrolCheckpoint.Patrol.Route.Name : "";
+                return PatrolCheckpoint != null && PatrolCheckpoint.PatrolDetail != null && PatrolCheckpoint.PatrolDetail.Patrol != null && PatrolCheckpoint.PatrolDetail.Patrol.Route != null ? PatrolCheckpoint.PatrolDetail.Patrol.Route.Name : "";
             }
         }
         public virtual string Difference

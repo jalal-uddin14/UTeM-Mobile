@@ -1,9 +1,11 @@
-﻿using UTeM_Mobile.Data.Models;
+﻿using SQLite;
+using UTeM_Mobile.Data.Models;
 
 namespace UTeM_Mobile.Core.Models
 {
     public class DBPatrolDetail
     {
+        [PrimaryKey]
         public int Id { get; set; }
         public DateTime Start { get; set; }
         public string Status { get; set; }

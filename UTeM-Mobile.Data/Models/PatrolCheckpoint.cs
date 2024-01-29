@@ -8,6 +8,9 @@
         public string Status { get; set; }
         public int PatrolId { get; set; }
         public virtual Patrol Patrol { get; set; }
+
+        public int PatrolDetailId { get; set; }
+        public virtual PatrolDetail PatrolDetail { get; set; }
         public int CheckpointId { get; set; }
         public virtual Checkpoint Checkpoint { get; set; }
         public virtual Report Report { get; set; }

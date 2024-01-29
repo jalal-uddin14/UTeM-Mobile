@@ -64,7 +64,9 @@ namespace UTeM_Mobile.ViewModels
                 }
                 else
                 {
-                    await MainThread.InvokeOnMainThreadAsync(() => Shell.Current.GoToAsync("LoginPage"));
+                    await MainThread.InvokeOnMainThreadAsync(() => {
+                        Shell.Current.GoToAsync("LoginPage");
+                    });
                 }
             }
             catch(Exception ex)

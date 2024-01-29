@@ -46,7 +46,7 @@ namespace UTeM_Mobile.Services
                         var latlong = location.Split(",");
                         var lat = Convert.ToDouble(latlong[0]);
                         var lon = Convert.ToDouble(latlong[1]);
-                        await ExecuteScanAsync(lat, lon);
+                        await ExecuteScanAsync(new Checkpoint() { Latitude = lat, Longitude = lon});
                     }
                     else
                     {
@@ -70,7 +70,7 @@ namespace UTeM_Mobile.Services
             }
         }
 
-        public static async Task ExecuteScanAsync(double _latitude, double _longitute)
+        public static async Task ExecuteScanAsync(Checkpoint passedCheckpoint)
         {
             try
             {
@@ -87,17 +87,18 @@ namespace UTeM_Mobile.Services
                 string url = "checkpoints/by-location";
                 var body = new
                 {
-                    nfcLatitude = _latitude,
-                    nfcLongitude = _longitute,
+                    nfcLatitude = passedCheckpoint.Latitude,
+                    nfcLongitude = passedCheckpoint.Longitude,
                     currentLatitude = location.Latitude,
                     currentLongitude = location.Longitude
+                    //currentLatitude = passedCheckpoint.Latitude,
+                    //currentLongitude = passedCheckpoint.Longitude
                 };
                 ObjectResponse<Checkpoint> checkpointResponse = await _genericCheckpointService.PostAsync(url, body, token);
                 if (checkpointResponse.IsSuccess && checkpointResponse.Data != null)
                 {
                     Checkpoint checkpoint = checkpointResponse.Data;
-                    var p = await PatrolDetailDBService.Get();
-                    PatrolDetail patrolDetail = ConvertModelService.DBPatrolDetailToPatrolDetail(p);
+                    PatrolDetail patrolDetail = StaticCredentials.PatrolDetail;
                     if (patrolDetail == null)
                     {
                         patrolResponse = await PatrolService.GetPatrolStatus();
@@ -114,11 +115,20 @@ namespace UTeM_Mobile.Services
                         {
                             patrolDetailId = patrolDetail.Id,
                             checkpointId = checkpoint.Id,
-                            latitude = _latitude,
-                            longitude = _longitute
+                            latitude = passedCheckpoint.Latitude,
+                            longitude = passedCheckpoint.Longitude
                         };
                         ObjectResponse<PatrolCheckpoint> patrolCheckpointResponse = await _genericPatrolCheckpointService.PostAsync(patrolCheckpointUrl, content, token);
-                        if (patrolCheckpointResponse.IsSuccess)
+                        if (patrolCheckpointResponse.IsSuccess && patrolCheckpointResponse.Data == null)
+                        {
+                            StaticCredentials.PatrolDetail = null;
+                            StaticCredentials.CheckpointTimer = null;
+                            StaticCredentials.NextPatrol = null;
+                            await MainThread.InvokeOnMainThreadAsync(() =>
+                                Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessful", "Checkpoint reached", patrolCheckpointResponse.Message)))
+                            );
+                        }
+                        else if (patrolCheckpointResponse.IsSuccess && patrolCheckpointResponse.Data != null)
                         {
                             patrolResponse = await PatrolService.GetPatrolStatus();
                             if (patrolResponse.IsSuccess && patrolResponse.Data != null)
@@ -128,12 +138,11 @@ namespace UTeM_Mobile.Services
                             await PatrolDBService.Delete();
                             if (patrolDetail != null)
                             {
-                                await PatrolDetailDBService.Insert(ConvertModelService.PatrolDetailToDbPatrolDetail(patrolDetail));
+                                StaticCredentials.PatrolDetail = patrolDetail;
                                 PatrolCheckpoint patrolCheckpoint = patrolDetail.PatrolCheckpoints.FirstOrDefault(p => p.Status == "Scheduled");
                                 if (patrolCheckpoint != null)
                                 {
-                                    await TimerDBService.Delete();
-                                    await TimerDBService.Insert(new CheckpointTimer { PatrolId = patrolDetail.Id, CheckpointId = patrolCheckpoint.CheckpointId, CheckpointName = patrolCheckpoint.Checkpoint.Name, ExpectedCheckedTime = patrolCheckpoint.ExpectedCheckedTime });
+                                    StaticCredentials.CheckpointTimer = new CheckpointTimer { PatrolId = patrolDetail.Id, CheckpointId = patrolCheckpoint.CheckpointId, CheckpointName = patrolCheckpoint.Checkpoint.Name, ExpectedCheckedTime = patrolCheckpoint.ExpectedCheckedTime };
                                 }
                             }
                             await MainThread.InvokeOnMainThreadAsync(() =>
@@ -156,7 +165,7 @@ namespace UTeM_Mobile.Services
                 }
                 else if (!checkpointResponse.IsSuccess && checkpointResponse.Data != null)
                 {
-                    await Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessful", "Checkpoint reached", checkpointResponse.Message)));
+                    await Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan Error", "Checkpoint failed", checkpointResponse.Message)));
                 }
                 else
                 {

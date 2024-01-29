@@ -1,10 +1,10 @@
 ﻿using MvvmHelpers.Commands;
 using System.Windows.Input;
 using UTeM_Mobile.Core.Models;
-using UTeM_Mobile.Core.Services.DBServices;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Models;
 using UTeM_Mobile.Services;
+using UTeM_Mobile.StaticProperties;
 using UTeM_Mobile.ViewModels;
 
 namespace UTeM_Mobile.PopupViewModels
@@ -34,14 +34,21 @@ namespace UTeM_Mobile.PopupViewModels
 
         private async Task ExecuteNavigationAsync()
         {
-            await TimerDBService.Delete();
+            StaticCredentials.CheckpointTimer = null;
             await ModalService.PopAllModals();
             await MainThread.InvokeOnMainThreadAsync(() => Shell.Current.GoToAsync("//ReportSendPage"));
         }
 
         private async Task ExecuteClosePopViewAsync()
         {
-            await ModalService.PopAllModals();
+            try
+            {
+                await Application.Current.MainPage.Navigation.PopModalAsync();
+            }
+            catch(Exception ex)
+            {
+
+            }
         }
     }
 }

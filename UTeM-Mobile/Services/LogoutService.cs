@@ -1,4 +1,5 @@
 ﻿using UTeM_Mobile.Core.Services.DBServices;
+using UTeM_Mobile.StaticProperties;
 
 namespace UTeM_Mobile.Services
 {
@@ -9,6 +10,8 @@ namespace UTeM_Mobile.Services
             await TimerDBService.Delete();
             await LocalDBService.RemoveToken();
             await PatrolDBService.Delete();
+            StaticCredentials.PatrolDetail = null;
+            StaticCredentials.CheckpointTimer = null;
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
                 Application.Current.MainPage = new AppShell();

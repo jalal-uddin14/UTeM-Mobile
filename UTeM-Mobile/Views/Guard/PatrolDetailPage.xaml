@@ -33,7 +33,7 @@
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
-        <Grid Grid.Row="2" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, *" Margin="20, 10" RowSpacing="5">
+        <Grid Grid.Row="2" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, *" Margin="20, 10" RowSpacing="5">
             <Grid Grid.Row="0">
                 <HorizontalStackLayout VerticalOptions="CenterAndExpand">
                     <Label Text="Campus: " FontSize="12" TextColor="Black" VerticalTextAlignment="Center"/>
@@ -54,26 +54,38 @@
             </Grid>
             <Grid Grid.Row="3">
                 <HorizontalStackLayout VerticalOptions="CenterAndExpand">
-                    <Label Text="Start" FontSize="12" TextColor="Black" VerticalTextAlignment="Center"/>
-                    <Label Text="{Binding Patrol.Start, StringFormat='{0:dd-MMM-yyyy hh:mm tt}'}" FontAttributes="Bold" TextColor="Black"/>
+                    <Label Text="Start: " FontSize="12" TextColor="Black" VerticalTextAlignment="Center"/>
+                    <Label Text="{Binding PatrolDetail.Start, StringFormat='{0:dd-MMM-yyyy hh:mm tt}'}" FontAttributes="Bold" TextColor="Black"/>
                 </HorizontalStackLayout>
             </Grid>
-            <Grid Grid.Row="4">
+            <Grid Grid.Row="4" IsVisible="{Binding PatrolDetail.IsStarted}">
                 <HorizontalStackLayout VerticalOptions="CenterAndExpand">
-                    <Label Text="End" FontSize="12" TextColor="Black" VerticalTextAlignment="Center"/>
-                    <Label Text="{Binding Patrol.End, StringFormat='{0:dd-MMM-yyyy hh:mm tt}'}" FontAttributes="Bold" TextColor="Black"/>
+                    <Label Text="Started at: " FontSize="12" TextColor="Black" VerticalTextAlignment="Center"/>
+                    <Label Text="{Binding PatrolDetail.StartedAt, StringFormat='{0:dd-MMM-yyyy hh:mm tt}'}" FontAttributes="Bold" TextColor="Black"/>
                 </HorizontalStackLayout>
             </Grid>
-            <Grid Grid.Row="5">
+            <Grid Grid.Row="5" IsVisible="{Binding PatrolDetail.IsCompleted}">
                 <HorizontalStackLayout VerticalOptions="CenterAndExpand">
-                    <Label Text="Status" FontSize="12" TextColor="Black" VerticalTextAlignment="Center"/>
-                    <Label IsVisible="{Binding Patrol.IsStarted}" Text="{Binding Patrol.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
-                    <Label IsVisible="{Binding Patrol.IsScheduled}" Text="{Binding Patrol.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
-                    <Label IsVisible="{Binding Patrol.IsCompleted}" Text="{Binding Patrol.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
-                    <Label IsVisible="{Binding Patrol.IsMissed}" Text="{Binding Patrol.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
+                    <Label Text="Completed at: " FontSize="12" TextColor="Black" VerticalTextAlignment="Center"/>
+                    <Label Text="{Binding PatrolDetail.CompletedAt, StringFormat='{0:dd-MMM-yyyy hh:mm tt}'}" FontAttributes="Bold" TextColor="Black"/>
                 </HorizontalStackLayout>
             </Grid>
-            <StackLayout Grid.Row="6">
+            <Grid Grid.Row="5" IsVisible="{Binding PatrolDetail.IsMissed}">
+                <HorizontalStackLayout VerticalOptions="CenterAndExpand">
+                    <Label Text="Completed at: " FontSize="12" TextColor="Black" VerticalTextAlignment="Center"/>
+                    <Label Text="{Binding PatrolDetail.CompletedAt, StringFormat='{0:dd-MMM-yyyy hh:mm tt}'}" FontAttributes="Bold" TextColor="Black"/>
+                </HorizontalStackLayout>
+            </Grid>
+            <Grid Grid.Row="6">
+                <HorizontalStackLayout VerticalOptions="CenterAndExpand">
+                    <Label Text="Status: " FontSize="12" TextColor="Black" VerticalTextAlignment="Center"/>
+                    <Label IsVisible="{Binding PatrolDetail.IsStarted}" Text="{Binding PatrolDetail.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
+                    <Label IsVisible="{Binding PatrolDetail.IsScheduled}" Text="{Binding PatrolDetail.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
+                    <Label IsVisible="{Binding PatrolDetail.IsCompleted}" Text="{Binding PatrolDetail.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
+                    <Label IsVisible="{Binding PatrolDetail.IsMissed}" Text="{Binding PatrolDetail.Status}" FontAttributes="Bold" TextColor="{StaticResource StartedStatusLabelColor}"/>
+                </HorizontalStackLayout>
+            </Grid>
+            <StackLayout Grid.Row="7">
                 <BoxView HeightRequest="1" Color="Grey"/>
             </StackLayout>
         </Grid>

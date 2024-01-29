@@ -11,16 +11,20 @@ namespace UTeM_Mobile.ViewModels.Guard
     public class PatrolDetailViewModel : MainViewModel, IOnAppearing
     {
         private IGenericService<Patrol> _genericPatrolService;
+        private IGenericService<PatrolDetail> _genericPatrolDetailService;
         private IGenericService<PatrolCheckpoint> _patrolCheckpointService;
         private string id;
         private Patrol patrol;
+        private PatrolDetail patrolDetail;
 
         public string Id { get => id; set => id = value; }
         public Patrol Patrol { get => patrol; set => SetProperty(ref patrol, value); }
+        public PatrolDetail PatrolDetail { get => patrolDetail; set => SetProperty(ref patrolDetail, value); }
 
         public PatrolDetailViewModel()
         {
             _genericPatrolService = new GenericService<Patrol>();
+            _genericPatrolDetailService = new GenericService<PatrolDetail>();
             _patrolCheckpointService = new GenericService<PatrolCheckpoint>();
             Patrol = new Patrol();
         }
@@ -54,12 +58,16 @@ namespace UTeM_Mobile.ViewModels.Guard
                 IsBusy = true;
                 if (Id != null)
                 {
-                    string url = "patrols/" + Id;
-                    ObjectResponse<Patrol> response = await _genericPatrolService.GetDetailsAsync(url, Token);
+                    string url = "patrolDetails/" + Id;
+                    ObjectResponse<PatrolDetail> response = await _genericPatrolDetailService.GetDetailsAsync(url, Token);
                     if (response.IsSuccess && response.Data != null)
                     {
-                        Patrol = response.Data;
-                        await CheckRouteCheckpointStatusAsync();
+                        PatrolDetail = response.Data;
+                        if (PatrolDetail.Patrol != null)
+                        {
+                            Patrol = PatrolDetail.Patrol;
+                            await CheckRouteCheckpointStatusAsync();
+                        }
                     }
                     else
                     {
@@ -92,7 +100,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 {
                     Patrol.Route.RouteCheckpoints[i].IsNotLast = i < Patrol.Route.RouteCheckpoints.Count - 1;
                     url = "patrolCheckpoints/check";
-                    var content = new { patrolId = Id, checkpointId = Patrol.Route.RouteCheckpoints[i].CheckpointId };
+                    var content = new { patrolDetailId = PatrolDetail.Id, checkpointId = Patrol.Route.RouteCheckpoints[i].CheckpointId };
                     ObjectResponse<PatrolCheckpoint> res = await _patrolCheckpointService.PostAsync(url, content, Token);
                     if (res.IsSuccess && res.Data != null)
                     {

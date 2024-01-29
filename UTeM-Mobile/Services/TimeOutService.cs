@@ -9,26 +9,29 @@ namespace UTeM_Mobile.Services
 {
     public class TimeOutService
     {
-        static IDispatcherTimer timer = Application.Current.Dispatcher.CreateTimer();
+        static IDispatcherTimer patrolDetailTimer = Application.Current.Dispatcher.CreateTimer();
+        static IDispatcherTimer patrolTimer = Application.Current.Dispatcher.CreateTimer();
+        static IDispatcherTimer locationTimer = Application.Current.Dispatcher.CreateTimer();
         static Patrol patrol = null;
         static PatrolDetail patrolDetail = null;
         static Location location = null;
 
 
-        public static void RunTimer()
+        public static void RunPatrolDetailTimer()
         {
-            timer.Interval = TimeSpan.FromSeconds(60);
-            timer.Tick += async (s, e) =>
+            patrolDetailTimer.Interval = TimeSpan.FromSeconds(30);
+            patrolDetailTimer.Tick += async (s, e) =>
             {
                 try
                 {
-                    CheckpointTimer checkpointTimer = await TimerDBService.Get();
-                    if (!StaticMessage.InternetNotConnected && checkpointTimer != null && checkpointTimer.ExpectedCheckedTime != null && checkpointTimer.ExpectedCheckedTime.Value <= DateTime.UtcNow.AddHours(8))
+                    if (!StaticMessage.InternetNotConnected && StaticCredentials.CheckpointTimer != null && StaticCredentials.CheckpointTimer.ExpectedCheckedTime != null && StaticCredentials.CheckpointTimer.ExpectedCheckedTime.Value <= DateTime.UtcNow.AddHours(8))
                     {
-                        await ModalService.PopAllModals();
-                        await MainThread.InvokeOnMainThreadAsync(() =>
+                        await MainThread.InvokeOnMainThreadAsync(async () =>
                         {
-                            Application.Current.MainPage.Navigation.PushModalAsync(new TimeoutPopupPage(checkpointTimer));
+                            if (Application.Current.MainPage.Navigation.ModalStack.Count <= 0)
+                            {
+                                await Application.Current.MainPage.Navigation.PushModalAsync(new TimeoutPopupPage(StaticCredentials.CheckpointTimer));
+                            }
                         });
                     }
                 }
@@ -37,18 +40,42 @@ namespace UTeM_Mobile.Services
                     Console.WriteLine(ex.ToString());
                 }
             };
-            timer.Start();
+            patrolDetailTimer.Start();
+        }
+
+        public static void RunPatrolTimer()
+        {
+            patrolTimer.Interval = TimeSpan.FromSeconds(60);
+            patrolTimer.Tick += async (s, e) =>
+            {
+                try
+                {
+                    if (!StaticMessage.InternetNotConnected && StaticCredentials.NextPatrol != null && StaticCredentials.NextPatrol.Start <= DateTime.UtcNow.AddHours(8).AddMinutes(10))
+                    {
+                        await MainThread.InvokeOnMainThreadAsync(async () =>
+                        {
+                            if (Application.Current.MainPage.Navigation.ModalStack.Count <= 0)
+                            {
+                                await Application.Current.MainPage.Navigation.PushModalAsync(new NextPatrolPopupPage(StaticCredentials.NextPatrol));
+                            }
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            };
+            patrolTimer.Start();
         }
         public static async Task RunLocationBroadcastAsync(AuthToken token)
         {
-            IDispatcherTimer locationTimer = Application.Current.Dispatcher.CreateTimer();
             locationTimer.Interval = TimeSpan.FromSeconds(10);
             locationTimer.Tick += async (s, e) =>
             {
                 if (!StaticMessage.InternetNotConnected)
                 {
-                    var p = await PatrolDetailDBService.Get();
-                    patrolDetail = ConvertModelService.DBPatrolDetailToPatrolDetail(p);
+                    patrolDetail = StaticCredentials.PatrolDetail;
                     if (patrolDetail == null)
                     {
                         var response = await PatrolService.GetPatrolStatus();
@@ -87,45 +114,53 @@ namespace UTeM_Mobile.Services
                     if (response.IsSuccess && response.Data != null)
                     {
                         PatrolDetail patrolDetail = response.Data;
-                        patrol = patrolDetail.Patrol;
-                        await PatrolDetailDBService.Delete();
-                        await PatrolDetailDBService.Insert(ConvertModelService.PatrolDetailToDbPatrolDetail(patrolDetail));
-                        await TimerDBService.Delete();
+                        StaticCredentials.PatrolDetail = patrolDetail;
+                        StaticCredentials.CheckpointTimer = null;
                         if (patrolDetail.Status == "Completed" || patrolDetail.Status == "Missed")
                         {
                             return;
                         }
-                        if (patrolDetail.PatrolCheckpoints != null && patrolDetail.PatrolCheckpoints.Count > 0)
+                        else if(patrolDetail.Status == "Started")
                         {
-                            PatrolCheckpoint patrolCheckpoint = patrolDetail.PatrolCheckpoints.FirstOrDefault(p => p.Status == "Scheduled");
-                            if (patrolCheckpoint != null)
+                            if (StaticCredentials.NextPatrol == null)
                             {
-                                CheckpointTimer checkpointTimer = new CheckpointTimer
+                                patrol = await PatrolService.GetPatrolDetail(patrolDetail.PatrolId);
+                                PatrolDetail nextPatrolDetail = patrol.PatrolDetails.Where(p => p.Status == "Scheduled" && p.Start > patrolDetail.Start).FirstOrDefault();
+                                if (nextPatrolDetail != null)
                                 {
-                                    PatrolId = patrolCheckpoint.PatrolId,
-                                    CheckpointId = patrolCheckpoint.CheckpointId,
-                                    CheckpointName = patrolCheckpoint.Checkpoint.Name,
-                                    ExpectedCheckedTime = patrolCheckpoint.ExpectedCheckedTime
-                                };
-                                await TimerDBService.Delete();
-                                await TimerDBService.Insert(checkpointTimer);
+                                    StaticCredentials.NextPatrol = nextPatrolDetail;
+                                }
                             }
-                        }
-                        else if (patrolDetail.Patrol.Route != null)
-                        {
-                            RouteCheckpoint nextCheckpoint = patrol.Route.RouteCheckpoints
-                                .FirstOrDefault(routeCheckpoints => !patrol.PatrolCheckpoints.Any(patrolCheckpoints => patrolCheckpoints.CheckpointId == routeCheckpoints.CheckpointId));
-                            if (nextCheckpoint != null)
+                            if (patrolDetail.PatrolCheckpoints != null && patrolDetail.PatrolCheckpoints.Count > 0)
                             {
-                                CheckpointTimer checkpointTimer = new CheckpointTimer
+                                PatrolCheckpoint patrolCheckpoint = patrolDetail.PatrolCheckpoints.FirstOrDefault(p => p.Status == "Scheduled");
+                                if (patrolCheckpoint != null)
                                 {
-                                    PatrolId = patrol.Id,
-                                    CheckpointId = nextCheckpoint.CheckpointId,
-                                    CheckpointName = nextCheckpoint.Checkpoint.Name,
-                                    ExpectedCheckedTime = DateTime.UtcNow.AddHours(8).AddMinutes(nextCheckpoint.ExpectedTime)
-                                };
-                                await TimerDBService.Delete();
-                                await TimerDBService.Insert(checkpointTimer);
+                                    CheckpointTimer checkpointTimer = new CheckpointTimer
+                                    {
+                                        PatrolId = patrolCheckpoint.PatrolId,
+                                        CheckpointId = patrolCheckpoint.CheckpointId,
+                                        CheckpointName = patrolCheckpoint.Checkpoint.Name,
+                                        ExpectedCheckedTime = patrolCheckpoint.ExpectedCheckedTime
+                                    };
+                                    StaticCredentials.CheckpointTimer = checkpointTimer;
+                                }
+                            }
+                            else if (patrolDetail.Patrol.Route != null)
+                            {
+                                RouteCheckpoint nextCheckpoint = patrol.Route.RouteCheckpoints
+                                    .FirstOrDefault(routeCheckpoints => !patrol.PatrolCheckpoints.Any(patrolCheckpoints => patrolCheckpoints.CheckpointId == routeCheckpoints.CheckpointId));
+                                if (nextCheckpoint != null)
+                                {
+                                    CheckpointTimer checkpointTimer = new CheckpointTimer
+                                    {
+                                        PatrolId = patrol.Id,
+                                        CheckpointId = nextCheckpoint.CheckpointId,
+                                        CheckpointName = nextCheckpoint.Checkpoint.Name,
+                                        ExpectedCheckedTime = DateTime.UtcNow.AddHours(8).AddMinutes(nextCheckpoint.ExpectedTime)
+                                    };
+                                    StaticCredentials.CheckpointTimer = checkpointTimer;
+                                }
                             }
                         }
                     }
