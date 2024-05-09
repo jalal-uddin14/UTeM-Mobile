@@ -22,7 +22,7 @@ namespace UTeM_Mobile.Services
                 return null;
             }
         }
-        public static async Task<Patrol> GetPatrolDetail(int id)
+        public static async Task<Patrol> GetPatrol(int id)
         {
             try
             {
@@ -36,6 +36,24 @@ namespace UTeM_Mobile.Services
                 return null;
             }
             catch(Exception ex)
+            {
+                return null;
+            }
+        }
+        public static async Task<PatrolDetail> GetPatrolDetail(int id)
+        {
+            try
+            {
+                var token = await LocalDBService.GetToken();
+                IGenericService<PatrolDetail> _genericPatrolDetailService = new GenericService<PatrolDetail>();
+                ObjectResponse<PatrolDetail> objectResponse = await _genericPatrolDetailService.GetDetailsAsync("patrolDetails/" + id, token);
+                if (objectResponse.IsSuccess && objectResponse.Data != null)
+                {
+                    return objectResponse.Data;
+                }
+                return null;
+            }
+            catch (Exception ex)
             {
                 return null;
             }

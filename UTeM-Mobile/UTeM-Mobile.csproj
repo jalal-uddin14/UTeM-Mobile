@@ -11,7 +11,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<!-- Display name -->
-		<ApplicationTitle>UTeM-Mobile</ApplicationTitle>
+		<ApplicationTitle>Smart Patrol Tech</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.utem</ApplicationId>
@@ -49,7 +49,6 @@
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
-		<MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="158,208" />
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
@@ -60,7 +59,9 @@
 
 	<ItemGroup>
 	  <None Remove="Platforms\Android\Resources\xml\file_paths.xml" />
-	  <None Remove="Resources\AppIcon\appicon.jpg" />
+	  <None Remove="Resources\AppIcon\appicon.png" />
+	  <None Remove="Resources\AppIcon\appicon1.jpg" />
+	  <None Remove="Resources\AppIcon\appiconfg.png" />
 	  <None Remove="Resources\Fonts\fa-brands-400.ttf" />
 	  <None Remove="Resources\Fonts\fa-regular-400.ttf" />
 	  <None Remove="Resources\Fonts\fa-solid-900.ttf" />
@@ -69,11 +70,13 @@
 	  <None Remove="Resources\Images\guard.png" />
 	  <None Remove="Resources\Images\logo.jpg" />
 	  <None Remove="Resources\Images\logo_only.jpg" />
-	  <None Remove="Resources\Images\logo_only.png" />
+	  <None Remove="Resources\Splash\splash.jpg" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiIcon Include="Resources\AppIcon\appicon.jpg" />
+	  <MauiIcon Include="Resources\AppIcon\appicon.png" />
+	  <MauiIcon Include="Resources\AppIcon\appicon1.jpg" />
+	  <MauiIcon Include="Resources\AppIcon\appiconfg.png" />
 	</ItemGroup>
 
 	<ItemGroup>

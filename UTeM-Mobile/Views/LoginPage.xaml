@@ -22,7 +22,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
-                <Image Source="logo.jpg"/>
+                <Image Source="logo.jpg" HeightRequest="300"/>
             </Grid>
             <StackLayout IsVisible="{Binding IsBusy}" Grid.Row="0" Margin="15, 5, 15, 20" Padding="0" VerticalOptions="EndAndExpand" BackgroundColor="White">
                 <ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource LoginButtonColor}" />

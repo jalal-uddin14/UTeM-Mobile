@@ -83,6 +83,7 @@ namespace UTeM_Mobile.Core.Services
             {
                 insecureHandler = GetInsecureHandler();
                 _client = new HttpClient(insecureHandler);
+                //_client = new HttpClient();
                 GetHttpClient(token);
                 var body = new StringContent(
                     JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");

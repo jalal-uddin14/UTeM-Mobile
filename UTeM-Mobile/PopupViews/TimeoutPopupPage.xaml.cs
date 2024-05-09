@@ -28,4 +28,13 @@ public partial class TimeoutPopupPage : ContentPage
         viewModel = BindingContext as TimeoutPopupViewModel;
         viewModel.CheckpointTimer = checkpointTimer;
     }
+
+    public TimeoutPopupPage(CheckpointTimer checkpointTimer, string popupMessage)
+    {
+        InitializeComponent();
+        this.BackgroundColor = new Color(0f, 0f, 0f, 0.7f);
+        viewModel = BindingContext as TimeoutPopupViewModel;
+        viewModel.CheckpointTimer = checkpointTimer;
+        viewModel.PopMessage = new Models.PopMessage { Message = popupMessage };
+    }
 }

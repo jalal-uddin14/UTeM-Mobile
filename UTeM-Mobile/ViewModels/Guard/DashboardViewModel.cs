@@ -156,6 +156,9 @@ namespace UTeM_Mobile.ViewModels.Guard
         {
             try
             {
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Patrol Notification", "Patrol starting")))
+                );
                 IsErrorMessage = false;
                 string url = "patrolDetails/update-status";
                 var content = new
@@ -173,15 +176,17 @@ namespace UTeM_Mobile.ViewModels.Guard
                         StaticCredentials.PatrolDetail = patrolDetail;
                         await TimeOutService.CheckTimerToken();
                     }
-                    await MainThread.InvokeOnMainThreadAsync(() => 
-                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Patrol Notification", response.Message)))
-                    );
+                    await MainThread.InvokeOnMainThreadAsync(() => {
+                        Application.Current.MainPage.Navigation.PopToRootAsync();
+                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Patrol Notification", response.Message)));
+                    });
                 }
                 else
                 {
-                    await MainThread.InvokeOnMainThreadAsync(() => 
-                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Patrol Notification", "Patrol Start Failed.", response.Message)))
-                    );
+                    await MainThread.InvokeOnMainThreadAsync(() => {
+                        Application.Current.MainPage.Navigation.PopToRootAsync();
+                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Patrol Information", "Patrol Notification.", response.Message)));
+                    });
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
@@ -198,6 +203,10 @@ namespace UTeM_Mobile.ViewModels.Guard
         {
             try
             {
+
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Patrol Notification", "Patrol starting")))
+                );
                 IsErrorMessage = false;
                 string url = "patrolDetails/update-status";
                 var content = new
@@ -213,16 +222,18 @@ namespace UTeM_Mobile.ViewModels.Guard
                     StaticCredentials.PatrolDetail = null;
                     await PatrolDBService.Delete();
                     HasNoPatrol = true;
-                    await MainThread.InvokeOnMainThreadAsync(() => 
-                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Patrol Notification", "Patrol ended")))
-                    );
+                    await MainThread.InvokeOnMainThreadAsync(() => {
+                        Application.Current.MainPage.Navigation.PopToRootAsync();
+                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Patrol Notification", "Patrol ended")));
+                    });
                     await PatrolDBService.Delete();
                 }
                 else
                 {
-                    await MainThread.InvokeOnMainThreadAsync(() => 
-                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Patrol notification", "Patrol End Failed", response.Message)))
-                    );
+                    await MainThread.InvokeOnMainThreadAsync(() => {
+                        Application.Current.MainPage.Navigation.PopToRootAsync();
+                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Patrol notification", "Patrol End Failed", response.Message)));
+                    });
                     SetErrorMessage(response.Message, response.Errors);
                 }
             }
@@ -316,7 +327,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                         Patrol = objectResponse.Data;
                         if (Patrol.End < DateTime.UtcNow.AddHours(7) && PatrolDetail.Status == "Started")
                         {
-                            await ExecuteEnd();
+                            //await ExecuteEnd();
                         }
                     }
                     if (PatrolDetail.Status == "Scheduled" || PatrolDetail.Status == "Started")
@@ -409,8 +420,15 @@ namespace UTeM_Mobile.ViewModels.Guard
                     {
                         if (Token.UserRole == "Guard")
                         {
-                            TimeOutService.RunPatrolDetailTimer();
-                            TimeOutService.RunPatrolTimer();
+                            if (patrolDetail.Patrol.TimerEnabled)
+                            {
+                                if (User != null)
+                                {
+                                    TimeOutService.RunPatrolDetailTimer(Token, User);
+                                }
+                                TimeOutService.RunPatrolTimer();
+                                TimeOutService.RunShiftTimer();
+                            }
                         }
                         var notification = new NotificationRequest
                         {

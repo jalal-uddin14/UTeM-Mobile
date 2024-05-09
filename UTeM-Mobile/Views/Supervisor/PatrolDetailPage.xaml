@@ -125,6 +125,9 @@
                                                 </Image.Source>
                                             </Image>
                                         </Grid>
+                                        <Frame IsVisible="{Binding IsMissed}" Grid.Row="0" Grid.Column="0" Padding="3" Margin="0" BackgroundColor="{StaticResource CheckpointBorderColor}" CornerRadius="15">
+                                            <Frame Padding="2" Margin="0" BackgroundColor="{StaticResource MissedCheckpointColor}" CornerRadius="10" />
+                                        </Frame>
                                         <Frame IsVisible="{Binding NotFound}" Grid.Row="0" Grid.Column="0" Padding="3" Margin="0" BackgroundColor="{StaticResource CheckpointBorderColor}" CornerRadius="15">
                                             <Frame Padding="2" Margin="0" BackgroundColor="{StaticResource ScheduledCheckpointColor}" CornerRadius="10" />
                                         </Frame>
@@ -142,7 +145,6 @@
         </Grid>
         <Grid IsVisible="{Binding ShowGPS}" Grid.Row="4" Margin="10">
             <maps:Map x:Name="map" Style="{StaticResource MapStyle}"/>
-
         </Grid>
     </Grid>
 </ContentPage>

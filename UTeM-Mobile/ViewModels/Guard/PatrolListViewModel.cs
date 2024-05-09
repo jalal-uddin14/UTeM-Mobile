@@ -13,21 +13,38 @@ namespace UTeM_Mobile.ViewModels.Guard
 {
     public class PatrolListViewModel : MainViewModel, IOnAppearing
     {
+        private bool IsUpcomingPatrol { get; set; }
+
         private IGenericService<Patrol> _genericService;
         private IGenericService<PatrolDetail> _genericPatrolDetailService;
         private IGenericService<ApplicationUser> _genericUserService;
         private ApplicationUser user;
+        private string patrolLabel;
+        private string patrolHeader;
 
+        public ICommand TogglePatrolCommand { get; }
         public ICommand NavigateToSendSoSCommand { get; }
         public ObservableRangeCollection<Patrol> PatrolList { get; }
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
+        public string PatrolLabel { get => patrolLabel; set => SetProperty(ref patrolLabel, value); }
+        public string PatrolHeader { get => patrolHeader; set => SetProperty(ref patrolHeader, value); }
 
         public PatrolListViewModel()
         {
+            PatrolHeader = "All Patrol Schedule List";
+            PatrolLabel = "Upcoming Patrols";
             _genericService = new GenericService<Patrol>();
             _genericUserService = new GenericService<ApplicationUser>();
             PatrolList = new ObservableRangeCollection<Patrol>();
+            TogglePatrolCommand = new AsyncCommand(ExecuteTogglePatrol);
             NavigateToSendSoSCommand = new AsyncCommand(ExecuteNavigateToSendSoSAsync);
+        }
+        private async Task ExecuteTogglePatrol()
+        {
+            IsUpcomingPatrol = !IsUpcomingPatrol;
+            PatrolLabel = IsUpcomingPatrol ? "All Patrols" : "Upcoming Patrols";
+            PatrolHeader = IsUpcomingPatrol ? "Upcoming Patrol Schedule List" : "All Patrol Schedule List";
+            await GetPatrolList();
         }
         private async Task ExecuteNavigateToSendSoSAsync()
         {
@@ -85,6 +102,10 @@ namespace UTeM_Mobile.ViewModels.Guard
                 PatrolList.Clear();
                 IsBusy = true;
                 string url = "patrols";
+                if (IsUpcomingPatrol)
+                {
+                    url = string.Format("patrols?startDate={0}", DateTime.UtcNow.AddHours(8).ToString("yyyy-MM-dd"));
+                }
                 PaginatedResponse<Patrol> response = await _genericService.GetPagedListAsync(url, Token);
                 if (response.IsSuccess && response.Data != null && response.Data.Data != null)
                 {

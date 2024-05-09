@@ -206,14 +206,14 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.5*" />
-                    <ColumnDefinition Width="0.5*" />
+                    <!--<ColumnDefinition Width="0.5*" />-->
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0" Margin="5">
                     <Button Text="Guard List" Style="{StaticResource SupervisorDashboardButton}" BackgroundColor="{StaticResource MatGreenButtonColor}" Command="{Binding NavigateToGuardListCommand}"/>
                 </Grid>
-                <Grid Grid.Column="1" Margin="5">
+                <!--<Grid Grid.Column="1" Margin="5">
                     <Button Text="Assign Patrol" Style="{StaticResource SupervisorDashboardButton}" BackgroundColor="{StaticResource RedButtonColor}" Command="{Binding NavigateToPatrolAddCommand}"/>
-                </Grid>
+                </Grid>-->
             </Grid>
         </StackLayout>
     </Grid>

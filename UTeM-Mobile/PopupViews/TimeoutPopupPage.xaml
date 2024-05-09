@@ -14,7 +14,7 @@
                 <Label Text="Timeout warning" TextColor="White" HorizontalOptions="CenterAndExpand"/>
             </StackLayout>
             <StackLayout BackgroundColor="Transparent" Margin="10">
-                <Label Text="Do you need more time?" TextColor="Black" FontSize="16" FontAttributes="Bold" HorizontalOptions="StartAndExpand" />
+                <Label Text="{Binding PopMessage.Message}" TextColor="Black" FontSize="16" FontAttributes="Bold" HorizontalOptions="StartAndExpand" />
             </StackLayout>
             <StackLayout BackgroundColor="Transparent" Padding="10">
                 <Label Text="{Binding PatrolCheckpoint.Checkpoint.Name, StringFormat='You are out of time to reach {0}.'}" TextColor="Black" HorizontalOptions="StartAndExpand"/>

@@ -46,7 +46,17 @@ namespace UTeM_Mobile.Services
                         var latlong = location.Split(",");
                         var lat = Convert.ToDouble(latlong[0]);
                         var lon = Convert.ToDouble(latlong[1]);
-                        await ExecuteScanAsync(new Checkpoint() { Latitude = lat, Longitude = lon});
+                        if (!StaticCredentials.IsScanning)
+                        {
+                            StaticCredentials.IsScanning = true;
+                            await ExecuteScanAsync(new Checkpoint() { Latitude = lat, Longitude = lon });
+                        }
+                        else
+                        {
+                            await MainThread.InvokeOnMainThreadAsync(() =>
+                                Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan Info", "NFC Scan", "NFC scan processing.")))
+                            );
+                        }
                     }
                     else
                     {
@@ -74,6 +84,18 @@ namespace UTeM_Mobile.Services
         {
             try
             {
+                //if (!StaticCredentials.IsScanning)
+                //{
+                //    StaticCredentials.IsScanning = true;
+                //}
+                //else if (StaticCredentials.IsScanning)
+                //{
+                //    await Application.Current.MainPage.Navigation.PopModalAsync();
+                //    await MainThread.InvokeOnMainThreadAsync(() =>
+                //        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan Info", "NFC Scan", "NFC scan processing.")))
+                //    );
+                //    return;
+                //}
                 var location = await LocationService.GetCurrentLocationAsync();
                 if (!await StaticMessage.ShowInternetMessage())
                 {
@@ -123,7 +145,7 @@ namespace UTeM_Mobile.Services
                         {
                             StaticCredentials.PatrolDetail = null;
                             StaticCredentials.CheckpointTimer = null;
-                            StaticCredentials.NextPatrol = null;
+                            StaticCredentials.NextPatrolDetail = null;
                             await MainThread.InvokeOnMainThreadAsync(() =>
                                 Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessful", "Checkpoint reached", patrolCheckpointResponse.Message)))
                             );
@@ -159,7 +181,7 @@ namespace UTeM_Mobile.Services
                     else
                     {
                         await MainThread.InvokeOnMainThreadAsync(() =>
-                            Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessful", "Checkpoint not found", "Patrol not started.")))
+                            Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan sucessful", "Wrong checkpoint", "Patrol not started.")))
                         );
                     }
                 }
@@ -184,6 +206,10 @@ namespace UTeM_Mobile.Services
                     await MainThread.InvokeOnMainThreadAsync(() => Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetExceptionMessage("Scan error", "Unexpected error occured in server.")))
                     );
                 }
+            }
+            finally
+            {
+                StaticCredentials.IsScanning = false;
             }
         }
     }

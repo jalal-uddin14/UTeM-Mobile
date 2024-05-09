@@ -12,6 +12,12 @@
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate views:DashboardPage}" Route="DashboardPage" />
         </Tab>
+        <Tab Title="Patrols">
+            <Tab.Icon>
+                <FontImageSource FontFamily="FAsolid" Glyph="{StaticResource IconRoute}" Color="Green" />
+            </Tab.Icon>
+            <ShellContent ContentTemplate="{DataTemplate views:PatrolListPage}" Route="PatrolListPage" />
+        </Tab>
         <Tab Title="Push2Talk">
             <Tab.Icon>
                 <FontImageSource FontFamily="FAsolid" Glyph="{StaticResource IconMicrophone}" Color="Green" />

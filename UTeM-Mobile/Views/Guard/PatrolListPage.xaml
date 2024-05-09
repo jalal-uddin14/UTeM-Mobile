@@ -24,7 +24,7 @@
             </StackLayout>
         </StackLayout>
         <StackLayout Grid.Row="1" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
-            <Label Text="Patrol Schedule List" Style="{StaticResource HeaderLabel}"/>
+            <Label Text="{Binding PatrolHeader}" Style="{StaticResource HeaderLabel}"/>
         </StackLayout>
         <Grid Grid.Row="2" IsVisible="{Binding IsErrorMessage}" VerticalOptions="CenterAndExpand">
             <ListView BackgroundColor="Transparent" SeparatorVisibility="None" VerticalScrollBarVisibility="Never" Margin="0" HasUnevenRows="True" ItemsSource="{Binding Message_list}">
@@ -113,6 +113,9 @@
                     <ColumnDefinition Width="0.5*" />
                     <ColumnDefinition Width="0.5*" />
                 </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0" Margin="5">
+                    <Button Text="{Binding PatrolLabel}" Style="{StaticResource SupervisorDashboardButton}" BackgroundColor="{StaticResource GreenButtonColor}" Command="{Binding TogglePatrolCommand}"/>
+                </Grid>
                 <Grid Grid.Column="1" Margin="5">
                     <Button Text="Send SoS" Style="{StaticResource SupervisorDashboardButton}" BackgroundColor="{StaticResource RedButtonColor}" Command="{Binding NavigateToSendSoSCommand}"/>
                 </Grid>

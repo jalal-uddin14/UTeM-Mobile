@@ -18,5 +18,6 @@
     <x:String x:Key="IconMapRoute">&#xf5a0;</x:String>
     <x:String x:Key="IconMicrophone">&#xf130;</x:String>
     <x:String x:Key="IconFilter">&#xf0b0;</x:String>
+    <x:String x:Key="IconRoute">&#xf4d7;</x:String>
     
 </ResourceDictionary>

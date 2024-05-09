@@ -12,6 +12,9 @@
         public virtual bool IsNotLast { get; set; }
         public virtual bool IsChecked { get; set; }
         public virtual bool IsScheduled { get; set; }
+        public virtual bool IsMissed { get; set; }
         public virtual bool NotFound { get; set; } = true;
+        public virtual bool HasSchedule { get; set; } = false;
+        public virtual DateTime? ExpectedCheckedTime { get; set; }
     }
 }
