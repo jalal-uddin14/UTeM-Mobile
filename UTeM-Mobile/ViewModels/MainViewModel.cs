@@ -57,14 +57,21 @@ namespace UTeM_Mobile.ViewModels
 
         public void CheckConnectivity()
         {
-            IsErrorMessage = false;
-            Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
-            IsNotConnected = Connectivity.NetworkAccess != NetworkAccess.Internet;
-            StaticMessage.InternetNotConnected = IsNotConnected;
-            if (IsNotConnected)
+            try
             {
-                Shell.Current.GoToAsync("NoInternetPage");
-                SetErrorMessage("Check your internet connection!");
+                IsErrorMessage = false;
+                Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
+                IsNotConnected = Connectivity.NetworkAccess != NetworkAccess.Internet;
+                StaticMessage.InternetNotConnected = IsNotConnected;
+                if (IsNotConnected)
+                {
+                    Shell.Current.GoToAsync("NoInternetPage");
+                    SetErrorMessage("Check your internet connection!");
+                }
+            }
+            catch (Exception ex)
+            {
+                var a = ex;
             }
         }
 

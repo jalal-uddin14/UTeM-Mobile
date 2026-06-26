@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Data.StaticCredentials;
-using Xamarin.Essentials;
+using Microsoft.Maui.ApplicationModel;
 
 namespace UTeM_Mobile.Core.Services.DBServices
 {

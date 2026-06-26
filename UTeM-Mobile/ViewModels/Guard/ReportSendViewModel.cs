@@ -1,6 +1,4 @@
 ﻿using MvvmHelpers.Commands;
-using Plugin.Media;
-using Plugin.Media.Abstractions;
 using System.Net.Http.Headers;
 using System.Windows.Input;
 using UTeM_Mobile.Core.IServices;
@@ -62,20 +60,9 @@ namespace UTeM_Mobile.ViewModels.Guard
             try
             {
                 IsSuccessMessage = false;
-                if (CrossMedia.Current.IsTakePhotoSupported)
+                if (MediaPicker.Default.IsCaptureSupported)
                 {
-                    var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
-                    {
-                        PhotoSize = PhotoSize.Medium,
-                        CompressionQuality = 20
-                    });
-
-                    if (file != null)
-                    {
-                        PhotoResult = new FileResult(file.Path);
-                        var a = file.GetStream().ReadByte();
-                        var b = File.ReadAllBytes(PhotoResult.FullPath);
-                    }
+                    PhotoResult = await MediaPicker.Default.CapturePhotoAsync();
                 }
                 else
                 {
@@ -106,7 +93,10 @@ namespace UTeM_Mobile.ViewModels.Guard
                 var requestContent = new MultipartFormDataContent();
                 if (PhotoResult != null)
                 {
-                    var imageContent = new ByteArrayContent(File.ReadAllBytes(PhotoResult.FullPath));
+                    using var stream = await PhotoResult.OpenReadAsync();
+                    using var memoryStream = new MemoryStream();
+                    await stream.CopyToAsync(memoryStream);
+                    var imageContent = new ByteArrayContent(memoryStream.ToArray());
                     imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
                     requestContent.Add(imageContent, "file", "image.jpg");
                 }

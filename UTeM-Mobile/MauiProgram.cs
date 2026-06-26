@@ -3,6 +3,7 @@ using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Core.Models;
+using UTeM_Mobile.Views;
 
 namespace UTeM_Mobile;
 
