@@ -168,7 +168,7 @@ namespace UTeM_Mobile.Services
             locationTimer.Start();
         }
 
-        public async Task CheckTimerToken()
+        public async Task CheckTimerTokenAsync()
         {
             try
             {

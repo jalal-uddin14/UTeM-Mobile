@@ -15,12 +15,14 @@ namespace UTeM_Mobile.ViewModels
         private readonly ITokenStorageService _tokenService;
         private readonly INFCService _nfcService;
         private readonly ITimeOutService _timeOutService;
+        private readonly IPusherService _pusherService;
 
-        public StartViewModel(ITokenStorageService tokenService, INFCService nFCService, ITimeOutService timeOutService)
+        public StartViewModel(ITokenStorageService tokenService, INFCService nFCService, ITimeOutService timeOutService, IPusherService pusherService)
         {
             _tokenService = tokenService;
             _nfcService = nFCService;
             _timeOutService = timeOutService;
+            _pusherService = pusherService;
         }
 
         public async Task OnAppearing()
@@ -49,7 +51,7 @@ namespace UTeM_Mobile.ViewModels
 
                 if (token.UserRole == "Supervisor")
                 {
-                    await PusherService.SubscribeGuardChannel();
+                    await _pusherService.SubscribeGuardChannelAsync();
                     await MainThread.InvokeOnMainThreadAsync(() =>
                     {
                         Application.Current!.MainPage = new SupervisorShell();
@@ -74,7 +76,7 @@ namespace UTeM_Mobile.ViewModels
                         _nfcService.SubscribeNFC();
                     }
 
-                    await _timeOutService.CheckTimerToken();
+                    await _timeOutService.CheckTimerTokenAsync();
                     await MainThread.InvokeOnMainThreadAsync(() =>
                     {
                         Application.Current!.MainPage = new GuardShell();

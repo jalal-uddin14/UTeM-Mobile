@@ -21,6 +21,27 @@ namespace UTeM_Mobile.Services
             _patrolService = patrolService;
         }
 
+        public Task InitializeAsync()
+        {
+            if (!CrossNFC.Current.IsAvailable)
+            {
+                StaticMessage.HasNFCMessage = true;
+                StaticMessage.NFCMessage = "NFC is not available in your phone.";
+                return Task.CompletedTask;
+            }
+
+            if (!CrossNFC.Current.IsEnabled)
+            {
+                StaticMessage.HasNFCMessage = true;
+                StaticMessage.NFCMessage = "Please turn on NFC.";
+                return Task.CompletedTask;
+            }
+
+            SubscribeNFC();
+
+            return Task.CompletedTask;
+        }
+
         public void SubscribeNFC()
         {
             try

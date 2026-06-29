@@ -9,6 +9,7 @@ namespace UTeM_Mobile.Interfaces
         AuthToken? CurrentToken { get; }
         bool IsLoggedIn { get; }
         public void SetSession(ApplicationUser user, AuthToken token);
+        public void SetSession(AuthToken token);
         public void Logout();
     }
 }

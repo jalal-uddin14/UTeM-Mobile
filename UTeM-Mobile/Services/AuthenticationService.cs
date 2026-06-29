@@ -17,6 +17,10 @@ namespace UTeM_Mobile.Services
             CurrentUser = user;
             CurrentToken = token;
         }
+        public void SetSession(AuthToken token)
+        {
+            CurrentToken = token;
+        }
 
         public void Logout()
         {

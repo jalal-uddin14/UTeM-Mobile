@@ -188,7 +188,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                     if (patrolResponse.Data != null)
                     {
                         StaticCredentials.PatrolDetail = patrolDetail;
-                        await _timeoutService.CheckTimerToken();
+                        await _timeoutService.CheckTimerTokenAsync();
                     }
                     await MainThread.InvokeOnMainThreadAsync(() => {
                         Application.Current.MainPage.Navigation.PopToRootAsync();
@@ -232,7 +232,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 HasNoPatrol = !response.IsSuccess;
                 if (response.IsSuccess)
                 {
-                    await _timeoutService.CheckTimerToken();
+                    await _timeoutService.CheckTimerTokenAsync();
                     StaticCredentials.PatrolDetail = null;
                     await PatrolDBService.Delete();
                     HasNoPatrol = true;
@@ -281,7 +281,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 Token = JsonSerializer.Deserialize<AuthToken>(tokenJson);
                 if (Token != null)
                 {
-                    await _timeoutService.CheckTimerToken();
+                    await _timeoutService.CheckTimerTokenAsync();
                     await GetUserDetailAsync();
                     await GetUserPatrol();
                     await ShowMessageAsync();

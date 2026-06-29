@@ -9,20 +9,21 @@ using UTeM_Mobile.PopupViews;
 using UTeM_Mobile.Models;
 using UTeM_Mobile.Core.Services.DBServices;
 using UTeM_Mobile.StaticProperties;
+using UTeM_Mobile.Interfaces;
 
 namespace UTeM_Mobile.Services
 {
-    public static class PusherService
+    public class PusherService : IPusherService
     {
-        public static AuthToken token = AsyncContext.Run(LocalDBService.GetToken);
-        public static Pusher pusher = new Pusher(PusherCredential.key, new PusherOptions
+        public AuthToken token = AsyncContext.Run(LocalDBService.GetToken);
+        public Pusher pusher = new Pusher(PusherCredential.key, new PusherOptions
         {
             Cluster = PusherCredential.cluster,
             Encrypted = true
         });
         public static Channel PrivateChannel;
 
-        private static void GetPusher()
+        private void GetPusher()
         {
             if (pusher == null)
             {
@@ -34,7 +35,7 @@ namespace UTeM_Mobile.Services
             }
         }
 
-        public static async Task SubscribeGuardChannel()
+        public async Task SubscribeGuardChannelAsync()
         {
             try
             {
@@ -57,7 +58,7 @@ namespace UTeM_Mobile.Services
 
         }
 
-        public static async void GuardActivityListener(object sender)
+        public async void GuardActivityListener(object sender)
         {
             try
             {

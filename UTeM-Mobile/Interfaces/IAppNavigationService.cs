@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UTeM_Mobile.Core.Models;
 
 namespace UTeM_Mobile.Interfaces
 {
-    public interface ITimeOutService
+    public interface IAppNavigationService
     {
-        Task RunLocationBroadcastAsync(AuthToken token);
-        Task CheckTimerTokenAsync();
+        Task GoToLoginAsync();
+        Task GoToGuardShellAsync();
+        Task GoToSupervisorShellAsync();
     }
 }
