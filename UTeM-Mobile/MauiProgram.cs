@@ -32,40 +32,46 @@ public static class MauiProgram
 			})
 			.UseLocalNotification();
 
-        builder.Services.AddSingleton<IGenericService<ApplicationUser>, GenericService<ApplicationUser>>();
-        builder.Services.AddSingleton<IGenericService<Route>, GenericService<Route>>();
-        builder.Services.AddSingleton<IGenericService<Patrol>, GenericService<Patrol>>();
-        builder.Services.AddSingleton<IGenericService<PatrolDetail>, GenericService<PatrolDetail>>();
-        builder.Services.AddSingleton<IGenericService<PatrolCheckpoint>, GenericService<PatrolCheckpoint>>();
-        builder.Services.AddSingleton<IGenericService<Report>, GenericService<Report>>();
-        builder.Services.AddSingleton<IGenericService<AuthToken>, GenericService<AuthToken>>();
+        builder.Services
+            .AddSingleton<IGenericService<ApplicationUser>, GenericService<ApplicationUser>>()
+            .AddSingleton<IGenericService<Route>, GenericService<Route>>()
+            .AddSingleton<IGenericService<Patrol>, GenericService<Patrol>>()
+            .AddSingleton<IGenericService<PatrolDetail>, GenericService<PatrolDetail>>()
+            .AddSingleton<IGenericService<PatrolCheckpoint>, GenericService<PatrolCheckpoint>>()
+            .AddSingleton<IGenericService<Report>, GenericService<Report>>()
+            .AddSingleton<IGenericService<AuthToken>, GenericService<AuthToken>>()
+            .AddSingleton<IAuthenticationService, AuthenticationService>()
+            .AddSingleton<ITokenStorageService, TokenStorageService>()
+            .AddSingleton<ILogoutService, LogoutService>()
+            .AddSingleton<IPatrolService, PatrolService>()
+            .AddSingleton<INFCService, NFCService>()
+            .AddSingleton<ITimeOutService, TimeOutService>()
+            .AddSingleton<IPusherService, PusherService>()
+            .AddSingleton<ILoginFlowService, LoginFlowService>()
+            .AddSingleton<IAppNavigationService, AppNavigationService>()
+            .AddSingleton<IAppStartupService, AppStartupService>()
+            .AddSingleton<LocalDBService>()
+            .AddSingleton<IDialogService, DialogService>();
 
-		builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
-		builder.Services.AddSingleton<ITokenStorageService, TokenStorageService>();
-		builder.Services.AddSingleton<ILogoutService, LogoutService>();
-		builder.Services.AddSingleton<IPatrolService, PatrolService>();
-		builder.Services.AddSingleton<INFCService, NFCService>();
-		builder.Services.AddSingleton<ITimeOutService, TimeOutService>();
-        builder.Services.AddSingleton<LocalDBService>();
-
-        builder.Services.AddTransient<AppShell>();
-
-        builder.Services.AddTransient<StartPage>();
-        builder.Services.AddTransient<StartViewModel>();
-        builder.Services.AddTransient<LoginPage>();
-		builder.Services.AddTransient<LoginViewModel>();
-        builder.Services.AddTransient<DashboardPage>();
-        builder.Services.AddTransient<DashboardViewModel>();
-        builder.Services.AddTransient<PatrolDetailListPage>();
-        builder.Services.AddTransient<PatrolDetailListViewModel>();
-        builder.Services.AddTransient<PatrolDetailPage>();
-        builder.Services.AddTransient<PatrolDetailViewModel>();
-        builder.Services.AddTransient<PatrolListPage>();
-        builder.Services.AddTransient<PatrolListViewModel>();
-        builder.Services.AddTransient<ProfilePage>();
-        builder.Services.AddTransient<ProfileViewModel>();
-        builder.Services.AddTransient<ReportSendPage>();
-        builder.Services.AddTransient<ReportSendViewModel>();
+        builder.Services.AddTransient<AppShell>()
+            .AddTransient<GuardShell>()
+            .AddTransient<SupervisorShell>()
+            .AddTransient<StartPage>()
+            .AddTransient<StartViewModel>()
+            .AddTransient<LoginPage>()
+            .AddTransient<LoginViewModel>()
+            .AddTransient<DashboardPage>()
+            .AddTransient<DashboardViewModel>()
+            .AddTransient<PatrolDetailListPage>()
+            .AddTransient<PatrolDetailListViewModel>()
+            .AddTransient<PatrolDetailPage>()
+            .AddTransient<PatrolDetailViewModel>()
+            .AddTransient<PatrolListPage>()
+            .AddTransient<PatrolListViewModel>()
+            .AddTransient<ProfilePage>()
+            .AddTransient<ProfileViewModel>()
+            .AddTransient<ReportSendPage>()
+            .AddTransient<ReportSendViewModel>();
 
 
         return builder.Build();

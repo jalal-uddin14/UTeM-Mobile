@@ -1,5 +1,4 @@
-﻿using UTeM_Mobile.Core.IServices;
-using UTeM_Mobile.Core.Models;
+﻿using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Core.Services.DBServices;
 using UTeM_Mobile.Data.Models;

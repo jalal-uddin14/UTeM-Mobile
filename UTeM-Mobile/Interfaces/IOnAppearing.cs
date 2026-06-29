@@ -3,6 +3,6 @@
     public interface IOnAppearing
     {
         Task OnAppearing();
-        Task GetTokenAsync();
+        //Task GetTokenAsync();
     }
 }

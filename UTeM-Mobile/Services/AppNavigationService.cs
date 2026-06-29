@@ -1,4 +1,5 @@
 ﻿using UTeM_Mobile.Interfaces;
+using UTeM_Mobile.Views;
 
 namespace UTeM_Mobile.Services
 {
@@ -13,7 +14,9 @@ namespace UTeM_Mobile.Services
 
         public Task GoToLoginAsync()
         {
-            return Shell.Current.GoToAsync("//LoginPage");
+            var loginPage = _serviceProvider.GetRequiredService<LoginPage>();
+            Application.Current!.MainPage = new NavigationPage(loginPage);
+            return Task.CompletedTask;
         }
 
         public Task GoToGuardShellAsync()

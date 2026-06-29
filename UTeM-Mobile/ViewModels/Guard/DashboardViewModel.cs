@@ -284,7 +284,6 @@ namespace UTeM_Mobile.ViewModels.Guard
                     await _timeoutService.CheckTimerTokenAsync();
                     await GetUserDetailAsync();
                     await GetUserPatrol();
-                    await ShowMessageAsync();
                 }
             }
             catch(Exception)
@@ -464,17 +463,6 @@ namespace UTeM_Mobile.ViewModels.Guard
                     }
                 }
                 HasNextCheckpoint = PatrolCheckpoint != null;
-            }
-        }
-
-        private async Task ShowMessageAsync()
-        {
-
-            if (StaticMessage.HasNFCMessage)
-            {
-                await MainThread.InvokeOnMainThreadAsync(() => App.Current.MainPage.DisplayAlert("Warning", StaticMessage.NFCMessage, "Ok"));
-                StaticMessage.NFCMessage = null;
-                StaticMessage.HasNFCMessage = false;
             }
         }
 

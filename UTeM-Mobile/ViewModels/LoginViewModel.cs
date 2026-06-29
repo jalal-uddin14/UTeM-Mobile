@@ -1,13 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Plugin.NFC;
-using System.Text.Json;
-using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
-using UTeM_Mobile.Services;
-using UTeM_Mobile.StaticProperties;
 
 namespace UTeM_Mobile.ViewModels
 {
@@ -22,15 +17,12 @@ namespace UTeM_Mobile.ViewModels
         [ObservableProperty]
         private ApplicationUser user;
 
-        private readonly IGenericService<AuthToken> _authService;
         private readonly IAuthenticationService _authenticationService;
-        private readonly ITokenStorageService _tokenService;
-        private readonly INFCService _nfcService;
-        private readonly ITimeOutService _timeOutService;
         private readonly ILoginFlowService _loginFlowService;
 
-        public LoginViewModel(ILoginFlowService loginFlow)
+        public LoginViewModel(IAuthenticationService authentication, ILoginFlowService loginFlow)
         {
+            _authenticationService = authentication;
             User = _authenticationService.CurrentUser ?? new ApplicationUser();
             _loginFlowService = loginFlow;
         }
@@ -54,59 +46,15 @@ namespace UTeM_Mobile.ViewModels
                     return;
                 }
                 IsBusy = true;
-                await _loginFlowService.LoginAsync(AuthToken);
-
-                //string url = "accounts/login";
-                //ObjectResponse<AuthToken> response = await _authService.PostAsync(url, user);
-                //if (response.IsSuccess && response.Data != null)
-                //{
-                //    AuthToken = response.Data;
-                //    AuthToken.ValidTo = DateTime.UtcNow.AddHours(8).AddMinutes(response.Data.LifetimeMinutes);
-                //    AuthToken.IsRemember = IsRemember;
-                //    _tokenService.RemoveAccessToken();
-                //    await _tokenService.SaveAccessTokenAsync(JsonSerializer.Serialize(AuthToken));
-                //    StaticCredentials.CheckpointTimer = null;
-                //    if (response.Data.UserRole == "Supervisor")
-                //    {
-                //        await PusherService.SubscribeGuardChannel();
-                //        await MainThread.InvokeOnMainThreadAsync(() =>
-                //        {
-                //            Application.Current.MainPage = new SupervisorShell();
-                //        });
-                //    }
-                //    else if (response.Data.UserRole == "Guard")
-                //    {
-                //        if (!CrossNFC.Current.IsAvailable)
-                //        {
-                //            await App.Current.MainPage.DisplayAlert("Failed", "NFC is not available in your phone.", "OK");
-                //        }
-                //        else if (!CrossNFC.Current.IsEnabled)
-                //        {
-                //            await App.Current.MainPage.DisplayAlert("Failed", "NFC is not active in your phone.", "OK");
-                //        }
-                //        else
-                //        {
-                //            _nfcService.SubscribeNFC();
-                //        }
-                //        await _timeOutService.CheckTimerToken();
-                //        await MainThread.InvokeOnMainThreadAsync(() =>
-                //        {
-                //            Application.Current.MainPage = new GuardShell();
-                //        });
-                //    }
-                //}
-                //else
-                //{
-                //    IsBusy = false;
-                //    SetErrorMessage(response.Message, response.Errors);
-                //}
+                await _loginFlowService.LoginAsync(User, IsRemember);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                SetErrorMessage(ex.Message);
             }
             finally
             {
+                IsBusy = false;
                 DependencyService.Get<IKeyboardHelper>().HideKeyboard();
             }
         }

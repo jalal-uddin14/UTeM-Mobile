@@ -13,33 +13,31 @@ namespace UTeM_Mobile.Services
 {
     public class NFCService : INFCService
     {
-        private readonly ITokenStorageService _tokenService;
         private readonly IPatrolService _patrolService;
-        public NFCService(ITokenStorageService tokenService, IPatrolService patrolService)
+        private readonly IDialogService _dialogService;
+        public NFCService(IPatrolService patrolService, IDialogService dialogService)
         {
-            _tokenService = tokenService;
+            _dialogService = dialogService;
             _patrolService = patrolService;
         }
 
-        public Task InitializeAsync()
+        public async Task InitializeAsync()
         {
             if (!CrossNFC.Current.IsAvailable)
             {
-                StaticMessage.HasNFCMessage = true;
-                StaticMessage.NFCMessage = "NFC is not available in your phone.";
-                return Task.CompletedTask;
+                await _dialogService.ShowAlertAsync(
+                    "NFC",
+                    "NFC is not available in your phone.");
             }
 
             if (!CrossNFC.Current.IsEnabled)
             {
-                StaticMessage.HasNFCMessage = true;
-                StaticMessage.NFCMessage = "Please turn on NFC.";
-                return Task.CompletedTask;
+                await _dialogService.ShowAlertAsync(
+                    "NFC",
+                    "Please turn on NFC.");
             }
 
             SubscribeNFC();
-
-            return Task.CompletedTask;
         }
 
         public void SubscribeNFC()

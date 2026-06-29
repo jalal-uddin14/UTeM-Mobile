@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Models;
+using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
 
 namespace UTeM_Mobile.Services
@@ -38,18 +34,24 @@ namespace UTeM_Mobile.Services
             _navigationService = navigationService;
         }
 
-        public async Task LoginAsync(AuthToken request)
+        public async Task LoginAsync(ApplicationUser user, bool isRemember)
         {
-            ObjectResponse<AuthToken> token = await _authApi.PostAsync("Auth/Login", request);
+            ObjectResponse<AuthToken> response = await _authApi.PostAsync("accounts/login", user);
 
-            if (token is null)
+            if (response is null || response.Data is null)
+            {
                 throw new Exception("Invalid login response.");
+            }
+            if (!response.IsSuccess)
+            {
+                throw new Exception(response.Message);
+            }
+            AuthToken token = response.Data;
+            token.IsRemember = isRemember;
+            await _tokenStorage.SaveAccessTokenAsync(JsonSerializer.Serialize(response.Data));
+            _authService.SetSession(response.Data);
 
-            await _tokenStorage.SaveAccessTokenAsync(JsonSerializer.Serialize(token.Data));
-
-            _authService.SetSession(token.Data);
-
-            await NavigateByRoleAsync(token.Data);
+            await NavigateByRoleAsync(response.Data);
         }
 
         public async Task RestoreSessionAsync()

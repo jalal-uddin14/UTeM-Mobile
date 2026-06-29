@@ -6,8 +6,6 @@ namespace UTeM_Mobile.StaticProperties
     public static class StaticMessage
     {
         public static bool HasModal { get; set; } = false;
-        public static bool HasNFCMessage { get; set; } = false;
-        public static string NFCMessage { get; set; }
         public static bool InternetNotConnected { get; set; } = false;
         public static async Task<bool> ShowInternetMessage()
         {

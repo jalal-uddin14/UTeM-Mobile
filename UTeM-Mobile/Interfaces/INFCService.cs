@@ -4,8 +4,8 @@ namespace UTeM_Mobile.Interfaces
 {
     public interface INFCService
     {
+        void SubscribeNFC();
         Task InitializeAsync();
         Task ExecuteScanAsync(Checkpoint passedCheckpoint);
-        void SubscribeNFC();
     }
 }
