@@ -4,14 +4,12 @@
              x:Class="UTeM_Mobile.Views.Supervisor.PatrolAddPage"
              BackgroundColor="{StaticResource FormBackgroundColor}"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
+             x:DataType="viewModel:PatrolAddViewModel"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
              xmlns:models="clr-namespace:UTeM_Mobile.Core.Models;assembly=UTeM-Mobile.Core"
              Shell.NavBarIsVisible="False"
              Title="Add Patrol">
-
-    <ContentPage.BindingContext>
-        <viewModel:PatrolAddViewModel />
-    </ContentPage.BindingContext>
+    
     <ScrollView>
         <Grid RowDefinitions="50, Auto, Auto, Auto">
             <StackLayout Grid.Row="0" BackgroundColor="{StaticResource HeadingColor}" Padding="5">

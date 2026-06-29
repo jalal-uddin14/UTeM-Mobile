@@ -15,6 +15,10 @@ namespace UTeM_Mobile.ViewModels.Guard
     public class ProfileViewModel : MainViewModel, IOnAppearing
     {
         private IGenericService<ApplicationUser> _genericUserService;
+
+        private readonly ITokenStorageService _tokenService;
+        private readonly ILogoutService _logoutService;
+
         private ApplicationUser user;
 
         public ICommand LogoutCommand { get; }
@@ -22,11 +26,13 @@ namespace UTeM_Mobile.ViewModels.Guard
 
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
 
-        public ProfileViewModel()
+        public ProfileViewModel(ILogoutService logoutService, ITokenStorageService tokenService)
         {
             _genericUserService = new GenericService<ApplicationUser>();
             UpdateProfileCommand = new AsyncCommand(ExecuteUpdateProfile);
             LogoutCommand = new AsyncCommand(ExecuteLogout);
+            _logoutService = logoutService;
+            _tokenService = tokenService;
         }
         private async Task ExecuteUpdateProfile()
         {
@@ -66,7 +72,7 @@ namespace UTeM_Mobile.ViewModels.Guard
             try
             {
                 IsErrorMessage = false;
-                await LogoutService.LogoutAsync();
+                await _logoutService.LogoutAsync();
             }
             catch (Exception)
             {
@@ -77,18 +83,18 @@ namespace UTeM_Mobile.ViewModels.Guard
             }
         }
 
-        public void OnAppearing()
+        public async Task OnAppearing()
         {
             IsErrorMessage = false;
-            Task.Run(async () => { await GetTokenAsync(); });
+            await GetTokenAsync();
         }
 
         public async Task GetTokenAsync()
         {
             try
             {
-                Token = await LocalDBService.GetToken();
-                if (Token != null)
+                var tokenJson = await _tokenService.GetAccessTokenAsync();
+                if (tokenJson != null)
                 {
                     await GetUserDetailAsync();
                 }

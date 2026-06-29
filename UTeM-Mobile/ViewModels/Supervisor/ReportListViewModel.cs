@@ -13,6 +13,8 @@ namespace UTeM_Mobile.ViewModels.Supervisor
     public class ReportListViewModel : BaseViewModel
     {
         private IGenericService<Report> _genericService;
+        private readonly ITokenStorageService _tokenService;
+
         private AuthToken token;
 
         public ICommand NavigateToDetailCommand { get; }
@@ -20,10 +22,11 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         public ObservableRangeCollection<Report> ReportList { get; set; }
         public AuthToken Token { get => token; set => SetProperty(ref token, value); }
 
-        public ReportListViewModel()
+        public ReportListViewModel(ITokenStorageService tokenService)
         {
             _genericService = new GenericService<Report>();
             ReportList = new ObservableRangeCollection<Report>();
+            _tokenService = tokenService;
         }
 
         public void OnAppearing()
@@ -34,8 +37,8 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         private async Task GetTokenAsync()
         {
-            Token = await LocalDBService.GetToken();
-            if (Token != null)
+            var tokenJson = await _tokenService.GetAccessTokenAsync();
+            if (tokenJson != null)
             {
                 await GetReportList();
             }

@@ -4,13 +4,11 @@
              x:Class="UTeM_Mobile.Views.LoginPage"
              BackgroundColor="White"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels"
+             x:DataType="viewModel:LoginViewModel"
              xmlns:models="clr-namespace:UTeM_Mobile.Core.Models;assembly=UTeM-Mobile.Core"
              Shell.NavBarIsVisible="False"
              Title="Login">
-
-    <ContentPage.BindingContext>
-        <viewModel:LoginViewModel />
-    </ContentPage.BindingContext>
+    
     <VerticalStackLayout>
         <Grid>
             <Grid.RowDefinitions>
@@ -24,12 +22,12 @@
             <Grid Grid.Row="0">
                 <Image Source="logo.jpg" HeightRequest="300"/>
             </Grid>
-            <StackLayout IsVisible="{Binding IsBusy}" Grid.Row="0" Margin="15, 5, 15, 20" Padding="0" VerticalOptions="EndAndExpand" BackgroundColor="White">
+            <StackLayout IsVisible="{Binding IsBusy}" Grid.Row="0" Margin="15, 5, 15, 20" Padding="0" VerticalOptions="End" BackgroundColor="White">
                 <ActivityIndicator IsRunning="{Binding IsBusy}" Color="{StaticResource LoginButtonColor}" />
             </StackLayout>
             <Frame Grid.Row="1" Style="{StaticResource LoginPageFrame}" BorderColor="Grey">
                 <HorizontalStackLayout>
-                    <Image HeightRequest="20" Margin="10, 0" HorizontalOptions="StartAndExpand">
+                    <Image HeightRequest="20" Margin="10, 0" HorizontalOptions="Start">
                         <Image.Source>
                             <FontImageSource FontFamily="FAsolid" Glyph="{StaticResource IconUser}" Color="Grey"></FontImageSource>
                         </Image.Source>
@@ -47,15 +45,10 @@
                     <Entry Placeholder="Password" MinimumWidthRequest="200" Text="{Binding User.Password}" IsPassword="True" HorizontalOptions="Fill" Completed="Entry_Completed" />
                 </HorizontalStackLayout>
             </Frame>
-            <Frame Grid.Row="3" Style="{StaticResource LoginPageFrame}" Padding="0, 0, 0, 5" BorderColor="Transparent">
-                <HorizontalStackLayout VerticalOptions="CenterAndExpand">
-                    <CheckBox IsChecked="{Binding IsRemember}" Color="{StaticResource LoginButtonColor}"/>
-                    <StackLayout>
-                        <StackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
-                        </StackLayout.GestureRecognizers>
-                        <Label Text="Remember me" VerticalOptions="CenterAndExpand"/>
-                    </StackLayout>
+            <Frame Grid.Row="3" Style="{StaticResource LoginPageFrame}" BorderColor="Transparent">
+                <HorizontalStackLayout VerticalOptions="Center">
+                    <CheckBox IsChecked="{Binding IsRemember}" Color="{StaticResource LoginButtonColor}" VerticalOptions="Center"/>
+                    <Label Text="Remember me" VerticalOptions="Center"/>
                 </HorizontalStackLayout>
             </Frame>
             <Frame Grid.Row="4" Style="{StaticResource LoginPageFrame}" Padding="0"  BorderColor="Transparent">

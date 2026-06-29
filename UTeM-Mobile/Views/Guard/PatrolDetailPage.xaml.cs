@@ -1,21 +1,24 @@
 using UTeM_Mobile.Data.Models;
+using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.ViewModels.Guard;
 
 namespace UTeM_Mobile.Views.Guard;
 
 public partial class PatrolDetailPage : ContentPage
 {
-	private PatrolDetailViewModel viewModel;
-	public PatrolDetailPage()
+	public PatrolDetailPage(PatrolDetailViewModel vm)
 	{
 		InitializeComponent();
-		viewModel = BindingContext as PatrolDetailViewModel;
-	}
+        BindingContext = vm;
+    }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
-		viewModel.OnAppearing();
+        if (BindingContext is IOnAppearing vm)
+        {
+            vm.OnAppearing();
+        }
     }
 
     private void ListView_ItemTapped(object sender, ItemTappedEventArgs e)

@@ -3,11 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="UTeM_Mobile.Views.Supervisor.WhatsAppPage"
              xmlns:viewmodel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
+             x:DataType="viewmodel:WhatsAppViewModel"
              BackgroundColor="White"
              Shell.NavBarIsVisible="False">
-    <ContentPage.BindingContext>
-        <viewmodel:WhatsAppViewModel />
-    </ContentPage.BindingContext>
+    
     <Grid RowDefinitions="50, Auto, *">
         <StackLayout Grid.Row="0" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
             <Label Text="Walkie Talkie" Style="{StaticResource HeaderLabel}"/>

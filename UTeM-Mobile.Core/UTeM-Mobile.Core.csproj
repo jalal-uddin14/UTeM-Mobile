@@ -1,23 +1,46 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <RootNamespace>UTeM_Mobile.Core</RootNamespace>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\UTeM-Mobile.Data\UTeM-Mobile.Data.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.100" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="PusherServer" Version="5.0.0" />
-    <PackageReference Include="RestSharp" Version="112.1.0" />
-    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-    <PackageReference Include="X.PagedList" Version="10.5.7" />
-  </ItemGroup>
-
-</Project>
+<Project Sdk="Microsoft.NET.Sdk">
+
+
+
+  <PropertyGroup>
+
+    <TargetFramework>net9.0</TargetFramework>
+
+    <RootNamespace>UTeM_Mobile.Core</RootNamespace>
+
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <Nullable>enable</Nullable>
+
+  </PropertyGroup>
+
+
+
+  <ItemGroup>
+
+    <ProjectReference Include="..\UTeM-Mobile.Data\UTeM-Mobile.Data.csproj" />
+
+  </ItemGroup>
+
+
+
+  <ItemGroup>
+
+    <PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.100" />
+
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+
+    <PackageReference Include="PusherServer" Version="5.0.0" />
+
+    <PackageReference Include="RestSharp" Version="112.1.0" />
+
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+
+    <PackageReference Include="X.PagedList" Version="10.5.7" />
+
+  </ItemGroup>
+
+
+
+</Project>
+

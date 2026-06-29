@@ -4,11 +4,10 @@
              x:Class="UTeM_Mobile.Views.Supervisor.RouteDetailPage"
              BackgroundColor="White"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
+             x:DataType="viewModel:RouteDetailViewModel"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
              Title="Route Detail">
-    <ContentPage.BindingContext>
-        <viewModel:RouteDetailViewModel />
-    </ContentPage.BindingContext>
+    
     
     <VerticalStackLayout>
         <StackLayout>

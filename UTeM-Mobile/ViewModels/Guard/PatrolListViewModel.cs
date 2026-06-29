@@ -8,6 +8,7 @@ using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Views.Guard;
 using UTeM_Mobile.Core.Services.DBServices;
+using System.Text.Json;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
@@ -18,6 +19,9 @@ namespace UTeM_Mobile.ViewModels.Guard
         private IGenericService<Patrol> _genericService;
         private IGenericService<PatrolDetail> _genericPatrolDetailService;
         private IGenericService<ApplicationUser> _genericUserService;
+
+        private readonly ITokenStorageService _tokenService;
+
         private ApplicationUser user;
         private string patrolLabel;
         private string patrolHeader;
@@ -29,7 +33,7 @@ namespace UTeM_Mobile.ViewModels.Guard
         public string PatrolLabel { get => patrolLabel; set => SetProperty(ref patrolLabel, value); }
         public string PatrolHeader { get => patrolHeader; set => SetProperty(ref patrolHeader, value); }
 
-        public PatrolListViewModel()
+        public PatrolListViewModel(ITokenStorageService tokenService)
         {
             PatrolHeader = "All Patrol Schedule List";
             PatrolLabel = "Upcoming Patrols";
@@ -38,6 +42,7 @@ namespace UTeM_Mobile.ViewModels.Guard
             PatrolList = new ObservableRangeCollection<Patrol>();
             TogglePatrolCommand = new AsyncCommand(ExecuteTogglePatrol);
             NavigateToSendSoSCommand = new AsyncCommand(ExecuteNavigateToSendSoSAsync);
+            _tokenService = tokenService;
         }
         private async Task ExecuteTogglePatrol()
         {
@@ -51,18 +56,18 @@ namespace UTeM_Mobile.ViewModels.Guard
             await Shell.Current.GoToAsync($"//{nameof(ReportSendPage)}");
         }
 
-        public void OnAppearing()
+        public async Task OnAppearing()
         {
             IsErrorMessage = false;
-            Task.Run(async () => { await GetTokenAsync(); });
+            await GetTokenAsync();
         }
 
         public async Task GetTokenAsync()
         {
             try
             {
-                Token = await LocalDBService.GetToken();
-                if (Token != null)
+                var tokenJson = await _tokenService.GetAccessTokenAsync();
+                if (tokenJson != null)
                 {
                     await GetPatrolList();
                     await GetUserDetailAsync();

@@ -5,14 +5,12 @@
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              xmlns:sensors="clr-namespace:Microsoft.Maui.Devices.Sensors;assembly=Microsoft.Maui.Essentials"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Guard"
+             x:DataType="viewModel:DashboardViewModel"
              xmlns:models="clr-namespace:UTeM_Mobile.Core.Models;assembly=UTeM-Mobile.Core"
              Shell.BackgroundColor="{StaticResource NavbarColor}"
              BackgroundColor="White"
              Title="Dashboard">
-    <ContentPage.BindingContext>
-        <viewModel:DashboardViewModel />
-    </ContentPage.BindingContext>
-    
+
     <Shell.TitleView>
         <Image Source="e_smartguardheader.png"
                HorizontalOptions="Center"

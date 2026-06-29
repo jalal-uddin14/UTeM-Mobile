@@ -7,21 +7,26 @@ using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.PopupViews;
 using UTeM_Mobile.Models;
-using UTeM_Mobile.Core.Services.DBServices;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
     public class ProfileViewModel : MainViewModel, IOnAppearing
     {
         private IGenericService<ApplicationUser> _genericService;
+        
+        private readonly ITokenStorageService _tokenService;
+        private readonly ILogoutService _logoutService;
+
         private ApplicationUser user;
 
         public ICommand UpdateProfileCommand { get; }
         public ICommand LogoutCommand { get; }
         public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
 
-        public ProfileViewModel()
+        public ProfileViewModel(ITokenStorageService tokenService, ILogoutService logoutService)
         {
+            _tokenService = tokenService;
+            _logoutService = logoutService;
             User = new ApplicationUser();
             _genericService = new GenericService<ApplicationUser>();
             UpdateProfileCommand = new AsyncCommand(ExecuteUpdateProfile);
@@ -31,11 +36,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         {
             try
             {
-                await LocalDBService.RemoveToken();
-                await MainThread.InvokeOnMainThreadAsync(() =>
-                {
-                    Application.Current.MainPage = new AppShell();
-                });
+                await _logoutService.LogoutAsync();
             }
             catch (Exception)
             {
@@ -74,15 +75,15 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             }
         }
 
-        public void OnAppearing()
+        public async Task OnAppearing()
         {
-            Task.Run(async () => { await GetTokenAsync(); });
+            await GetTokenAsync();
         }
 
         public async Task GetTokenAsync()
         {
-            Token = await LocalDBService.GetToken();
-            if (Token != null)
+            var tokenJson = await _tokenService.GetAccessTokenAsync();
+            if (tokenJson != null)
             {
                 await GetProfileAsync();
             }

@@ -4,11 +4,10 @@
              x:Class="UTeM_Mobile.Views.StartPage"
              BackgroundColor="White"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels"
+             x:DataType="viewModel:StartViewModel"
              xmlns:model="clr-namespace:UTeM_Mobile.Core.Models;assembly=UTeM-Mobile.Core"
              Shell.NavBarIsVisible="False">
-    <ContentPage.BindingContext>
-        <viewModel:StartViewModel />
-    </ContentPage.BindingContext>
+    
     <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
         <Image Source="logo.jpg" />
     </StackLayout >

@@ -14,6 +14,7 @@ using Plugin.LocalNotification;
 using MvvmHelpers;
 using Microsoft.Maui.Controls.Maps;
 using UTeM_Mobile.Core.Services.DBServices;
+using System.Text.Json;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
@@ -21,11 +22,17 @@ namespace UTeM_Mobile.ViewModels.Guard
     {
         private IDispatcherTimer timer = null;
         private Location currentLocation;
+
         private IGenericService<Patrol> _genericPatrolService;
         private IGenericService<PatrolDetail> _genericPatrolDetailService;
-        private IGenericService<Checkpoint> _genericCheckpointService;
         private IGenericService<ApplicationUser> _genericUserService;
-        private IGenericService<PatrolCheckpoint> _genericPatrolCheckpointService;
+
+        private readonly ITokenStorageService _tokenService;
+        private readonly ILogoutService _logoutService;
+        private readonly IPatrolService _patrolService;
+        private readonly INFCService _nfcService;
+        private readonly ITimeOutService _timeoutService;
+
         private bool showMap;
         private bool showLogo;
         private bool hasNoPatrol;
@@ -91,18 +98,24 @@ namespace UTeM_Mobile.ViewModels.Guard
         public string NoPatrolMessage { get => noPatrolMessage; set => SetProperty(ref noPatrolMessage, value); }
         public Polyline Polyline { get => polyline; set => SetProperty(ref polyline, value); }
 
-        public DashboardViewModel()
+        public DashboardViewModel(ILogoutService logoutService, ITokenStorageService tokenService, IPatrolService patrolService, INFCService nfcService, ITimeOutService timeOutService)
         {
             ShowMap = true;
             User = new ApplicationUser();
             Patrol = new Patrol();
             IsStarted = false;
             HasNoPatrol = true;
+
+            _logoutService = logoutService;
+            _tokenService = tokenService;
+            _patrolService = patrolService;
+            _nfcService = nfcService;
+            _timeoutService = timeOutService;
+
+
             _genericPatrolService = new GenericService<Patrol>();
             _genericPatrolDetailService = new GenericService<PatrolDetail>();
-            _genericCheckpointService = new GenericService<Checkpoint>();
             _genericUserService = new GenericService<ApplicationUser>();
-            _genericPatrolCheckpointService = new GenericService<PatrolCheckpoint>();
             PinCollection = new ObservableRangeCollection<Pin>();
             ScanCommand = new AsyncCommand(ExecuteScanAsync);
             NavigateToProfileCommand = new AsyncCommand(ExecuteNavigateToProfile);
@@ -111,13 +124,14 @@ namespace UTeM_Mobile.ViewModels.Guard
             StartCommand = new AsyncCommand(ExecuteStart);
             EndCommand = new AsyncCommand(ExecuteEnd);
             LogoutCommand = new AsyncCommand(ExecuteLogout);
+            _nfcService = nfcService;
         }
         private async Task ExecuteLogout()
         {
             try
             {
                 IsErrorMessage = false;
-                await LogoutService.LogoutAsync();
+                await _logoutService.LogoutAsync();
             }
             catch (Exception)
             {
@@ -130,7 +144,7 @@ namespace UTeM_Mobile.ViewModels.Guard
             try
             {
                 Checkpoint checkpoint = PatrolCheckpoint.Checkpoint;
-                await NFCService.ExecuteScanAsync(checkpoint);
+                await _nfcService.ExecuteScanAsync(checkpoint);
             }
             catch(Exception)
             {
@@ -170,11 +184,11 @@ namespace UTeM_Mobile.ViewModels.Guard
                 IsStarted = response.IsSuccess;
                 if (IsStarted)
                 {
-                    var patrolResponse = await PatrolService.GetPatrolStatus();
+                    var patrolResponse = await _patrolService.GetPatrolStatus();
                     if (patrolResponse.Data != null)
                     {
                         StaticCredentials.PatrolDetail = patrolDetail;
-                        await TimeOutService.CheckTimerToken();
+                        await _timeoutService.CheckTimerToken();
                     }
                     await MainThread.InvokeOnMainThreadAsync(() => {
                         Application.Current.MainPage.Navigation.PopToRootAsync();
@@ -218,7 +232,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 HasNoPatrol = !response.IsSuccess;
                 if (response.IsSuccess)
                 {
-                    await TimeOutService.CheckTimerToken();
+                    await _timeoutService.CheckTimerToken();
                     StaticCredentials.PatrolDetail = null;
                     await PatrolDBService.Delete();
                     HasNoPatrol = true;
@@ -246,12 +260,12 @@ namespace UTeM_Mobile.ViewModels.Guard
             }
         }
 
-        public void OnAppearing()
+        public async Task OnAppearing()
         {
             timer = Application.Current.Dispatcher.CreateTimer();
             RunTimer();
             IsErrorMessage = IsNotConnected;
-            Task.Run(async () => { await GetTokenAsync(); });
+            await GetTokenAsync();
         }
 
         public async Task GetTokenAsync()
@@ -263,10 +277,11 @@ namespace UTeM_Mobile.ViewModels.Guard
                     return;
                 }
                 IsBusy = true;
-                Token = await LocalDBService.GetToken();
+                var tokenJson = await _tokenService.GetAccessTokenAsync();
+                Token = JsonSerializer.Deserialize<AuthToken>(tokenJson);
                 if (Token != null)
                 {
-                    await TimeOutService.CheckTimerToken();
+                    await _timeoutService.CheckTimerToken();
                     await GetUserDetailAsync();
                     await GetUserPatrol();
                     await ShowMessageAsync();
@@ -310,7 +325,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                 PatrolDetail = StaticCredentials.PatrolDetail;
                 if (PatrolDetail == null)
                 {
-                    ObjectResponse<PatrolDetail> response = await PatrolService.GetPatrolStatus();
+                    ObjectResponse<PatrolDetail> response = await _patrolService.GetPatrolStatus();
                     if (response.IsSuccess && response.Data != null)
                     {
                         PatrolDetail = response.Data;
@@ -347,7 +362,7 @@ namespace UTeM_Mobile.ViewModels.Guard
                         else
                         {
                             GeneratePinCollection();
-                            await TimeOutService.RunLocationBroadcastAsync(Token);
+                            await _timeoutService.RunLocationBroadcastAsync(Token);
                             ObjectResponse<PatrolDetail> objectResponse1 = await _genericPatrolDetailService.GetDetailsAsync(string.Format("patrolDetails/{0}", PatrolDetail.Id), Token);
                             if (objectResponse1.IsSuccess && objectResponse1.Data != null)
                             {

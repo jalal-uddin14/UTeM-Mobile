@@ -11,6 +11,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
     public class RouteDetailViewModel : BaseViewModel
     {
         private IGenericService<Route> genericService;
+        private readonly ITokenStorageService _tokenService;
         private int id;
         private Route route;
         private AuthToken token;
@@ -20,7 +21,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         public Route Route { get => route; set => SetProperty(ref route, value); }
         public AuthToken Token { get => token; set => SetProperty(ref token, value); }
 
-        public RouteDetailViewModel()
+        public RouteDetailViewModel(ITokenStorageService tokenService)
         {
             Route = new Route
             {
@@ -28,6 +29,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             };
             RouteCheckpointList = new ObservableRangeCollection<RouteCheckpoint>();
             genericService = new GenericService<Route>();
+            _tokenService = tokenService;
         }
 
         public void OnAppearing()
@@ -37,8 +39,8 @@ namespace UTeM_Mobile.ViewModels.Supervisor
 
         private async Task GetTokenAsync()
         {
-            Token = await LocalDBService.GetToken();
-            if (Token != null)
+            var tokenJson = await _tokenService.GetAccessTokenAsync();
+            if (tokenJson != null)
             {
                 await GetRouteDetail();
             }

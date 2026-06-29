@@ -4,28 +4,26 @@
              x:Class="UTeM_Mobile.Views.Supervisor.ProfilePage"
              BackgroundColor="White"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
+             x:DataType="viewModel:ProfileViewModel"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
              Shell.NavBarIsVisible="False"
              Title="Profile">
-    <ContentPage.BindingContext>
-        <viewModel:ProfileViewModel />
-    </ContentPage.BindingContext>
     <Grid RowDefinitions="80, 50, Auto, Auto, Auto">
         <Grid Grid.Row="0" ColumnDefinitions="0.8*, 0.2*">
             <StackLayout Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" BackgroundColor="{StaticResource DashboardHeadColor}" Padding="20">
                 <Frame BackgroundColor="Transparent" Margin="10, 0" Padding="0" CornerRadius="25" HeightRequest="55">
                     <Image Source="logo_only.jpg" HeightRequest="50"/>
                 </Frame>
-                <StackLayout VerticalOptions="CenterAndExpand">
+                <StackLayout VerticalOptions="Center">
                     <Label Text="{Binding User.Name}" TextColor="White" FontAttributes="Bold"/>
                     <Label Text="{Binding User.Role}" TextColor="White" FontAttributes="Bold"/>
                 </StackLayout>
             </StackLayout>
-            <StackLayout Grid.Column="1" VerticalOptions="CenterAndExpand">
+            <StackLayout Grid.Column="1" VerticalOptions="Center">
                 <StackLayout.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding LogoutCommand}"/>
                 </StackLayout.GestureRecognizers>
-                <Image HeightRequest="20" Margin="20, 0" HorizontalOptions="EndAndExpand">
+                <Image HeightRequest="20" Margin="20, 0" HorizontalOptions="End">
                     <Image.Source>
                         <FontImageSource FontFamily="FAsolid" Glyph="{StaticResource IconLogout}" Color="White"></FontImageSource>
                     </Image.Source>
@@ -38,24 +36,24 @@
         <StackLayout Grid.Row="2" Padding="5" Margin="20, 10">
             <Grid RowDefinitions="*, *, *, *" ColumnDefinitions="0.4*, 0.6*" RowSpacing="20">
                 <Grid Grid.Row="0" Grid.Column="0">
-                    <Label Text="Name:" VerticalOptions="CenterAndExpand"/>
+                    <Label Text="Name:" VerticalOptions="Center"/>
                 </Grid>
                 <Grid Grid.Row="0" Grid.Column="1" Padding="0" Margin="0">
-                    <Frame Margin="0" Padding="10, 0" VerticalOptions="CenterAndExpand">
+                    <Frame Margin="0" Padding="10, 0" VerticalOptions="Center">
                         <Entry Text="{Binding User.Name}"/>
                     </Frame>
                 </Grid>
                 <Grid Grid.Row="1" Grid.Column="0">
-                    <Label Text="Email:" VerticalOptions="CenterAndExpand"/>
+                    <Label Text="Email:" VerticalOptions="Center"/>
                 </Grid>
                 <Grid Grid.Row="1" Grid.Column="1">
-                    <Label Text="{Binding User.Email}" VerticalOptions="CenterAndExpand"/>
+                    <Label Text="{Binding User.Email}" VerticalOptions="Center"/>
                 </Grid>
                 <Grid Grid.Row="2" Grid.Column="0">
-                    <Label Text="Phone number:" VerticalOptions="CenterAndExpand"/>
+                    <Label Text="Phone number:" VerticalOptions="Center"/>
                 </Grid>
                 <Grid Grid.Row="2" Grid.Column="1">
-                    <Frame Margin="0" Padding="10, 0" VerticalOptions="CenterAndExpand">
+                    <Frame Margin="0" Padding="10, 0" VerticalOptions="Center">
                         <Entry Text="{Binding User.PhoneNumber}"/>
                     </Frame>
                 </Grid>
@@ -68,11 +66,11 @@
             </Grid>
         </StackLayout>
         <Grid Grid.Row="3" Margin="5" Padding="5">
-            <StackLayout IsVisible="{Binding IsErrorMessage}" VerticalOptions="CenterAndExpand">
-                <Label Text="{Binding Message}" TextColor="Red" HorizontalOptions="CenterAndExpand"/>
+            <StackLayout IsVisible="{Binding IsErrorMessage}" VerticalOptions="Center">
+                <Label Text="{Binding Message}" TextColor="Red" HorizontalOptions="Center"/>
             </StackLayout>
-            <StackLayout IsVisible="{Binding IsSuccessMessage}" VerticalOptions="CenterAndExpand">
-                <Label Text="{Binding Message}" TextColor="Green" HorizontalOptions="CenterAndExpand" />
+            <StackLayout IsVisible="{Binding IsSuccessMessage}" VerticalOptions="Center">
+                <Label Text="{Binding Message}" TextColor="Green" HorizontalOptions="Center" />
             </StackLayout>
         </Grid>
         <Grid Grid.Row="4" Margin="50, 0">

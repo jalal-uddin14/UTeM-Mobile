@@ -5,13 +5,12 @@
              xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              xmlns:sensors="clr-namespace:Microsoft.Maui.Devices.Sensors;assembly=Microsoft.Maui.Essentials"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
+             x:DataType="viewModel:PatrolDetailViewModel"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
              xmlns:models="clr-namespace:UTeM_Mobile.Core.Models;assembly=UTeM-Mobile.Core"
              BackgroundColor="White"
              Shell.NavBarIsVisible="False">
-    <ContentPage.BindingContext>
-        <viewModel:PatrolDetailViewModel />
-    </ContentPage.BindingContext>
+    
     <Grid RowDefinitions="50, Auto, 80, Auto, *">
         <StackLayout Grid.Row="0" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
             <Label Text="Patrol Details" Style="{StaticResource HeaderLabel}"/>

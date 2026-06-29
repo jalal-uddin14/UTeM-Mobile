@@ -8,9 +8,7 @@ using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Views.Supervisor;
 using UTeM_Mobile.PopupViews;
 using UTeM_Mobile.Models;
-using UTeM_Mobile.Services;
 using UTeM_Mobile.Interfaces;
-using UTeM_Mobile.Core.Services.DBServices;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
@@ -21,6 +19,13 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         private IGenericService<ApplicationUser> _genericUserService;
         private IGenericService<Shift> _genericShiftService;
         private IGenericService<Campus> _genericCampusService;
+
+        private readonly ITokenStorageService _tokenService;
+
+        private readonly ILogoutService _logoutService;
+
+
+
         private ApplicationUser user;
         private ApplicationUser selectedGuard;
         private DateTime? selectedStartDate;
@@ -144,13 +149,17 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         public bool IsCampusVisible { get => isCampusVisible; set => SetProperty(ref isCampusVisible, value); }
         public bool IsFilterVisible { get => isFilterVisible; set => SetProperty(ref isFilterVisible, value); }
 
-        public PatrolListViewModel()
+        public PatrolListViewModel(ILogoutService logoutService, ITokenStorageService tokenService)
         {
             IsFilterVisible = false;
             SelectedStartDate = DateTime.UtcNow.AddHours(8);
             SelectedEndDate = DateTime.UtcNow.AddHours(8);
             User = new ApplicationUser();
             SelectedGuard = new ApplicationUser();
+
+            _logoutService = logoutService;
+            _tokenService = tokenService;
+
             _genericPatrolService = new GenericService<Patrol>();
             _genericPatrolDetailService = new GenericService<PatrolDetail>();
             _genericUserService = new GenericService<ApplicationUser>();
@@ -179,7 +188,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             try
             {
                 IsErrorMessage = false;
-                await LogoutService.LogoutAsync();
+                await _logoutService.LogoutAsync();
             }
             catch (Exception)
             {
@@ -204,11 +213,11 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             await Shell.Current.GoToAsync($"{nameof(ProfilePage)}");
         }
 
-        public void OnAppearing()
+        public async Task OnAppearing()
         {
             IsGuardNotVisible = true;
             IsErrorMessage = false;
-            Task.Run(async () => { await GetTokenAsync(); });
+            await GetTokenAsync();
         }
 
         public async Task GetTokenAsync()
@@ -216,8 +225,8 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             try
             {
                 IsBusy = true;
-                Token = await LocalDBService.GetToken();
-                if (Token != null)
+                var tokenJson = await _tokenService.GetAccessTokenAsync();
+                if (tokenJson != null)
                 {
                     await GetProfileAsync();
                     await GetGuardListAsync();

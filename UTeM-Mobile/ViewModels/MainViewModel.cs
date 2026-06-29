@@ -1,4 +1,4 @@
-﻿using MvvmHelpers;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Interfaces;
@@ -7,43 +7,39 @@ using UTeM_Mobile.StaticProperties;
 
 namespace UTeM_Mobile.ViewModels
 {
-    public class MainViewModel : BaseViewModel, IInternetConnection
+    public partial class MainViewModel : ObservableObject, IInternetConnection
     {
+        [ObservableProperty]
+        protected bool isBusy;
+        
+        [ObservableProperty]
+        protected bool isNotBusy;
+
+        [ObservableProperty]
         private AuthToken token;
+
+        [ObservableProperty]
         private bool isSuccessMessage;
+
+        [ObservableProperty]
         private bool isErrorMessage;
+
+        [ObservableProperty]
         private string message;
+
+        [ObservableProperty]
         private int errorHeight;
+
+        [ObservableProperty]
         private bool isNotConnected;
-        public bool IsSuccessMessage { get => isSuccessMessage; set => SetProperty(ref isSuccessMessage, value); }
-        public bool IsErrorMessage
+
+        partial void OnIsErrorMessageChanged(bool value)
         {
-            get => isErrorMessage;
-            set
-            {
-                SetProperty(ref isErrorMessage, value);
-                IsSuccessMessage = !value;
-            }
+            IsSuccessMessage = !value;
         }
-        public string Message { get => message; set => SetProperty(ref message, value); }
+
         public ObservableCollection<ErrorView> Message_list { get; }
-        public int ErrorHeight { get => errorHeight; set => SetProperty(ref errorHeight, value); }
-        public bool IsNotConnected { get => isNotConnected; set => SetProperty(ref isNotConnected, value); }
-        protected AuthToken Token
-        {
-            get => token;
-            set
-            {
-                SetProperty(ref token, value);
-                if (value.ValidTo <= DateTime.Now)
-                {
-                    Task.Run(async () =>
-                    {
-                        await LogoutService.LogoutAsync();
-                    });
-                }
-            }
-        }
+
 
         public MainViewModel()
         {

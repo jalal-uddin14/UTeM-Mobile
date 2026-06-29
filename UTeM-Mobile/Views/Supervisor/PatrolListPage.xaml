@@ -4,6 +4,7 @@
              x:Class="UTeM_Mobile.Views.Supervisor.PatrolListPage"
              BackgroundColor="White"
              xmlns:viewModel="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
+             x:DataType="viewModel:PatrolListViewModel"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
              xmlns:models="clr-namespace:UTeM_Mobile.Core.Models;assembly=UTeM-Mobile.Core"
              Shell.BackgroundColor="{StaticResource NavbarColor}">
@@ -14,10 +15,7 @@
                VerticalOptions="Center"
                HeightRequest="30"/>
     </Shell.TitleView>
-
-    <ContentPage.BindingContext>
-        <viewModel:PatrolListViewModel />
-    </ContentPage.BindingContext>
+    
     <Grid RowDefinitions="80, 50, Auto, Auto, *, 50">
         <Grid Grid.Row="0" ColumnDefinitions="0.8*, 0.2*" BackgroundColor="{StaticResource DashboardHeadColor}" Padding="10">
             <StackLayout Grid.Column="0" Orientation="Horizontal">

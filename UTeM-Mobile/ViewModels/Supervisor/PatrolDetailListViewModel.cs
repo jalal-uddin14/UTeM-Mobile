@@ -13,6 +13,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
     {
         private IGenericService<Patrol> _genericPatrolService;
         private IGenericService<PatrolDetail> _genericPatrolDetailService;
+        private readonly ITokenStorageService _tokenService;
         private string id;
         private Patrol patrol;
 
@@ -20,25 +21,26 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         public string Id { get => id; set => id = value; }
         public Patrol Patrol { get => patrol; set => SetProperty(ref patrol, value); }
 
-        public PatrolDetailListViewModel()
+        public PatrolDetailListViewModel(ITokenStorageService tokenService)
         {
             Patrol = new Patrol();
             PatrolDetailList = new ObservableRangeCollection<PatrolDetail>();
             _genericPatrolService = new GenericService<Patrol>();
             _genericPatrolDetailService = new GenericService<PatrolDetail>();
+            _tokenService = tokenService;
         }
 
-        public void OnAppearing()
+        public async Task OnAppearing()
         {
-            Task.Run(async () => { await GetTokenAsync(); });
+            await GetTokenAsync();
         }
 
         public async Task GetTokenAsync()
         {
             try
             {
-                Token = await LocalDBService.GetToken();
-                if (Token != null)
+                var tokenJson = await _tokenService.GetAccessTokenAsync();
+                if (tokenJson != null)
                 {
                     await GetPatrolDetailAsync();
                 }

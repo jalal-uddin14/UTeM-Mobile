@@ -1,19 +1,23 @@
+using System.Threading.Tasks;
+using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.ViewModels;
 
 namespace UTeM_Mobile.Views;
 
 public partial class StartPage : ContentPage
 {
-	private StartViewModel viewModel;
-	public StartPage()
+	public StartPage(StartViewModel vm)
 	{
 		InitializeComponent();
-	}
+		BindingContext = vm;
+    }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
-		viewModel = BindingContext as StartViewModel;
-		viewModel.OnAppearing();
+        if (BindingContext is IOnAppearing vm)
+        {
+            await vm.OnAppearing();
+        }
     }
 }

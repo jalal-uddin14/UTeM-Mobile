@@ -3,17 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="UTeM_Mobile.Views.Guard.WhatsAppPage"
              xmlns:viewmodel="clr-namespace:UTeM_Mobile.ViewModels.Guard"
+             x:DataType="viewmodel:WhatsAppViewModel"
              BackgroundColor="White"
              Shell.NavBarIsVisible="False">
-    <ContentPage.BindingContext>
-        <viewmodel:WhatsAppViewModel />
-    </ContentPage.BindingContext>
+    
     <Grid RowDefinitions="50, Auto, *">
         <StackLayout Grid.Row="0" BackgroundColor="{StaticResource HeadingColor}" Padding="5">
             <Label Text="Walkie Talkie" Style="{StaticResource HeaderLabel}"/>
         </StackLayout>
         <Label x:Name="talkLabel" Grid.Row="1" Margin="10" Text="Press and hold on microphone to talk" FontAttributes="Bold"/>
-        <Frame Grid.Row="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" HeightRequest="215" WidthRequest="215" BackgroundColor="Transparent" CornerRadius="110" Padding="5">
+        <Frame Grid.Row="2" VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="215" WidthRequest="215" BackgroundColor="Transparent" CornerRadius="110" Padding="5">
             <Frame x:Name="talkFrame" WidthRequest="205" HeightRequest="205" CornerRadius="105" BorderColor="Transparent" BackgroundColor="Blue" HasShadow="True">
                 <Frame CornerRadius="100" WidthRequest="200" HeightRequest="200" BorderColor="Transparent">
                     <Button Text="{StaticResource IconMicrophone}" FontFamily="FAsolid" BackgroundColor="Transparent" TextColor="Black" FontSize="28" Pressed="Button_Pressed" Released="Button_Released" HeightRequest="200" WidthRequest="200"/>

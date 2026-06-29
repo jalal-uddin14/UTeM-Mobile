@@ -4,11 +4,10 @@
              x:Class="UTeM_Mobile.Views.Supervisor.RouteListPage"
              BackgroundColor="White"
              xmlns:viewModel ="clr-namespace:UTeM_Mobile.ViewModels.Supervisor"
+             x:DataType="viewModel:RouteListViewModel"
              xmlns:model="clr-namespace:UTeM_Mobile.Data.Models;assembly=UTeM-Mobile.Data"
              Title="Route List">
-    <ContentPage.BindingContext>
-        <viewModel:RouteListViewModel />
-    </ContentPage.BindingContext>
+    
     <VerticalStackLayout>
         <ListView ItemsSource="{Binding RouteList}" ItemTapped="ListView_ItemTapped">
             <ListView.ItemTemplate>

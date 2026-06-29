@@ -3,7 +3,6 @@ using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Interfaces;
-using UTeM_Mobile.Core.Services.DBServices;
 
 namespace UTeM_Mobile.ViewModels.Supervisor
 {
@@ -11,30 +10,32 @@ namespace UTeM_Mobile.ViewModels.Supervisor
     public class GuardDetailViewModel : MainViewModel, IOnAppearing
     {
         private IGenericService<ApplicationUser> _genericService;
+        private readonly ITokenStorageService _tokenService;
         private string id;
         private ApplicationUser guard;
 
         public string Id { get => id; set => id = value; }
         public ApplicationUser Guard { get => guard; set => SetProperty(ref guard, value); }
 
-        public GuardDetailViewModel()
+        public GuardDetailViewModel(ITokenStorageService tokenService)
         {
             _genericService = new GenericService<ApplicationUser>();
             Guard = new ApplicationUser();
+            _tokenService = tokenService;
         }
 
-        public void OnAppearing()
+        public async Task OnAppearing()
         {
             IsErrorMessage = false;
-            Task.Run(async () => { await GetTokenAsync(); });
+            await GetTokenAsync();
         }
 
         public async Task GetTokenAsync()
         {
             try
             {
-                Token = await LocalDBService.GetToken();
-                if (Token != null)
+                var tokenJson = await _tokenService.GetAccessTokenAsync();
+                if (tokenJson != null)
                 {
                     await GetGuardDetail();
                 }

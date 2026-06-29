@@ -4,15 +4,24 @@ using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Core.Services.DBServices;
 using UTeM_Mobile.Data.Models;
+using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Models;
 using UTeM_Mobile.PopupViews;
 using UTeM_Mobile.StaticProperties;
 
 namespace UTeM_Mobile.Services
 {
-    public class NFCService
+    public class NFCService : INFCService
     {
-        public static void SubscribeNFC()
+        private readonly ITokenStorageService _tokenService;
+        private readonly IPatrolService _patrolService;
+        public NFCService(ITokenStorageService tokenService, IPatrolService patrolService)
+        {
+            _tokenService = tokenService;
+            _patrolService = patrolService;
+        }
+
+        public void SubscribeNFC()
         {
             try
             {
@@ -28,7 +37,7 @@ namespace UTeM_Mobile.Services
             }
         }
 
-        private static async void Current_OnMessageReceived(ITagInfo tagInfo)
+        private async void Current_OnMessageReceived(ITagInfo tagInfo)
         {
             try
             {
@@ -80,7 +89,7 @@ namespace UTeM_Mobile.Services
             }
         }
 
-        public static async Task ExecuteScanAsync(Checkpoint passedCheckpoint)
+        public async Task ExecuteScanAsync(Checkpoint passedCheckpoint)
         {
             try
             {
@@ -123,7 +132,7 @@ namespace UTeM_Mobile.Services
                     PatrolDetail patrolDetail = StaticCredentials.PatrolDetail;
                     if (patrolDetail == null)
                     {
-                        patrolResponse = await PatrolService.GetPatrolStatus();
+                        patrolResponse = await _patrolService.GetPatrolStatus();
                         if (patrolResponse.IsSuccess && patrolResponse.Data != null)
                         {
                             patrolDetail = patrolResponse.Data;
@@ -152,7 +161,7 @@ namespace UTeM_Mobile.Services
                         }
                         else if (patrolCheckpointResponse.IsSuccess && patrolCheckpointResponse.Data != null)
                         {
-                            patrolResponse = await PatrolService.GetPatrolStatus();
+                            patrolResponse = await _patrolService.GetPatrolStatus();
                             if (patrolResponse.IsSuccess && patrolResponse.Data != null)
                             {
                                 patrolDetail = patrolResponse.Data;

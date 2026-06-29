@@ -11,30 +11,32 @@ namespace UTeM_Mobile.ViewModels.Supervisor
     public class GuardListViewModel : MainViewModel, IOnAppearing
     {
         private IGenericService<ApplicationUser> _genericService;
+        private readonly ITokenStorageService _tokenService;
         private bool isGuardVisible;
         private bool isRouteVisible;
         public ObservableRangeCollection<ApplicationUser> GuardList { get; }
         public bool IsGuardVisible { get => isGuardVisible; set => SetProperty(ref isGuardVisible, value); }
         public bool IsRouteVisible { get => isRouteVisible; set => SetProperty(ref isRouteVisible, value); }
 
-        public GuardListViewModel()
+        public GuardListViewModel(ITokenStorageService tokenService)
         {
             _genericService = new GenericService<ApplicationUser>();
             GuardList = new ObservableRangeCollection<ApplicationUser>();
+            _tokenService = tokenService;
         }
 
-        public void OnAppearing()
+        public async Task OnAppearing()
         {
             IsErrorMessage = false;
-            Task.Run(async () => { await GetTokenAsync(); });
+            await GetTokenAsync();
         }
 
         public async Task GetTokenAsync()
         {
             try
             {
-                Token = await LocalDBService.GetToken();
-                if (Token != null)
+                var tokenJson = await _tokenService.GetAccessTokenAsync();
+                if (tokenJson != null)
                 {
                     await GetGuardList();
                 }

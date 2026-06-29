@@ -5,17 +5,19 @@ namespace UTeM_Mobile.Views.Guard;
 
 public partial class ReportSendPage : ContentPage
 {
-	private ReportSendViewModel viewModel;
-	public ReportSendPage()
+	public ReportSendPage(ReportSendViewModel vm)
 	{
 		InitializeComponent();
-	}
+        BindingContext = vm;
+    }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
-		viewModel = BindingContext as ReportSendViewModel;
-		viewModel.OnAppearing();
+        if (BindingContext is IOnAppearing vm)
+        {
+            vm.OnAppearing();
+        }
     }
 
     private void Editor_Completed(object sender, EventArgs e)

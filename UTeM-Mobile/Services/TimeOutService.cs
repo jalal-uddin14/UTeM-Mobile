@@ -1,14 +1,16 @@
-﻿using UTeM_Mobile.Core.Models;
+﻿using UTeM_Mobile.Core.IServices;
+using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Core.Services.DBServices;
 using UTeM_Mobile.Data.Models;
+using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Models;
 using UTeM_Mobile.PopupViews;
 using UTeM_Mobile.StaticProperties;
 
 namespace UTeM_Mobile.Services
 {
-    public class TimeOutService
+    public class TimeOutService : ITimeOutService
     {
         static IDispatcherTimer patrolDetailTimer = Application.Current.Dispatcher.CreateTimer();
         static IDispatcherTimer patrolTimer = Application.Current.Dispatcher.CreateTimer();
@@ -18,6 +20,12 @@ namespace UTeM_Mobile.Services
         static PatrolDetail patrolDetail = null;
         static PatrolDetail timerPatrolDetail = null;
         static Location location = null;
+
+        private readonly IPatrolService _patrolService;
+        public TimeOutService(IPatrolService patrolService)
+        {
+            _patrolService = patrolService;
+        }
 
 
         public static void RunPatrolDetailTimer(AuthToken token, ApplicationUser user)
@@ -125,7 +133,7 @@ namespace UTeM_Mobile.Services
             };
             shiftTimer.Start();
         }
-        public static async Task RunLocationBroadcastAsync(AuthToken token)
+        public async Task RunLocationBroadcastAsync(AuthToken token)
         {
             locationTimer.Interval = TimeSpan.FromSeconds(10);
             locationTimer.Tick += async (s, e) =>
@@ -135,7 +143,7 @@ namespace UTeM_Mobile.Services
                     patrolDetail = StaticCredentials.PatrolDetail;
                     if (patrolDetail == null)
                     {
-                        var response = await PatrolService.GetPatrolStatus();
+                        var response = await _patrolService.GetPatrolStatus();
                         if (response.IsSuccess && response.Data != null)
                         {
                             patrolDetail = response.Data;
@@ -160,14 +168,14 @@ namespace UTeM_Mobile.Services
             locationTimer.Start();
         }
 
-        public static async Task CheckTimerToken()
+        public async Task CheckTimerToken()
         {
             try
             {
                 AuthToken token = await LocalDBService.GetToken();
                 if (token != null && token.ValidTo > DateTime.UtcNow.AddHours(8))
                 {
-                    ObjectResponse<PatrolDetail> response = await PatrolService.GetPatrolStatus();
+                    ObjectResponse<PatrolDetail> response = await _patrolService.GetPatrolStatus();
                     if (response.IsSuccess && response.Data != null)
                     {
                         PatrolDetail patrolDetail = response.Data;
@@ -181,7 +189,7 @@ namespace UTeM_Mobile.Services
                         {
                             if (StaticCredentials.NextPatrolDetail == null)
                             {
-                                patrol = await PatrolService.GetPatrol(patrolDetail.PatrolId);
+                                patrol = await _patrolService.GetPatrol(patrolDetail.PatrolId);
                                 if (patrol != null)
                                 {
                                     StaticCredentials.Patrol = patrol;

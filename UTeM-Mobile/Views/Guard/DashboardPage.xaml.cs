@@ -1,4 +1,5 @@
 using Microsoft.Maui.Maps;
+using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Services;
 using UTeM_Mobile.ViewModels.Guard;
 
@@ -6,19 +7,21 @@ namespace UTeM_Mobile.Views.Guard;
 
 public partial class DashboardPage : ContentPage
 {
-    private DashboardViewModel viewModel;
     private bool isFlashOn;
-	public DashboardPage()
+	public DashboardPage(DashboardViewModel vm)
 	{
 		InitializeComponent();
+        BindingContext = vm;
         isFlashOn = false;
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
-        viewModel = BindingContext as DashboardViewModel;
-        viewModel.OnAppearing();
+        if (BindingContext is IOnAppearing vm)
+        {
+            await vm.OnAppearing();
+        }
     }
 
     public async Task GetCurrentLocation()

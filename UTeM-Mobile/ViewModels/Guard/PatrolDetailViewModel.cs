@@ -1,9 +1,11 @@
-﻿using UTeM_Mobile.Core.IServices;
+﻿using MvvmHelpers.Commands;
+using System.Text.Json;
+using UTeM_Mobile.Core.IServices;
+using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Core.Services;
+using UTeM_Mobile.Core.Services.DBServices;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
-using UTeM_Mobile.Core.Models;
-using UTeM_Mobile.Core.Services.DBServices;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
@@ -13,6 +15,9 @@ namespace UTeM_Mobile.ViewModels.Guard
         static IDispatcherTimer patrolCheckTimer = Application.Current.Dispatcher.CreateTimer();
         private IGenericService<PatrolDetail> _genericPatrolDetailService;
         private IGenericService<PatrolCheckpoint> _patrolCheckpointService;
+
+        private readonly ITokenStorageService _tokenService;
+
         private DateTime? expectedChecktime;
         private string id;
         private Patrol patrol;
@@ -37,26 +42,27 @@ namespace UTeM_Mobile.ViewModels.Guard
         }
         public bool TimeExceeded { get => timeExceeded; set => SetProperty(ref timeExceeded, value); }
 
-        public PatrolDetailViewModel()
+        public PatrolDetailViewModel(ITokenStorageService tokenService)
         {
             _genericPatrolDetailService = new GenericService<PatrolDetail>();
             _patrolCheckpointService = new GenericService<PatrolCheckpoint>();
             Patrol = new Patrol();
+            _tokenService = tokenService;
         }
 
-        public void OnAppearing()
+        public async Task OnAppearing()
         {
             ExpectedChecktime = null;
             IsErrorMessage = false;
-            Task.Run(async () => { await GetTokenAsync(); });
+            await GetTokenAsync();
         }
 
         public async Task GetTokenAsync()
         {
             try
             {
-                Token = await LocalDBService.GetToken();
-                if (Token != null)
+                var tokenJson = await _tokenService.GetAccessTokenAsync();
+                if (tokenJson != null)
                 {
                     await GetPatrolDetailAsync();
                 }

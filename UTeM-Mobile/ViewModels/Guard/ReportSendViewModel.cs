@@ -10,6 +10,7 @@ using UTeM_Mobile.PopupViews;
 using UTeM_Mobile.Models;
 using UTeM_Mobile.Core.Services.DBServices;
 using UTeM_Mobile.Services;
+using System.Text.Json;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
@@ -17,6 +18,11 @@ namespace UTeM_Mobile.ViewModels.Guard
     {
         private IGenericService<Report> _genericService;
         private IGenericService<ApplicationUser> _genericUserService;
+
+        private readonly ITokenStorageService _tokenService;
+        private readonly IPatrolService _patrolService;
+
+
         private bool hasPatrol;
         private bool hasNoPatrol;
         private Report report;
@@ -46,13 +52,15 @@ namespace UTeM_Mobile.ViewModels.Guard
         public Checkpoint Checkpoint { get => checkpoint; set => SetProperty(ref checkpoint, value); }
         public PatrolCheckpoint PatrolCheckpoint { get => patrolCheckpoint; set => SetProperty(ref patrolCheckpoint, value); }
 
-        public ReportSendViewModel()
+        public ReportSendViewModel(ITokenStorageService tokenService, IPatrolService patrolService)
         {
             Report = new Report();
             _genericService = new GenericService<Report>();
             _genericUserService = new GenericService<ApplicationUser>();
             TakePhotoCommand = new AsyncCommand(TakePhotoAsync);
             SendReportCommand = new AsyncCommand(ExecuteSendReport);
+            _tokenService = tokenService;
+            _patrolService = patrolService;
         }
 
         private async Task TakePhotoAsync()
@@ -136,11 +144,11 @@ namespace UTeM_Mobile.ViewModels.Guard
             }
         }
 
-        public void OnAppearing()
+        public async Task OnAppearing()
         {
             IsErrorMessage = false;
             Report = new Report();
-            Task.Run(async () => { await GetTokenAsync(); });
+            await GetTokenAsync();
         }
 
         public async Task GetTokenAsync()
@@ -149,7 +157,8 @@ namespace UTeM_Mobile.ViewModels.Guard
             {
                 HasPatrol = false;
                 Checkpoint = null;
-                Token = await LocalDBService.GetToken();
+                var tokenJson = await _tokenService.GetAccessTokenAsync();
+                Token = JsonSerializer.Deserialize<AuthToken>(tokenJson);
                 if (Token != null)
                 {
                     await GetProfileAsync();
@@ -187,7 +196,7 @@ namespace UTeM_Mobile.ViewModels.Guard
             try
             {
                 IsErrorMessage = false;
-                ObjectResponse<PatrolDetail> patrolResponse = await PatrolService.GetPatrolStatus();
+                ObjectResponse<PatrolDetail> patrolResponse = await _patrolService.GetPatrolStatus();
                 if (patrolResponse.IsSuccess)
                 {
                     if (patrolResponse.Data != null && patrolResponse.Data.Status == "Started" && patrolResponse.Data.PatrolCheckpoints.Count > 0 && patrolResponse.Data.PatrolCheckpoints.FirstOrDefault(q => q.Status == "Scheduled") != null && patrolResponse.Data.PatrolCheckpoints.FirstOrDefault(q => q.Status == "Scheduled").Checkpoint != null)

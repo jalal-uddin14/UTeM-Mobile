@@ -14,6 +14,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         private IGenericService<Patrol> _genericService;
         private IGenericService<PatrolDetail> _genericPatrolDetailService;
         private IGenericService<PatrolCheckpoint> _patrolCheckpointService;
+        private readonly ITokenStorageService _tokenService;
         private string id;
         private Patrol patrol;
         private PatrolDetail patrolDetail;
@@ -40,7 +41,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         public bool ShowGPS { get => showGPS; set => SetProperty(ref showGPS, value); }
         public bool PatrolRunning { get => patrolRunning; set => SetProperty(ref patrolRunning, value); }
 
-        public PatrolDetailViewModel()
+        public PatrolDetailViewModel(ITokenStorageService tokenService)
         {
             Patrol = new Patrol { Guard = new ApplicationUser(), Route = new Route() };
             PatrolDetail = new PatrolDetail { Patrol = Patrol };
@@ -48,6 +49,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             _genericPatrolDetailService = new GenericService<PatrolDetail>();
             _patrolCheckpointService = new GenericService<PatrolCheckpoint>();
             ToggleMapCommand = new Command(ExecuteToggleMap);
+            _tokenService = tokenService;
         }
 
         private void ExecuteToggleMap()
@@ -55,21 +57,21 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             ShowMapRoute = !ShowMapRoute;
         }
 
-        public void OnAppearing()
+        public async Task OnAppearing()
         {
             PatrolRunning = false;
             IsBusy = true;
             ShowMapRoute = true;
             IsErrorMessage = false;
-            Task.Run(async () => { await GetTokenAsync(); });
+            await GetTokenAsync();
         }
 
         public async Task GetTokenAsync()
         {
             try
             {
-                Token = await LocalDBService.GetToken();
-                if (Token != null)
+                var tokenJson = await _tokenService.GetAccessTokenAsync();
+                if (tokenJson != null)
                 {
                     await GetPatrolDetailAsync();
                 }

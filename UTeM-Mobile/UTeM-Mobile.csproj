@@ -1,180 +1,362 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<!-- iOS requires a Mac build host; on Windows, build Android only -->
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">net9.0-android</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('osx'))">net9.0-ios;net9.0-android</TargetFrameworks>
-		<OutputType>Exe</OutputType>
-		<RootNamespace>UTeM_Mobile</RootNamespace>
-		<UseMaui>true</UseMaui>
-		<SingleProject>true</SingleProject>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-
-		<!-- Display name -->
-		<ApplicationTitle>Smart Patrol Tech</ApplicationTitle>
-
-		<!-- App Identifier -->
-		<ApplicationId>com.companyname.utem</ApplicationId>
-		<ApplicationIdGuid>51665bf0-1b65-4bf7-9846-463fb117ef15</ApplicationIdGuid>
-
-		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-		<ApplicationVersion>1</ApplicationVersion>
-
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-ios|AnyCPU'">
-		<CreatePackage>false</CreatePackage>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
-		<AndroidPackageFormat>apk</AndroidPackageFormat>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.jpg" Color="#FFFFFF" BaseSize="256,256" />
-
-		<!-- Images -->
-		<MauiImage Include="Resources\Images\*" />
-
-		<!-- Custom Fonts -->
-		<MauiFont Include="Resources\Fonts\*" />
-
-		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
-		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Remove="Platforms\Android\Resources\xml\file_paths.xml" />
-	  <None Remove="Resources\AppIcon\appicon.png" />
-	  <None Remove="Resources\AppIcon\appicon1.jpg" />
-	  <None Remove="Resources\AppIcon\appiconfg.png" />
-	  <None Remove="Resources\Fonts\fa-brands-400.ttf" />
-	  <None Remove="Resources\Fonts\fa-regular-400.ttf" />
-	  <None Remove="Resources\Fonts\fa-solid-900.ttf" />
-	  <None Remove="Resources\Fonts\fa-v4compatibility.ttf" />
-	  <None Remove="Resources\Images\e_smartguardheader.png" />
-	  <None Remove="Resources\Images\guard.png" />
-	  <None Remove="Resources\Images\logo.jpg" />
-	  <None Remove="Resources\Images\logo_only.jpg" />
-	  <None Remove="Resources\Splash\splash.jpg" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiIcon Include="Resources\AppIcon\appicon.png" />
-	  <MauiIcon Include="Resources\AppIcon\appicon1.jpg" />
-	  <MauiIcon Include="Resources\AppIcon\appiconfg.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Include="Microsoft.Maui.Controls.Maps" Version="9.0.100" />
-	  <PackageReference Include="Nito.AsyncEx.Context" Version="5.1.2" />
-	  <PackageReference Include="Plugin.LocalNotification" Version="12.0.2" />
-	  <PackageReference Include="Plugin.NFC" Version="0.1.26" />
-	  <PackageReference Include="PusherClient" Version="2.2.1" />
-	  <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
-	  <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.10" />
-	  <PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.10" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\UTeM-Mobile.Core\UTeM-Mobile.Core.csproj" />
-	  <ProjectReference Include="..\UTeM-Mobile.Data\UTeM-Mobile.Data.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiXaml Update="GuardShell.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="PopupViews\MessagePopupPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="PopupViews\NextPatrolPopupPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="PopupViews\TimeoutPopupPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Resources\Styles\Icons.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="SupervisorShell.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Guard\DashboardPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Guard\PatrolDetailListPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Guard\PatrolDetailPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Guard\PatrolListPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Guard\ProfilePage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Guard\ReportSendPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Guard\WhatsAppPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\LoginPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\NoInternetPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\StartPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Supervisor\DashboardPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Supervisor\GuardDetailPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Supervisor\GuardListPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Supervisor\PatrolAddPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Supervisor\PatrolDetailListPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Supervisor\PatrolDetailPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Supervisor\PatrolListPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Supervisor\ProfilePage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Supervisor\ReportDetailPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Supervisor\ReportListPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Supervisor\RouteDetailPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Supervisor\RouteListPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\Supervisor\WhatsAppPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	</ItemGroup>
-
-</Project>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+
+
+	<PropertyGroup>
+
+		<!-- iOS requires a Mac build host; on Windows, build Android only -->
+
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">net9.0-android</TargetFrameworks>
+
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('osx'))">net9.0-ios;net9.0-android</TargetFrameworks>
+
+		<OutputType>Exe</OutputType>
+
+		<RootNamespace>UTeM_Mobile</RootNamespace>
+
+		<UseMaui>true</UseMaui>
+
+		<SingleProject>true</SingleProject>
+
+		<ImplicitUsings>enable</ImplicitUsings>
+
+		<Nullable>enable</Nullable>
+
+
+
+		<!-- Display name -->
+
+		<ApplicationTitle>Smart Patrol Tech</ApplicationTitle>
+
+
+
+		<!-- App Identifier -->
+
+		<ApplicationId>com.companyname.utem</ApplicationId>
+
+		<ApplicationIdGuid>51665bf0-1b65-4bf7-9846-463fb117ef15</ApplicationIdGuid>
+
+
+
+		<!-- Versions -->
+
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+
+		<ApplicationVersion>1</ApplicationVersion>
+
+
+
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+
+	</PropertyGroup>
+
+
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-ios|AnyCPU'">
+
+		<CreatePackage>false</CreatePackage>
+
+	</PropertyGroup>
+
+
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
+
+		<AndroidPackageFormat>apk</AndroidPackageFormat>
+
+	</PropertyGroup>
+
+
+
+	<ItemGroup>
+
+		<!-- Splash Screen -->
+
+		<MauiSplashScreen Include="Resources\Splash\splash.jpg" Color="#FFFFFF" BaseSize="256,256" />
+
+
+
+		<!-- Images -->
+
+		<MauiImage Include="Resources\Images\*" />
+
+
+
+		<!-- Custom Fonts -->
+
+		<MauiFont Include="Resources\Fonts\*" />
+
+
+
+		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+
+	  <None Remove="Platforms\Android\Resources\xml\file_paths.xml" />
+
+	  <None Remove="Resources\AppIcon\appicon.png" />
+
+	  <None Remove="Resources\AppIcon\appicon1.jpg" />
+
+	  <None Remove="Resources\AppIcon\appiconfg.png" />
+
+	  <None Remove="Resources\Fonts\fa-brands-400.ttf" />
+
+	  <None Remove="Resources\Fonts\fa-regular-400.ttf" />
+
+	  <None Remove="Resources\Fonts\fa-solid-900.ttf" />
+
+	  <None Remove="Resources\Fonts\fa-v4compatibility.ttf" />
+
+	  <None Remove="Resources\Images\e_smartguardheader.png" />
+
+	  <None Remove="Resources\Images\guard.png" />
+
+	  <None Remove="Resources\Images\logo.jpg" />
+
+	  <None Remove="Resources\Images\logo_only.jpg" />
+
+	  <None Remove="Resources\Splash\splash.jpg" />
+
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+
+	  <MauiIcon Include="Resources\AppIcon\appicon.png" />
+
+	  <MauiIcon Include="Resources\AppIcon\appicon1.jpg" />
+
+	  <MauiIcon Include="Resources\AppIcon\appiconfg.png" />
+
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+
+	  <PackageReference Include="Microsoft.Maui.Controls.Maps" Version="9.0.100" />
+
+	  <PackageReference Include="Nito.AsyncEx.Context" Version="5.1.2" />
+
+	  <PackageReference Include="Plugin.LocalNotification" Version="12.0.2" />
+
+	  <PackageReference Include="Plugin.NFC" Version="0.1.26" />
+
+	  <PackageReference Include="PusherClient" Version="2.2.1" />
+
+	  <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
+
+	  <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+
+	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.10" />
+
+	  <PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.10" />
+
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+
+	  <ProjectReference Include="..\UTeM-Mobile.Core\UTeM-Mobile.Core.csproj" />
+
+	  <ProjectReference Include="..\UTeM-Mobile.Data\UTeM-Mobile.Data.csproj" />
+
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+
+	  <MauiXaml Update="GuardShell.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="PopupViews\MessagePopupPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="PopupViews\NextPatrolPopupPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="PopupViews\TimeoutPopupPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Resources\Styles\Icons.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="SupervisorShell.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Guard\DashboardPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Guard\PatrolDetailListPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Guard\PatrolDetailPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Guard\PatrolListPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Guard\ProfilePage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Guard\ReportSendPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Guard\WhatsAppPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\LoginPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\NoInternetPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\StartPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Supervisor\DashboardPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Supervisor\GuardDetailPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Supervisor\GuardListPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Supervisor\PatrolAddPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Supervisor\PatrolDetailListPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Supervisor\PatrolDetailPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Supervisor\PatrolListPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Supervisor\ProfilePage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Supervisor\ReportDetailPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Supervisor\ReportListPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Supervisor\RouteDetailPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Supervisor\RouteListPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	  <MauiXaml Update="Views\Supervisor\WhatsAppPage.xaml">
+
+	    <Generator>MSBuild:Compile</Generator>
+
+	  </MauiXaml>
+
+	</ItemGroup>
+
+
+
+</Project>
+

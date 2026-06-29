@@ -1,10 +1,9 @@
-﻿using MvvmHelpers.Commands;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Plugin.NFC;
-using System.Windows.Input;
+using System.Text.Json;
 using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Models;
-using UTeM_Mobile.Core.Services;
-using UTeM_Mobile.Core.Services.DBServices;
 using UTeM_Mobile.Data.Models;
 using UTeM_Mobile.Interfaces;
 using UTeM_Mobile.Services;
@@ -12,29 +11,36 @@ using UTeM_Mobile.StaticProperties;
 
 namespace UTeM_Mobile.ViewModels
 {
-    public class LoginViewModel : MainViewModel
+    public partial class LoginViewModel : MainViewModel
     {
+        [ObservableProperty]
         private bool isRemember;
-        private string errorMessage;
+
+        [ObservableProperty]
         private AuthToken authToken;
+
+        [ObservableProperty]
         private ApplicationUser user;
-        private IGenericService<AuthToken> _authService;
 
-        public ICommand LoginCommand { get; }
-        public bool IsRemember { get => isRemember; set => SetProperty(ref isRemember, value); }
-        public string ErrorMessage { get => errorMessage; set => SetProperty(ref errorMessage, value); }
-        public AuthToken AuthToken { get => authToken; set => SetProperty(ref authToken, value); }
-        public ApplicationUser User { get => user; set => SetProperty(ref user, value); }
+        private readonly IGenericService<AuthToken> _authService;
+        private readonly IAuthenticationService _authenticationService;
+        private readonly ITokenStorageService _tokenService;
+        private readonly INFCService _nfcService;
+        private readonly ITimeOutService _timeOutService;
 
-        public LoginViewModel()
+        public LoginViewModel(IGenericService<AuthToken> authService, IAuthenticationService authenticationService, ITokenStorageService tokenService, INFCService nfcService, ITimeOutService timeOutService)
         {
-            AuthToken = new AuthToken();
-            User = new ApplicationUser();
-            _authService = new GenericService<AuthToken>();
-            LoginCommand = new AsyncCommand(ExecuteLogin);
+            _authService = authService;
+            _authenticationService = authenticationService;
+            User = _authenticationService.CurrentUser ?? new ApplicationUser();
+            AuthToken = _authenticationService.CurrentToken;
+            _tokenService = tokenService;
+            _nfcService = nfcService;
+            _timeOutService = timeOutService;
         }
 
-        private async Task ExecuteLogin()
+        [RelayCommand]
+        private async Task LoginAsync()
         {
             try
             {
@@ -53,15 +59,15 @@ namespace UTeM_Mobile.ViewModels
                 }
                 IsBusy = true;
                 string url = "accounts/login";
-                ObjectResponse<AuthToken> response = await _authService.PostAsync(url, User);
+                ObjectResponse<AuthToken> response = await _authService.PostAsync(url, user);
                 if (response.IsSuccess && response.Data != null)
                 {
                     AuthToken = response.Data;
                     AuthToken.ValidTo = DateTime.UtcNow.AddHours(8).AddMinutes(response.Data.LifetimeMinutes);
                     AuthToken.IsRemember = IsRemember;
+                    _tokenService.RemoveAccessToken();
+                    await _tokenService.SaveAccessTokenAsync(JsonSerializer.Serialize(AuthToken));
                     StaticCredentials.CheckpointTimer = null;
-                    await LocalDBService.RemoveToken();
-                    await LocalDBService.InsertToken(AuthToken);
                     if (response.Data.UserRole == "Supervisor")
                     {
                         await PusherService.SubscribeGuardChannel();
@@ -82,9 +88,9 @@ namespace UTeM_Mobile.ViewModels
                         }
                         else
                         {
-                            NFCService.SubscribeNFC();
+                            _nfcService.SubscribeNFC();
                         }
-                        await TimeOutService.CheckTimerToken();
+                        await _timeOutService.CheckTimerToken();
                         await MainThread.InvokeOnMainThreadAsync(() =>
                         {
                             Application.Current.MainPage = new GuardShell();
@@ -105,11 +111,6 @@ namespace UTeM_Mobile.ViewModels
             {
                 DependencyService.Get<IKeyboardHelper>().HideKeyboard();
             }
-        }
-
-        public void OnAppearing()
-        {
-
         }
     }
 }

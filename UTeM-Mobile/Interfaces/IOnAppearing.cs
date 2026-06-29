@@ -2,7 +2,7 @@
 {
     public interface IOnAppearing
     {
-        void OnAppearing();
+        Task OnAppearing();
         Task GetTokenAsync();
     }
 }

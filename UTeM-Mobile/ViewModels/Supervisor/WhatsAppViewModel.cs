@@ -13,27 +13,29 @@ namespace UTeM_Mobile.ViewModels.Supervisor
     {
         private IGenericService<Patrol> _genericPatrolService;
         private IGenericService<ApplicationUser> _genericUserService;
+        private readonly ITokenStorageService _tokenService;
         private ApplicationUser user;
         private Patrol patrol;
         private string phoneNumber;
 
-        public WhatsAppViewModel()
+        public WhatsAppViewModel(ITokenStorageService tokenService)
         {
             _genericPatrolService = new GenericService<Patrol>();
             _genericUserService = new GenericService<ApplicationUser>();
+            _tokenService = tokenService;
         }
         public async Task GetTokenAsync()
         {
-            Token = await LocalDBService.GetToken();
+            var tokenJson = await _tokenService.GetAccessTokenAsync();
             //if (Token != null)
             //{
             //    await GetProfileAsync();
             //}
         }
 
-        public void OnAppearing()
+        public async Task OnAppearing()
         {
-            Task.Run(async () => { await GetTokenAsync(); });
+            await GetTokenAsync();
         }
 
         private async Task GetProfileAsync()

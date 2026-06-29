@@ -21,6 +21,9 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         private IGenericService<Patrol> _patrolService;
         private IGenericService<Shift> _shiftService;
         private IGenericService<TimeSchedule> _timeService;
+
+        private readonly ITokenStorageService _tokenService;
+
         private Patrol patrol;
         private ApplicationUser selectedGuard;
         private Campus selectedCampus;
@@ -179,7 +182,7 @@ namespace UTeM_Mobile.ViewModels.Supervisor
         public string SelectedShiftString { get => selectedShiftString; set => SetProperty(ref selectedShiftString, value); }
         public string SelectedTimeString { get => selectedTimeString; set => SetProperty(ref selectedTimeString, value); }
 
-        public PatrolAddViewModel()
+        public PatrolAddViewModel(ITokenStorageService tokenService)
         {
             Patrol = new Patrol();
             StartDate = DateTime.Now;
@@ -195,13 +198,14 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             ShiftList = new ObservableRangeCollection<Shift>();
             TimeScheduleList = new ObservableRangeCollection<TimeSchedule>();
             CreatePatrolCommand = new AsyncCommand(ExecuteCreatePatrol);
-            ReloadDataCommand = new MvvmHelpers.Commands.Command(OnAppearing);
+            ReloadDataCommand = new AsyncCommand(OnAppearing);
             _userService = new GenericService<ApplicationUser>();
             _campusService = new GenericService<Campus>();
             _routeService = new GenericService<Route>();
             _patrolService = new GenericService<Patrol>();
             _shiftService = new GenericService<Shift>();
             _timeService = new GenericService<TimeSchedule>();
+            _tokenService = tokenService;
         }
 
         private async Task ExecuteCreatePatrol()
@@ -262,20 +266,20 @@ namespace UTeM_Mobile.ViewModels.Supervisor
             }
         }
 
-        public void OnAppearing()
+        public async Task OnAppearing()
         {
             IsGuardNotVisible = IsRouteNotVisible = true;
             IsRouteSelected = IsShiftSelected = IsTimeSelected = IsErrorMessage = false;
             SelectedRouteString = SelectedShiftString = SelectedTimeString = "";
-            Task.Run(async () => { await GetTokenAsync(); });
+            await GetTokenAsync();
         }
 
         public async Task GetTokenAsync()
         {
             try
             {
-                Token = await LocalDBService.GetToken();
-                if (Token != null)
+                var tokenJson = await _tokenService.GetAccessTokenAsync();
+                if (tokenJson != null)
                 {
                     await GetGuardListAsync();
                     await GetCampusListAsync();

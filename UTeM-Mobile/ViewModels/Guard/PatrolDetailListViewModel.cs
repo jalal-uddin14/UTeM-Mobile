@@ -1,4 +1,5 @@
-﻿using UTeM_Mobile.Core.IServices;
+﻿using System.Text.Json;
+using UTeM_Mobile.Core.IServices;
 using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.Core.Services;
 using UTeM_Mobile.Core.Services.DBServices;
@@ -13,6 +14,8 @@ namespace UTeM_Mobile.ViewModels.Guard
         private IGenericService<Patrol> _genericPatrolService;
         private IGenericService<PatrolDetail> _genericPatrolDetailService;
         private IGenericService<ApplicationUser> _genericUserService;
+
+        private readonly ITokenStorageService _tokenService;
         private ApplicationUser user;
 
         private string id;
@@ -24,25 +27,26 @@ namespace UTeM_Mobile.ViewModels.Guard
         public Patrol Patrol { get => patrol; set => SetProperty(ref patrol, value); }
         public PatrolDetail PatrolDetail { get => patrolDetail; set => SetProperty(ref patrolDetail, value); }
 
-        public PatrolDetailListViewModel()
+        public PatrolDetailListViewModel(ITokenStorageService storageService)
         {
             _genericPatrolService = new GenericService<Patrol>();
             _genericPatrolDetailService = new GenericService<PatrolDetail>();
             _genericUserService = new GenericService<ApplicationUser>();
             Patrol = new Patrol();
+            _tokenService = storageService;
         }
 
-        public void OnAppearing()
+        public async Task OnAppearing()
         {
             IsErrorMessage = false;
-            Task.Run(async () => { await GetTokenAsync(); });
+            await GetTokenAsync();
         }
         public async Task GetTokenAsync()
         {
             try
             {
-                Token = await LocalDBService.GetToken();
-                if (Token != null)
+                var tokenJson = await _tokenService.GetAccessTokenAsync();
+                if (tokenJson != null)
                 {
                     await GetUserDetailAsync();
                     await GetPatrolDetailAsync();

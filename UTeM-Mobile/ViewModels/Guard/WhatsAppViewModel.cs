@@ -6,29 +6,33 @@ using UTeM_Mobile.Core.Models;
 using UTeM_Mobile.PopupViews;
 using UTeM_Mobile.Models;
 using UTeM_Mobile.Core.Services.DBServices;
+using System.Text.Json;
 
 namespace UTeM_Mobile.ViewModels.Guard
 {
     public class WhatsAppViewModel : MainViewModel, IOnAppearing
     {
         private IGenericService<ApplicationUser> _genericUserService;
+        private readonly ITokenStorageService _tokenService;
         private string phoneNumber;
 
-        public WhatsAppViewModel()
+        public WhatsAppViewModel(ITokenStorageService tokenService)
         {
             _genericUserService = new GenericService<ApplicationUser>();
+            _tokenService = tokenService;
         }
 
-        public void OnAppearing()
+        public async Task OnAppearing()
         {
             IsErrorMessage = false;
-            Task.Run(async () => { await GetTokenAsync(); });
+            await GetTokenAsync();
         }
         public async Task GetTokenAsync()
         {
             try
             {
-                Token = await LocalDBService.GetToken();
+                var tokenJson = await _tokenService.GetAccessTokenAsync();
+                Token = JsonSerializer.Deserialize<AuthToken>(tokenJson);
                 if (Token != null)
                 {
                     await GetProfileAsync();
