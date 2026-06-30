@@ -14,11 +14,17 @@ namespace UTeM_Mobile.Services
     public class NFCService : INFCService
     {
         private readonly IPatrolService _patrolService;
+        private readonly ICheckpointService _checkpointService;
         private readonly IDialogService _dialogService;
-        public NFCService(IPatrolService patrolService, IDialogService dialogService)
+
+        private bool _isSubscribed;
+        private bool _isScanning;
+
+        public NFCService(IPatrolService patrolService, ICheckpointService checkpointService, IDialogService dialogService)
         {
             _dialogService = dialogService;
             _patrolService = patrolService;
+            _checkpointService = checkpointService;
         }
 
         public async Task InitializeAsync()
@@ -28,6 +34,7 @@ namespace UTeM_Mobile.Services
                 await _dialogService.ShowAlertAsync(
                     "NFC",
                     "NFC is not available in your phone.");
+                return;
             }
 
             if (!CrossNFC.Current.IsEnabled)
@@ -35,6 +42,7 @@ namespace UTeM_Mobile.Services
                 await _dialogService.ShowAlertAsync(
                     "NFC",
                     "Please turn on NFC.");
+                return;
             }
 
             SubscribeNFC();
@@ -44,10 +52,17 @@ namespace UTeM_Mobile.Services
         {
             try
             {
+                if (_isSubscribed)
+                    return;
+
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
+                    CrossNFC.Current.OnMessageReceived -= Current_OnMessageReceived;
                     CrossNFC.Current.OnMessageReceived += Current_OnMessageReceived;
+
                     CrossNFC.Current.StartListening();
+
+                    _isSubscribed = true;
                 });
             }
             catch (Exception)
@@ -56,59 +71,121 @@ namespace UTeM_Mobile.Services
             }
         }
 
+        public void UnsubscribeNFC()
+        {
+            if (!_isSubscribed)
+                return;
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                CrossNFC.Current.OnMessageReceived -= Current_OnMessageReceived;
+                CrossNFC.Current.StopListening();
+
+                _isSubscribed = false;
+            });
+        }
+
         private async void Current_OnMessageReceived(ITagInfo tagInfo)
         {
             try
             {
-                if (tagInfo != null)
+                var checkpoint = TryReadCheckpoint(tagInfo);
+
+                if (checkpoint is null)
                 {
-                    var record = tagInfo.Records;
-                    if (record != null)
-                    {
-                        //var data = "geo:0,0?q=2.413724,102.13129(Main+gate+2)";
-                        //var data = "geo:2.414724,102.13129";
-                        var data = record[0].Uri;
-                        var first = data.Split('(')[0];
-                        var sec = first.Split("q=");
-                        string location = sec.Count() > 0 ? sec[1] : sec[0];
-                        var latlong = location.Split(",");
-                        var lat = Convert.ToDouble(latlong[0]);
-                        var lon = Convert.ToDouble(latlong[1]);
-                        if (!StaticCredentials.IsScanning)
-                        {
-                            StaticCredentials.IsScanning = true;
-                            await ExecuteScanAsync(new Checkpoint() { Latitude = lat, Longitude = lon });
-                        }
-                        else
-                        {
-                            await MainThread.InvokeOnMainThreadAsync(() =>
-                                Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan Info", "NFC Scan", "NFC scan processing.")))
-                            );
-                        }
-                    }
-                    else
-                    {
-                        await MainThread.InvokeOnMainThreadAsync(() => 
-                            Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan Error", "Scan Failed", "Appropriate data not found in tag.")))
-                        );
-                    }
+                    await _dialogService.ShowAlertAsync(
+                        "Scan Error",
+                        "Appropriate data not found in tag.");
+                    return;
                 }
-                else
-                {
-                    await MainThread.InvokeOnMainThreadAsync(() =>
-                        Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan Error", "NFC Error", "NFC data reading failed.")))
-                    );
-                }
+
+                await ExecuteScanAsync(checkpoint);
             }
-            catch(Exception)
+            catch
             {
-                await MainThread.InvokeOnMainThreadAsync(() =>
-                    Application.Current.MainPage.Navigation.PushModalAsync(new MessagePopupPage(PopMessage.GetMessage("Scan Error", "NFC Failed", "Unexpected error occured.")))
-                );
+                await _dialogService.ShowAlertAsync(
+                    "Scan Error",
+                    "Unexpected error occurred while reading NFC.");
             }
         }
 
+        private Checkpoint? TryReadCheckpoint(ITagInfo tagInfo)
+        {
+            if (tagInfo?.Records is null || tagInfo.Records.Length == 0)
+                return null;
+
+            var uri = tagInfo.Records[0].Uri;
+
+            if (string.IsNullOrWhiteSpace(uri))
+                return null;
+
+            // Example: geo:0,0?q=2.413724,102.13129(Main gate)
+            var locationPart = uri.Split('(')[0];
+            var queryPart = locationPart.Split("q=");
+
+            var location = queryPart.Length > 1
+                ? queryPart[1]
+                : queryPart[0];
+
+            var latLong = location.Split(',');
+
+            if (latLong.Length < 2)
+                return null;
+
+            if (!double.TryParse(latLong[0], out var latitude))
+                return null;
+
+            if (!double.TryParse(latLong[1], out var longitude))
+                return null;
+
+            return new Checkpoint
+            {
+                Latitude = latitude,
+                Longitude = longitude
+            };
+        }
+
         public async Task ExecuteScanAsync(Checkpoint passedCheckpoint)
+        {
+            if (_isScanning)
+            {
+                await _dialogService.ShowAlertAsync(
+                    "NFC Scan",
+                    "NFC scan is already processing.");
+                return;
+            }
+
+            try
+            {
+                _isScanning = true;
+
+                var result = await _checkpointService.MarkCheckpointAsync(passedCheckpoint);
+
+                if (!result.IsSuccess)
+                {
+                    await _dialogService.ShowAlertAsync(
+                        "Scan Error",
+                        result.Message ?? "Checkpoint scan failed.");
+                    return;
+                }
+
+                await _dialogService.ShowAlertAsync(
+                    "Scan Successful",
+                    result.Message ?? "Checkpoint reached.");
+            }
+            catch
+            {
+                await _dialogService.ShowAlertAsync(
+                    "Scan Error",
+                    "Unexpected error occurred while scanning checkpoint.");
+            }
+            finally
+            {
+                _isScanning = false;
+            }
+        }
+
+        public async Task ExecuteScanAsync1(Checkpoint passedCheckpoint)
         {
             try
             {

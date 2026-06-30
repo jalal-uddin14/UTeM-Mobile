@@ -10,9 +10,11 @@ namespace UTeM_Mobile.Services
     public class PatrolService : IPatrolService
     {
         private readonly ITokenStorageService _tokenService;
-        public PatrolService(ITokenStorageService tokenService)
+        private readonly IGenericService<PatrolDetail> _genericPatrolService;
+        public PatrolService(ITokenStorageService tokenService, IGenericService<PatrolDetail> genericPatrolService)
         {
             _tokenService = tokenService;
+            _genericPatrolService = genericPatrolService;
         }
         public async Task<ObjectResponse<PatrolDetail>> GetPatrolStatus()
         {
@@ -24,9 +26,8 @@ namespace UTeM_Mobile.Services
                     return null;
                 }
                 var token = JsonSerializer.Deserialize<AuthToken>(tokenJson);
-                IGenericService<PatrolDetail> _genericPatrolDetailService = new GenericService<PatrolDetail>();
                 string patrolDetailStatusUrl = "patrolDetails/status";
-                return await _genericPatrolDetailService.PostAsync(patrolDetailStatusUrl, null, token);
+                return await _genericPatrolService.PostAsync(patrolDetailStatusUrl, null, token);
             }
             catch (Exception ex)
             {
@@ -79,5 +80,6 @@ namespace UTeM_Mobile.Services
                 return null;
             }
         }
+        
     }
 }

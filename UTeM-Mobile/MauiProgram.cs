@@ -44,6 +44,7 @@ public static class MauiProgram
             .AddSingleton<ITokenStorageService, TokenStorageService>()
             .AddSingleton<ILogoutService, LogoutService>()
             .AddSingleton<IPatrolService, PatrolService>()
+            .AddSingleton<ICheckpointService, CheckpointService>()
             .AddSingleton<INFCService, NFCService>()
             .AddSingleton<ITimeOutService, TimeOutService>()
             .AddSingleton<IPusherService, PusherService>()
